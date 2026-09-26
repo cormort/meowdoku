@@ -481,19 +481,26 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0
   // 存活擺法集合：O(1) 加入／移除／隨機抽樣
   const pos = new Int32Array(placementCats.length).fill(-1);
   const aliveList = [];
-  const add = (pi) => { if (pos[pi] < 0) { pos[pi] = aliveList.length; aliveList.push(pi); } };
+  const aliveAt = new Int32Array(n * n);   // 經過每格的存活擺法數
+  const add = (pi) => {
+    if (pos[pi] >= 0) return;
+    pos[pi] = aliveList.length; aliveList.push(pi);
+    for (const cell of placementCats[pi]) aliveAt[cell]++;
+  };
   const del = (pi) => {
     const i = pos[pi];
     if (i < 0) return;
     const last = aliveList.pop();
     if (last !== pi) { aliveList[i] = last; pos[last] = i; }
     pos[pi] = -1;
+    for (const cell of placementCats[pi]) aliveAt[cell]--;
   };
   for (let pi = 0; pi < placementCats.length; pi++) if (isAlive(pi)) add(pi);
 
   const maxSize = Math.ceil(n * 1.8);
   const penalty = (sz) => (sz > maxSize ? (sz - maxSize) * wBig : 0) + (sz < 2 ? wSmall : 0);
   const nbs = orthoTable(n);
+  const aliveAfter = new Uint8Array(Math.max(...cellLists.map((l) => l.length)));   // 評估時的結果，接受後直接沿用
   for (let step = 0; step < steps && aliveList.length; step++) {
     const T = t0 * Math.pow(t1 / t0, step / steps);
     const target = placementCats[aliveList[Math.floor(rng() * aliveList.length)]];
@@ -503,17 +510,17 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0
     const to = owner[nbs[cell][Math.floor(rng() * nbs[cell].length)]];
     if (to === from) continue;
 
-    let before = 0;
-    for (const pi of cellLists[cell]) if (pos[pi] >= 0) before++;
+    const before = aliveAt[cell];
     owner[cell] = to;
     if (!regionIsConnected(n, owner, from)) { owner[cell] = from; continue; }
+    const through = cellLists[cell];
     let after = 0;
-    for (const pi of cellLists[cell]) if (isAlive(pi)) after++;
+    for (let k = 0; k < through.length; k++) if ((aliveAfter[k] = isAlive(through[k]) ? 1 : 0)) after++;
     const dE = after - before
       + penalty(size[from] - 1) - penalty(size[from]) + penalty(size[to] + 1) - penalty(size[to]);
     if (dE <= 0 || rng() < Math.exp(-dE / T)) {
       size[from]--; size[to]++;
-      for (const pi of cellLists[cell]) { if (isAlive(pi)) add(pi); else del(pi); }
+      for (let k = 0; k < through.length; k++) { if (aliveAfter[k]) add(through[k]); else del(through[k]); }
     } else {
       owner[cell] = from;
     }
