@@ -526,17 +526,15 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   }
 
   if (assigned < total) return null;
-  if (aliveCount > 0) return repairPartition(n, solution, owner, size, placementCats, cellLists, solutionIdx, rng);
-  return owner;
+  const result = aliveCount > 0
+    ? repairPartition(n, solution, owner, size, placementCats, cellLists, solutionIdx, rng)
+    : owner;
+  if (result) growSingletons(n, solution, result, size, placementCats, cellLists, solutionIdx);
+  return result;
 }
 
-// 貪婪長完仍有少數擺法沒擋掉時：找一個仍成立的擺法，把它某個（非正解）貓位改劃給鄰近色塊，
-// 讓它在同一色塊出現兩隻貓而失效；色塊須保持連通且大小不超出範圍
-function repairPartition(n, solution, owner, size, placements, cellLists, solutionIdx, rng) {
-  const catCells = new Set(solution.map((c, r) => r * n + c));
-  const maxSize = Math.ceil(n * 1.8);
-  const minSize = Math.max(2, Math.floor(n / 3));
-
+// 判斷「其他擺法」在目前 owner 下是否仍成立（即每隻貓落在不同色塊）
+function aliveChecker(n, owner, placements, cellLists, solutionIdx) {
   // 熱迴圈：擺法攤平成 typed array，用索引判斷，避免逐一走訪陣列物件
   const flat = flatPlacements(n, placements);
   const seen = new Int32Array(n);
@@ -558,6 +556,17 @@ function repairPartition(n, solution, owner, size, placements, cellLists, soluti
     for (const pi of cellLists[cell]) if (isAlive(pi)) k++;
     return k;
   };
+  return { isAlive, aliveCount, aliveThrough };
+}
+
+// 貪婪長完仍有少數擺法沒擋掉時：找一個仍成立的擺法，把它某個（非正解）貓位改劃給鄰近色塊，
+// 讓它在同一色塊出現兩隻貓而失效；色塊須保持連通且大小不超出範圍
+function repairPartition(n, solution, owner, size, placements, cellLists, solutionIdx, rng) {
+  const catCells = new Set(solution.map((c, r) => r * n + c));
+  const maxSize = Math.ceil(n * 1.8);
+  const minSize = Math.max(2, Math.floor(n / 3));
+
+  const { isAlive, aliveCount, aliveThrough } = aliveChecker(n, owner, placements, cellLists, solutionIdx);
   const alivePlacements = () => {
     const out = [];
     for (let pi = 0; pi < placements.length; pi++) if (isAlive(pi)) out.push(pi);
@@ -601,9 +610,37 @@ function repairPartition(n, solution, owner, size, placements, cellLists, soluti
   return alive === 0 ? owner : null;
 }
 
+// 已唯一解後的品質修整：只有 1 格的色塊（等於直接公布貓位）向鄰塊借格子。
+// 只接受「借出的色塊仍連通、仍 ≥2 格，不會讓任何其他擺法復活，而且仍能純邏輯解」的移動，
+// 所以唯一解與不用猜都不變（單格色塊是解題的起點，拿掉可能讓題目變成要猜）。
+function growSingletons(n, solution, owner, size, placements, cellLists, solutionIdx) {
+  if (!logicSolve(n, owner).solved) return;   // 本來就要猜 → 交給 generatePuzzle 淘汰
+  const catCells = new Set(solution.map((c, r) => r * n + c));
+  const { aliveThrough } = aliveChecker(n, owner, placements, cellLists, solutionIdx);
+  const nbs = orthoTable(n);
+  let progress = true;
+  while (progress) {
+    progress = false;
+    for (let region = 0; region < n; region++) {
+      if (size[region] !== 1) continue;
+      const home = owner.indexOf(region);
+      for (const cell of nbs[home]) {
+        const from = owner[cell];
+        if (catCells.has(cell) || size[from] <= 2) continue;
+        owner[cell] = region;
+        if (regionIsConnected(n, owner, from) && aliveThrough(cell) === 0 && logicSolve(n, owner).solved) {
+          size[from]--; size[region]++; progress = true;
+          break;
+        }
+        owner[cell] = from;
+      }
+    }
+  }
+}
+
 export function generatePuzzle(n, { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 60 } = {}) {
   const started = Date.now();
-  const rejections = { noSolution: 0, notUnique: 0, needsGuess: 0 };
+  const rejections = { noSolution: 0, notUnique: 0, needsGuess: 0, tooEasy: 0 };
   let tries = 0;
 
   while (tries < maxTries) {
@@ -622,6 +659,8 @@ export function generatePuzzle(n, { rng = makeRng(Date.now() >>> 0), chunkiness 
 
     const sizes = new Map();
     owner.forEach((v) => sizes.set(v, (sizes.get(v) || 0) + 1));
+    // 單格色塊等於直接公布貓位；超過 1 個就再試（最後一次機會例外，寧可出題也不失敗）
+    if ([...sizes.values()].filter((v) => v === 1).length > 1 && tries < maxTries) { rejections.tooEasy++; continue; }
     return {
       n,
       owner,
