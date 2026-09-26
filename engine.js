@@ -440,99 +440,6 @@ function placementIndex(n) {
   return _placementIndex.get(n);
 }
 
-function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
-  const total = n * n;
-  const catCellOf = solution.map((c, r) => r * n + c);
-  const catCells = new Set(catCellOf);
-  const owner = new Array(total).fill(-1);
-  const size = new Array(n).fill(1);
-  catCellOf.forEach((cell, region) => { owner[cell] = region; });
-
-  // 所有合法擺法，以及「每格可能是哪些擺法的貓位」（每個 n 只建一次）
-  const { placementCats, cellLists } = placementIndex(n);
-  const flat = flatPlacements(n, placementCats);
-
-  // alive[pi] = 尚未被擋掉（正解本身不算）；regionCount[pi * n + region] = 該擺法在該色塊內已有幾隻貓
-  const alive = new Uint8Array(placementCats.length).fill(1);
-  const regionCount = new Uint8Array(placementCats.length * n);
-  let aliveCount = placementCats.length;
-  const solutionIdx = placementCats.findIndex((cells) => cells.every((cell, r) => cell === catCellOf[r]));
-  if (solutionIdx >= 0) { alive[solutionIdx] = 0; aliveCount--; }
-  if (!aliveCount) return null;
-
-  // gainTable[cell * n + region] = 經過 cell、且在 region 已有 1 隻貓的存活擺法數
-  // （＝把 cell 劃給 region 能擋掉幾個擺法）；隨 commit 增量維護，killGain 直接查表
-  const gainTable = new Int32Array(total * n);
-  // 每盤複製一份清單，已擋掉的擺法順手移出（處理順序不影響結果：都是加減計數）
-  const lists = cellLists.map((list) => list.slice());
-  const commit = (cell, region) => {
-    owner[cell] = region;
-    size[region] += 1;
-    const list = lists[cell];
-    for (let k = 0; k < list.length;) {
-      const pi = list[k];
-      if (!alive[pi]) { list[k] = list[list.length - 1]; list.pop(); continue; }
-      k++;
-      const base = pi * n;
-      if (regionCount[base + region] === 0) {
-        regionCount[base + region] = 1;
-        for (let r = 0; r < n; r++) gainTable[flat[base + r] * n + region]++;
-      } else {
-        // 第二隻貓進同一色塊 → 擋掉；把它對各色塊貢獻過的增益扣回
-        regionCount[base + region] = 2;
-        alive[pi] = 0; aliveCount--;
-        for (let g = 0; g < n; g++) {
-          if (regionCount[base + g] === 0) continue;
-          for (let r = 0; r < n; r++) gainTable[flat[base + r] * n + g]--;
-        }
-      }
-    }
-  };
-
-  const killGain = (cell, region) => gainTable[cell * n + region];
-
-  let assigned = n;
-  let guard = total * 200;
-  const nbs = orthoTable(n);
-
-  while (assigned < total && guard-- > 0) {
-    const frontier = [];
-    for (let i = 0; i < total; i++) {
-      if (owner[i] >= 0) continue;
-      const adj = [];
-      for (const nb of nbs[i]) if (owner[nb] >= 0 && !adj.includes(owner[nb])) adj.push(owner[nb]);
-      if (adj.length) frontier.push({ cell: i, regions: adj });
-    }
-    if (!frontier.length) return null;
-
-    let bestPick = null;
-    const sample = Math.min(frontier.length, 14);
-    for (let k = 0; k < sample; k++) {
-      const cand = frontier[Math.floor(rng() * frontier.length)];
-      for (const region of cand.regions) {
-        const gain = killGain(cand.cell, region);
-        let compact = 0;
-        for (const nb of nbs[cand.cell]) if (owner[nb] === region) compact++;
-        // 分數：優先殺掉擺法；chunkiness 高時偏好形狀緊實；
-        // 超過平均大小的色塊重扣分，否則單一色塊會吞掉整個盤面、其他色塊只剩 1 格
-        const over = Math.max(0, size[region] + 1 - n);
-        const score = gain * 10 + compact * (chunkiness * 3) - over * over * 4 + rng();
-        if (!bestPick || score > bestPick.score) bestPick = { cell: cand.cell, region, score };
-      }
-    }
-    if (!bestPick) return null;
-    commit(bestPick.cell, bestPick.region);
-    assigned++;
-  }
-
-  if (assigned < total) return null;
-  const result = aliveCount > 0
-    ? repairPartition(n, solution, owner, size, placementCats, cellLists, solutionIdx, rng)
-    : owner;
-  if (result) growSingletons(n, solution, result, size, placementCats, cellLists, solutionIdx);
-  return result;
-}
-
 // 判斷「其他擺法」在目前 owner 下是否仍成立（即每隻貓落在不同色塊）
 function aliveChecker(n, owner, placements, cellLists, solutionIdx) {
   // 熱迴圈：擺法攤平成 typed array，用索引判斷，避免逐一走訪陣列物件
@@ -559,55 +466,82 @@ function aliveChecker(n, owner, placements, cellLists, solutionIdx) {
   return { isAlive, aliveCount, aliveThrough };
 }
 
-// 貪婪長完仍有少數擺法沒擋掉時：找一個仍成立的擺法，把它某個（非正解）貓位改劃給鄰近色塊，
-// 讓它在同一色塊出現兩隻貓而失效；色塊須保持連通且大小不超出範圍
-function repairPartition(n, solution, owner, size, placements, cellLists, solutionIdx, rng) {
-  const catCells = new Set(solution.map((c, r) => r * n + c));
-  const maxSize = Math.ceil(n * 1.8);
-  const minSize = Math.max(2, Math.floor(n / 3));
+// 模擬退火切分：從平衡的色塊出發，每步把某個仍成立擺法的（非正解）貓位改劃給鄰塊。
+// 能量＝存活擺法數＋色塊過大／過小懲罰；變差的步依溫度機率接受，避免像修補步那樣卡死。
+function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0 = 2, t1 = 0.05, wBig = 0.5, wSmall = 3, steps2 = 400, t2 = 0.5 } = {}) {
+  const grown = growRegions(n, solution, rng, chunkiness);
+  if (!grown) return null;
+  const { owner, size } = grown;
+  const { placementCats, cellLists } = placementIndex(n);
+  const catCellOf = solution.map((c, r) => r * n + c);
+  const catCells = new Set(catCellOf);
+  const solutionIdx = placementCats.findIndex((cells) => cells.every((cell, r) => cell === catCellOf[r]));
+  const { isAlive } = aliveChecker(n, owner, placementCats, cellLists, solutionIdx);
 
-  const { isAlive, aliveCount, aliveThrough } = aliveChecker(n, owner, placements, cellLists, solutionIdx);
-  const alivePlacements = () => {
-    const out = [];
-    for (let pi = 0; pi < placements.length; pi++) if (isAlive(pi)) out.push(pi);
-    return out;
+  // 存活擺法集合：O(1) 加入／移除／隨機抽樣
+  const pos = new Int32Array(placementCats.length).fill(-1);
+  const aliveList = [];
+  const add = (pi) => { if (pos[pi] < 0) { pos[pi] = aliveList.length; aliveList.push(pi); } };
+  const del = (pi) => {
+    const i = pos[pi];
+    if (i < 0) return;
+    const last = aliveList.pop();
+    if (last !== pi) { aliveList[i] = last; pos[last] = i; }
+    pos[pi] = -1;
   };
+  for (let pi = 0; pi < placementCats.length; pi++) if (isAlive(pi)) add(pi);
 
-  let alive = aliveCount();
-  let guard = n * n;
-  while (alive > 0 && guard-- > 0) {
-    // 依序嘗試仍成立的其他擺法，直到有一個能找到保持色塊連通的修補步
-    let best = null;
-    for (const ti of shuffle(alivePlacements(), rng).slice(0, 40)) {
-      const target = placements[ti];
-      // 候選：把 target 的某個（非正解）貓位改劃到相鄰色塊
-      const moves = [];
-      for (const cell of target) {
-        if (catCells.has(cell)) continue;
-        const from = owner[cell];
-        for (const nb of orthoNeighbors(n, cell)) {
-          const to = owner[nb];
-          if (to === from || size[from] <= minSize || size[to] >= maxSize || moves.some((m) => m.cell === cell && m.to === to)) continue;
-          moves.push({ cell, from, to });
-        }
-      }
-      for (const m of shuffle(moves, rng)) {
-        const before = aliveThrough(m.cell);
-        owner[m.cell] = m.to;
-        if (regionIsConnected(n, owner, m.from)) {
-          const k = alive - before + aliveThrough(m.cell);
-          if (!best || k < best.k) best = { ...m, k };
-        }
-        owner[m.cell] = m.from;
-      }
-      if (best) break;
+  const maxSize = Math.ceil(n * 1.8);
+  const penalty = (sz) => (sz > maxSize ? (sz - maxSize) * wBig : 0) + (sz < 2 ? wSmall : 0);
+  const nbs = orthoTable(n);
+  for (let step = 0; step < steps && aliveList.length; step++) {
+    const T = t0 * Math.pow(t1 / t0, step / steps);
+    const target = placementCats[aliveList[Math.floor(rng() * aliveList.length)]];
+    const cell = target[Math.floor(rng() * n)];
+    if (catCells.has(cell)) continue;
+    const from = owner[cell];
+    const to = owner[nbs[cell][Math.floor(rng() * nbs[cell].length)]];
+    if (to === from) continue;
+
+    let before = 0;
+    for (const pi of cellLists[cell]) if (pos[pi] >= 0) before++;
+    owner[cell] = to;
+    if (!regionIsConnected(n, owner, from)) { owner[cell] = from; continue; }
+    let after = 0;
+    for (const pi of cellLists[cell]) if (isAlive(pi)) after++;
+    const dE = after - before
+      + penalty(size[from] - 1) - penalty(size[from]) + penalty(size[to] + 1) - penalty(size[to]);
+    if (dE <= 0 || rng() < Math.exp(-dE / T)) {
+      size[from]--; size[to]++;
+      for (const pi of cellLists[cell]) { if (isAlive(pi)) add(pi); else del(pi); }
+    } else {
+      owner[cell] = from;
     }
-    if (!best) return null;   // 無步可走 → 換一個正解重來（允許暫時不變好的步，避免卡在局部最佳）
-    owner[best.cell] = best.to;
-    size[best.from]--; size[best.to]++;
-    alive = best.k;
   }
-  return alive === 0 ? owner : null;
+  if (aliveList.length) return null;
+
+  // 第二階段：已唯一解，改為最小化「純邏輯解不出的貓數」。會讓任何擺法復活的移動一律拒絕，唯一解不變。
+  const unsolved = () => n - logicSolve(n, owner).cats.length;
+  let energy = unsolved();
+  for (let step = 0; step < steps2 && energy > 0; step++) {
+    const T = t2 * (1 - step / steps2) + 0.01;
+    const cell = Math.floor(rng() * n * n);
+    if (catCells.has(cell)) continue;
+    const from = owner[cell];
+    const to = owner[nbs[cell][Math.floor(rng() * nbs[cell].length)]];
+    if (to === from) continue;
+    owner[cell] = to;
+    let revived = false;
+    for (const pi of cellLists[cell]) if (isAlive(pi)) { revived = true; break; }
+    if (revived || !regionIsConnected(n, owner, from)) { owner[cell] = from; continue; }
+    const e = unsolved();
+    const dE = e - energy + penalty(size[from] - 1) - penalty(size[from]) + penalty(size[to] + 1) - penalty(size[to]);
+    if (dE <= 0 || rng() < Math.exp(-dE / T)) { size[from]--; size[to]++; energy = e; }
+    else owner[cell] = from;
+  }
+  if (energy > 0) return null;
+  growSingletons(n, solution, owner, size, placementCats, cellLists, solutionIdx);
+  return owner;
 }
 
 // 已唯一解後的品質修整：只有 1 格的色塊（等於直接公布貓位）向鄰塊借格子。
@@ -648,7 +582,7 @@ export function generatePuzzle(n, { rng = makeRng(Date.now() >>> 0), chunkiness 
     const solution = generateSolution(n, rng);
     if (!solution) { rejections.noSolution++; continue; }
 
-    const owner = buildUniquePartition(n, solution, rng, { chunkiness });
+    const owner = buildPartitionSA(n, solution, rng, { chunkiness });
     if (!owner) { rejections.notUnique++; continue; }
 
     // 保險：建構保證唯一，但仍用解題器複驗（避免模型寫錯卻悄悄上線）
