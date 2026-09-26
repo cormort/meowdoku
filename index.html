@@ -288,13 +288,57 @@ function fmtTime(sec) {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
-function newGame({ n = state.n, daily = false, seed = null } = {}) {
-  setLoading(true, daily ? '生成今日題目…' : '生成題目中…');
-  // 讓瀏覽器先畫出 spinner，再做（可能達 1 秒的）生成與驗證
-  requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(() => {
-    const rng = seed === null ? makeRng((Date.now() ^ (Math.random() * 4294967295)) >>> 0) : makeRng(seed);
-    const puzzle = generatePuzzle(n, { rng, chunkiness: n <= 5 ? 0.75 : n <= 7 ? 0.5 : 0.35, maxTries: 60 });
-    setLoading(false);
+// ---------- 題目生成（Web Worker ＋ 預先生成下一題） ----------
+const chunkinessOf = (n) => (n <= 5 ? 0.75 : n <= 7 ? 0.5 : 0.35);
+const randomSeed = () => (Date.now() ^ (Math.random() * 4294967295)) >>> 0;
+// 兩個 Worker：前景（玩家正在等的題）與背景（預先生成），避免切換尺寸時排在預先生成後面
+function makeGenerator() {
+  let worker = null;
+  try { worker = new Worker('./gen-worker.js', { type: 'module' }); } catch { worker = null; }
+  let seq = 0;
+  const pending = new Map();   // id -> resolve
+  if (worker) {
+    worker.onmessage = (e) => { pending.get(e.data.id)?.(e.data.puzzle); pending.delete(e.data.id); };
+    // Worker 載入失敗（例如 file:// 或舊瀏覽器不支援 module worker）→ 改回主執行緒
+    worker.onerror = () => {
+      worker = null;
+      for (const resolve of pending.values()) resolve(undefined);
+      pending.clear();
+    };
+  }
+  return (n, seed) => {
+    const fallback = () => new Promise((resolve) => setTimeout(() => resolve(
+      generatePuzzle(n, { rng: makeRng(seed), chunkiness: chunkinessOf(n), maxTries: 60 })), 20));
+    if (!worker) return fallback();
+    const id = ++seq;
+    return new Promise((resolve) => {
+      pending.set(id, resolve);
+      worker.postMessage({ id, n, seed, chunkiness: chunkinessOf(n) });
+    }).then((puzzle) => (puzzle === undefined ? fallback() : puzzle));
+  };
+}
+const requestPuzzle = makeGenerator();
+const requestPrefetch = makeGenerator();
+
+// 每種尺寸最多先做好一題（只給隨機題；每日挑戰固定 seed，不預先生成）
+const prefetched = new Map();   // n -> Promise<puzzle>
+function prefetch(n) {
+  if (!prefetched.has(n)) prefetched.set(n, requestPrefetch(n, randomSeed()));
+}
+
+let gameSeq = 0;
+async function newGame({ n = state.n, daily = false, seed = null } = {}) {
+  const my = ++gameSeq;
+  let job;
+  if (seed === null && prefetched.has(n)) { job = prefetched.get(n); prefetched.delete(n); }
+  else job = requestPuzzle(n, seed === null ? randomSeed() : seed);
+  // 預先生成好的題目通常立刻就緒；稍等一下才顯示 spinner，避免閃一下
+  const spinner = setTimeout(() => setLoading(true, daily ? '生成今日題目…' : '生成題目中…'), 120);
+  const puzzle = await job;
+  clearTimeout(spinner);
+  if (my !== gameSeq) return;     // 玩家已經又按了別的，丟掉這題
+  setLoading(false);
+  {
     if (!puzzle) { showSheet('生成失敗', '這一輪沒能生出合格題目，請再試一次。', '再試一次', () => newGame({ n, daily, seed })); return; }
 
     Object.assign(state, {
@@ -309,7 +353,8 @@ function newGame({ n = state.n, daily = false, seed = null } = {}) {
     updateBestLabel();
     saveResume();
     document.querySelectorAll('.levels [data-n]').forEach((b) => b.classList.toggle('on', Number(b.dataset.n) === state.n));
-  }, 20)));
+  }
+  prefetch(n);
 }
 
 function todayKey() {

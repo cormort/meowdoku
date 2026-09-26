@@ -3,7 +3,7 @@ const BUILD_VERSION = '__BUILD_VERSION__';
 const PREFIX = 'meowdoku';
 const SHELL = `${PREFIX}-shell-${BUILD_VERSION}`;
 const APP_SHELL = [
-  './', './index.html', './engine.js', './manifest.webmanifest',
+  './', './index.html', './engine.js', './gen-worker.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png',
   './icons/cats.webp',
 ];
