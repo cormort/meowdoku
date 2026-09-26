@@ -53,6 +53,13 @@ export function orthoNeighbors(n, idx) {
   return out;
 }
 
+// 生成器熱迴圈用：每個 n 只建一次鄰格表，避免每步配置新陣列
+const _orthoTable = new Map();
+function orthoTable(n) {
+  if (!_orthoTable.has(n)) _orthoTable.set(n, Array.from({ length: n * n }, (_, i) => orthoNeighbors(n, i)));
+  return _orthoTable.get(n);
+}
+
 export function aroundNeighbors(n, idx) {
   const [r, c] = rowColOf(n, idx);
   const out = [];
@@ -412,6 +419,17 @@ export function enumeratePlacements(n, limit = 200000) {
   return out;
 }
 
+const _placementIndex = new Map();
+function placementIndex(n) {
+  if (!_placementIndex.has(n)) {
+    const placementCats = enumeratePlacements(n).map((perm) => perm.map((c, r) => r * n + c));
+    const cellLists = Array.from({ length: n * n }, () => []);
+    placementCats.forEach((cells, pi) => { for (const cell of cells) cellLists[cell].push(pi); });
+    _placementIndex.set(n, { placementCats, cellLists });
+  }
+  return _placementIndex.get(n);
+}
+
 function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   const total = n * n;
   const catCellOf = solution.map((c, r) => r * n + c);
@@ -420,26 +438,17 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   const size = new Array(n).fill(1);
   catCellOf.forEach((cell, region) => { owner[cell] = region; });
 
-  // 其他合法擺法（扣掉正解），以及「每格可能是哪些擺法的貓位」
-  const others = enumeratePlacements(n).filter((perm) => {
-    for (let r = 0; r < n; r++) if (perm[r] !== solution[r]) return true;
-    return false;
-  });
-  if (!others.length) return null;
+  // 所有合法擺法，以及「每格可能是哪些擺法的貓位」（每個 n 只建一次；清單每盤複製一份，因為會就地壓縮）
+  const { placementCats, cellLists } = placementIndex(n);
+  const cellToPlacements = new Map(cellLists.map((list, cell) => [cell, list.slice()]));
 
-  const cellToPlacements = new Map();      // cell -> [placementIndex...]
-  const placementCats = others.map((perm) => perm.map((c, r) => r * n + c));
-  placementCats.forEach((cells, pi) => {
-    for (const cell of cells) {
-      if (!cellToPlacements.has(cell)) cellToPlacements.set(cell, []);
-      cellToPlacements.get(cell).push(pi);
-    }
-  });
-
-  // alive[pi] = 尚未被擋掉；regionCount[pi * n + region] = 該擺法在該色塊內已有幾隻貓
-  const alive = new Uint8Array(others.length).fill(1);
-  const regionCount = new Uint8Array(others.length * n);
-  let aliveCount = others.length;
+  // alive[pi] = 尚未被擋掉（正解本身不算）；regionCount[pi * n + region] = 該擺法在該色塊內已有幾隻貓
+  const alive = new Uint8Array(placementCats.length).fill(1);
+  const regionCount = new Uint8Array(placementCats.length * n);
+  let aliveCount = placementCats.length;
+  const solutionIdx = placementCats.findIndex((cells) => cells.every((cell, r) => cell === catCellOf[r]));
+  if (solutionIdx >= 0) { alive[solutionIdx] = 0; aliveCount--; }
+  if (!aliveCount) return null;
 
   const commit = (cell, region) => {
     owner[cell] = region;
@@ -459,21 +468,26 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
     const list = cellToPlacements.get(cell);
     if (!list) return 0;
     let gain = 0;
-    for (const pi of list) {
-      if (!alive[pi]) continue;
+    for (let k = 0; k < list.length;) {
+      const pi = list[k];
+      // 已擋掉的擺法順手移出清單，之後不再掃到
+      if (!alive[pi]) { list[k] = list[list.length - 1]; list.pop(); continue; }
       if (regionCount[pi * n + region] >= 1) gain++;
+      k++;
     }
     return gain;
   };
 
   let assigned = n;
   let guard = total * 200;
+  const nbs = orthoTable(n);
 
   while (assigned < total && guard-- > 0) {
     const frontier = [];
     for (let i = 0; i < total; i++) {
       if (owner[i] >= 0) continue;
-      const adj = [...new Set(orthoNeighbors(n, i).map((nb) => owner[nb]).filter((r) => r >= 0))];
+      const adj = [];
+      for (const nb of nbs[i]) if (owner[nb] >= 0 && !adj.includes(owner[nb])) adj.push(owner[nb]);
       if (adj.length) frontier.push({ cell: i, regions: adj });
     }
     if (!frontier.length) return null;
@@ -484,7 +498,8 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
       const cand = frontier[Math.floor(rng() * frontier.length)];
       for (const region of cand.regions) {
         const gain = killGain(cand.cell, region);
-        const compact = orthoNeighbors(n, cand.cell).filter((nb) => owner[nb] === region).length;
+        let compact = 0;
+        for (const nb of nbs[cand.cell]) if (owner[nb] === region) compact++;
         // 分數：優先殺掉擺法；chunkiness 高時偏好形狀緊實；
         // 超過平均大小的色塊重扣分，否則單一色塊會吞掉整個盤面、其他色塊只剩 1 格
         const over = Math.max(0, size[region] + 1 - n);
@@ -498,21 +513,21 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   }
 
   if (assigned < total) return null;
-  if (aliveCount > 0) return repairPartition(n, solution, owner, size, others, rng);
+  if (aliveCount > 0) return repairPartition(n, solution, owner, size, placementCats, cellLists, solutionIdx, rng);
   return owner;
 }
 
 // 貪婪長完仍有少數擺法沒擋掉時：找一個仍成立的擺法，把它某個（非正解）貓位改劃給鄰近色塊，
 // 讓它在同一色塊出現兩隻貓而失效；色塊須保持連通且大小不超出範圍
-function repairPartition(n, solution, owner, size, others, rng) {
+function repairPartition(n, solution, owner, size, placements, cellLists, solutionIdx, rng) {
   const catCells = new Set(solution.map((c, r) => r * n + c));
   const maxSize = Math.ceil(n * 1.8);
   const minSize = Math.max(2, Math.floor(n / 3));
-  const placements = others.map((perm) => perm.map((c, r) => r * n + c));
 
   const seen = new Int32Array(n);
   let stamp = 0;
   const isAlive = (cells) => {
+    if (cells === placements[solutionIdx]) return false;   // 正解本身不算「其他擺法」
     stamp++;
     for (const cell of cells) {
       if (seen[owner[cell]] === stamp) return false;
@@ -521,6 +536,12 @@ function repairPartition(n, solution, owner, size, others, rng) {
     return true;
   };
   const aliveCount = () => { let k = 0; for (const p of placements) if (isAlive(p)) k++; return k; };
+  // 改劃一格只影響「用到這格」的擺法，只重算這些即可（用完整清單：改劃可能讓已擋掉的擺法復活）
+  const aliveThrough = (cell) => {
+    let k = 0;
+    for (const pi of cellLists[cell]) if (isAlive(placements[pi])) k++;
+    return k;
+  };
 
   let alive = aliveCount();
   let guard = n * n;
@@ -540,9 +561,10 @@ function repairPartition(n, solution, owner, size, others, rng) {
         }
       }
       for (const m of shuffle(moves, rng)) {
+        const before = aliveThrough(m.cell);
         owner[m.cell] = m.to;
         if (regionIsConnected(n, owner, m.from)) {
-          const k = aliveCount();
+          const k = alive - before + aliveThrough(m.cell);
           if (!best || k < best.k) best = { ...m, k };
         }
         owner[m.cell] = m.from;
