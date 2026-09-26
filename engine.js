@@ -417,6 +417,7 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   const catCellOf = solution.map((c, r) => r * n + c);
   const catCells = new Set(catCellOf);
   const owner = new Array(total).fill(-1);
+  const size = new Array(n).fill(1);
   catCellOf.forEach((cell, region) => { owner[cell] = region; });
 
   // 其他合法擺法（扣掉正解），以及「每格可能是哪些擺法的貓位」
@@ -442,6 +443,7 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
 
   const commit = (cell, region) => {
     owner[cell] = region;
+    size[region] += 1;
     const list = cellToPlacements.get(cell);
     if (!list) return;
     for (const pi of list) {
@@ -483,8 +485,10 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
       for (const region of cand.regions) {
         const gain = killGain(cand.cell, region);
         const compact = orthoNeighbors(n, cand.cell).filter((nb) => owner[nb] === region).length;
-        // 分數：優先殺掉擺法；chunkiness 高時偏好形狀緊實
-        const score = gain * 10 + compact * (chunkiness * 3) + rng();
+        // 分數：優先殺掉擺法；chunkiness 高時偏好形狀緊實；
+        // 超過平均大小的色塊重扣分，否則單一色塊會吞掉整個盤面、其他色塊只剩 1 格
+        const over = Math.max(0, size[region] + 1 - n);
+        const score = gain * 10 + compact * (chunkiness * 3) - over * over * 4 + rng();
         if (!bestPick || score > bestPick.score) bestPick = { cell: cand.cell, region, score };
       }
     }
@@ -494,8 +498,63 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   }
 
   if (assigned < total) return null;
-  if (aliveCount > 0) return null;          // 還有擺法沒被擋掉 → 這盤不是唯一解
+  if (aliveCount > 0) return repairPartition(n, solution, owner, size, others, rng);
   return owner;
+}
+
+// 貪婪長完仍有少數擺法沒擋掉時：找一個仍成立的擺法，把它某個（非正解）貓位改劃給鄰近色塊，
+// 讓它在同一色塊出現兩隻貓而失效；色塊須保持連通且大小不超出範圍
+function repairPartition(n, solution, owner, size, others, rng) {
+  const catCells = new Set(solution.map((c, r) => r * n + c));
+  const maxSize = Math.ceil(n * 1.8);
+  const minSize = Math.max(2, Math.floor(n / 3));
+  const placements = others.map((perm) => perm.map((c, r) => r * n + c));
+
+  const seen = new Int32Array(n);
+  let stamp = 0;
+  const isAlive = (cells) => {
+    stamp++;
+    for (const cell of cells) {
+      if (seen[owner[cell]] === stamp) return false;
+      seen[owner[cell]] = stamp;
+    }
+    return true;
+  };
+  const aliveCount = () => { let k = 0; for (const p of placements) if (isAlive(p)) k++; return k; };
+
+  let alive = aliveCount();
+  let guard = n * n;
+  while (alive > 0 && guard-- > 0) {
+    // 依序嘗試仍成立的其他擺法，直到有一個能找到保持色塊連通的修補步
+    let best = null;
+    for (const target of shuffle(placements.filter(isAlive), rng).slice(0, 40)) {
+      // 候選：把 target 的某個（非正解）貓位改劃到相鄰色塊
+      const moves = [];
+      for (const cell of target) {
+        if (catCells.has(cell)) continue;
+        const from = owner[cell];
+        for (const nb of orthoNeighbors(n, cell)) {
+          const to = owner[nb];
+          if (to === from || size[from] <= minSize || size[to] >= maxSize || moves.some((m) => m.cell === cell && m.to === to)) continue;
+          moves.push({ cell, from, to });
+        }
+      }
+      for (const m of shuffle(moves, rng)) {
+        owner[m.cell] = m.to;
+        if (regionIsConnected(n, owner, m.from)) {
+          const k = aliveCount();
+          if (!best || k < best.k) best = { ...m, k };
+        }
+        owner[m.cell] = m.from;
+      }
+      if (best) break;
+    }
+    if (!best) return null;   // 無步可走 → 換一個正解重來（允許暫時不變好的步，避免卡在局部最佳）
+    owner[best.cell] = best.to;
+    size[best.from]--; size[best.to]++;
+    alive = best.k;
+  }
+  return alive === 0 ? owner : null;
 }
 
 export function generatePuzzle(n, { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 60 } = {}) {
