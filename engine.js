@@ -468,7 +468,7 @@ function aliveChecker(n, owner, placements, cellLists, solutionIdx) {
 
 // 模擬退火切分：從平衡的色塊出發，每步把某個仍成立擺法的（非正解）貓位改劃給鄰塊。
 // 能量＝存活擺法數＋色塊過大／過小懲罰；變差的步依溫度機率接受，避免像修補步那樣卡死。
-function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0 = 2, t1 = 0.05, wBig = 0.5, wSmall = 3, steps2 = 400, t2 = 0.5 } = {}) {
+function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0 = 2, t1 = 0.05, wBig = 0.5, wSmall = 3, steps2 = 400, t2 = 0.5, trimCap = 1.3 } = {}) {
   const grown = growRegions(n, solution, rng, chunkiness);
   if (!grown) return null;
   const { owner, size } = grown;
@@ -500,7 +500,29 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0
   const maxSize = Math.ceil(n * 1.8);
   const penalty = (sz) => (sz > maxSize ? (sz - maxSize) * wBig : 0) + (sz < 2 ? wSmall : 0);
   const nbs = orthoTable(n);
-  const aliveAfter = new Uint8Array(Math.max(...cellLists.map((l) => l.length)));   // 評估時的結果，接受後直接沿用
+  const aliveAfter = new Uint8Array(placementCats.length);   // 評估時的結果，接受後直接沿用
+  const movedCells = new Int32Array(n * n);
+  const unionBuf = new Int32Array(placementCats.length);
+  const seenP = new Int32Array(placementCats.length);
+  let stampP = 0;
+  const maxOrphans = n;
+  // from 色塊中，從它的貓位走不到的格子（移動後被切斷的那一塊）
+  const reach = new Int32Array(n * n);
+  let stampR = 0;
+  const orphansOf = (region) => {
+    stampR++;
+    const start = catCellOf[region];
+    const queue = [start];
+    reach[start] = stampR;
+    for (let q = 0; q < queue.length; q++) {
+      for (const nb of nbs[queue[q]]) {
+        if (owner[nb] === region && reach[nb] !== stampR) { reach[nb] = stampR; queue.push(nb); }
+      }
+    }
+    const out = [];
+    for (let i = 0; i < n * n; i++) if (owner[i] === region && reach[i] !== stampR) out.push(i);
+    return out;
+  };
   for (let step = 0; step < steps && aliveList.length; step++) {
     const T = t0 * Math.pow(t1 / t0, step / steps);
     const target = placementCats[aliveList[Math.floor(rng() * aliveList.length)]];
@@ -510,19 +532,42 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0
     const to = owner[nbs[cell][Math.floor(rng() * nbs[cell].length)]];
     if (to === from) continue;
 
-    const before = aliveAt[cell];
     owner[cell] = to;
-    if (!regionIsConnected(n, owner, from)) { owner[cell] = from; continue; }
-    const through = cellLists[cell];
+    // 複合移動：若 from 因此斷成兩塊，把不含貓的那塊一起劃給 to（它與 cell 相鄰，to 仍連通）。
+    // 被擋的關鍵移動約 3/4 是卡在「會斷開色塊」，單格移動永遠走不到。
+    let moved = 1;
+    movedCells[0] = cell;
+    if (!regionIsConnected(n, owner, from)) {
+      const orphans = orphansOf(from);
+      if (orphans.length > maxOrphans) { owner[cell] = from; continue; }
+      for (const o of orphans) { owner[o] = to; movedCells[moved++] = o; }
+    }
+
+    let before;
+    let through;
+    if (moved === 1) {
+      before = aliveAt[cell];
+      through = cellLists[cell];
+    } else {
+      // 多格移動：受影響的擺法取聯集（去重）
+      stampP++;
+      through = unionBuf; let u = 0;
+      for (let m = 0; m < moved; m++) for (const pi of cellLists[movedCells[m]]) {
+        if (seenP[pi] !== stampP) { seenP[pi] = stampP; through[u++] = pi; }
+      }
+      through = through.subarray(0, u);
+      before = 0;
+      for (let k = 0; k < u; k++) if (pos[through[k]] >= 0) before++;
+    }
     let after = 0;
     for (let k = 0; k < through.length; k++) if ((aliveAfter[k] = isAlive(through[k]) ? 1 : 0)) after++;
     const dE = after - before
-      + penalty(size[from] - 1) - penalty(size[from]) + penalty(size[to] + 1) - penalty(size[to]);
+      + penalty(size[from] - moved) - penalty(size[from]) + penalty(size[to] + moved) - penalty(size[to]);
     if (dE <= 0 || rng() < Math.exp(-dE / T)) {
-      size[from]--; size[to]++;
+      size[from] -= moved; size[to] += moved;
       for (let k = 0; k < through.length; k++) { if (aliveAfter[k]) add(through[k]); else del(through[k]); }
     } else {
-      owner[cell] = from;
+      for (let m = 0; m < moved; m++) owner[movedCells[m]] = from;
     }
   }
   if (aliveList.length) return null;
@@ -547,8 +592,37 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, t0
     else owner[cell] = from;
   }
   if (energy > 0) return null;
+  trimLargeRegions(n, solution, owner, size, placementCats, cellLists, solutionIdx, Math.ceil(n * trimCap));
   growSingletons(n, solution, owner, size, placementCats, cellLists, solutionIdx);
   return owner;
+}
+
+// 已唯一解後的品質修整：超過 cap 的大色塊把邊界格讓給較小的鄰塊（退火為了擋擺法常會長出 20+ 格的巨塊）。
+// 條件同 growSingletons：讓出後仍連通、不讓任何其他擺法復活、仍能純邏輯解。
+function trimLargeRegions(n, solution, owner, size, placements, cellLists, solutionIdx, cap) {
+  const catCells = new Set(solution.map((c, r) => r * n + c));
+  const { aliveThrough } = aliveChecker(n, owner, placements, cellLists, solutionIdx);
+  const nbs = orthoTable(n);
+  for (;;) {
+    let big = 0;
+    for (let r = 1; r < n; r++) if (size[r] > size[big]) big = r;
+    if (size[big] <= cap) return;
+    let done = false;
+    for (let cell = 0; cell < n * n && !done; cell++) {
+      if (owner[cell] !== big || catCells.has(cell)) continue;
+      for (const nb of nbs[cell]) {
+        const to = owner[nb];
+        if (to === big || size[to] + 1 >= size[big]) continue;
+        owner[cell] = to;
+        if (regionIsConnected(n, owner, big) && aliveThrough(cell) === 0 && logicSolve(n, owner).solved) {
+          size[big]--; size[to]++; done = true;
+          break;
+        }
+        owner[cell] = big;
+      }
+    }
+    if (!done) return;   // 最大的那塊已無格可讓
+  }
 }
 
 // 已唯一解後的品質修整：只有 1 格的色塊（等於直接公布貓位）向鄰塊借格子。
@@ -581,7 +655,7 @@ function growSingletons(n, solution, owner, size, placements, cellLists, solutio
 
 export function generatePuzzle(n, { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 60 } = {}) {
   const started = Date.now();
-  const rejections = { noSolution: 0, notUnique: 0, needsGuess: 0, tooEasy: 0 };
+  const rejections = { noSolution: 0, notUnique: 0, needsGuess: 0, tooEasy: 0, tooUneven: 0 };
   let tries = 0;
 
   while (tries < maxTries) {
@@ -602,6 +676,8 @@ export function generatePuzzle(n, { rng = makeRng(Date.now() >>> 0), chunkiness 
     owner.forEach((v) => sizes.set(v, (sizes.get(v) || 0) + 1));
     // 單格色塊等於直接公布貓位；超過 1 個就再試（最後一次機會例外，寧可出題也不失敗）
     if ([...sizes.values()].filter((v) => v === 1).length > 1 && tries < maxTries) { rejections.tooEasy++; continue; }
+    // 巨塊（收尾讓不出格子的少數盤面）同理：再試
+    if (Math.max(...sizes.values()) > Math.ceil(n * 2.2) && tries < maxTries) { rejections.tooUneven++; continue; }
     return {
       n,
       owner,
