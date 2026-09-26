@@ -37,7 +37,7 @@ h1 span{font-size:1.4rem}
 .status b{font-variant-numeric:tabular-nums}
 .hearts{letter-spacing:2px; font-size:1rem}
 .levels{display:flex; flex-wrap:wrap; gap:6px; padding:10px; justify-content:center}
-.levels button{flex:1 1 auto; min-width:88px}
+.levels button{flex:1 1 30%; min-width:0}   /* 固定每列 3 顆：尺寸一列、功能一列 */
 button{
   font:inherit; font-size:.82rem; color:var(--ink); background:var(--card);
   border:1px solid var(--line); border-radius:11px; padding:9px 11px; cursor:pointer;
@@ -57,13 +57,13 @@ button:disabled{opacity:.45; cursor:default}
 .cell{
   position:relative; display:flex; align-items:center; justify-content:center;
   font-size:calc(100cqw / var(--n, 5) * .55); line-height:1; cursor:pointer;
-  border:0; background:transparent; padding:0; margin:0;
+  border:0; border-radius:0; background:transparent; padding:0; margin:0;
   min-width:0; min-height:0; overflow:hidden;
 }
 .cell i{font-style:normal; pointer-events:none}
 .cell.mark i{color:var(--ink); opacity:.7}
 .cell.cat i{filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
-.cell.autox i{opacity:.5}
+.cell.autox i{opacity:.8}   /* 會與 .mark 的 .7 相乘，太低就看不清 */
 /* 貓臉圖示：icons/cats.webp 為 9×9 張 sprite */
 .face{display:block; background:url(icons/cats.webp) 0 0/900% 900% no-repeat; border-radius:18%}
 .cell i.face{width:86%; height:86%}
@@ -367,7 +367,7 @@ function saveResume() {
     localStorage.setItem(LS.resume, JSON.stringify({
       n: state.n, owner: state.owner, solution: state.solution, cells: state.cells,
       lives: state.lives, elapsed: state.elapsed, daily: state.daily, dailyKey: state.dailyKey,
-      autoMarked: [...(state.autoMarked || [])],
+      autoMarked: [...(state.autoMarked || [])], done: state.done,
     }));
   } catch {}
 }
@@ -381,11 +381,11 @@ function loadResume() {
     Object.assign(state, {
       n: s.n, owner: s.owner, solution: s.solution, cells: s.cells, lives: s.lives ?? 3,
       elapsed: s.elapsed || 0, daily: !!s.daily, dailyKey: s.dailyKey || null,
-      done: false, history: [], cursor: 0, hints: 0, autoMarked: new Set(s.autoMarked || []),
+      done: !!s.done, history: [], cursor: 0, hints: 0, autoMarked: new Set(s.autoMarked || []),
     });
     renderBoard();
     $('timer').textContent = fmtTime(state.elapsed);
-    startTimer();
+    if (!state.done) startTimer();   // 已解完的盤面保持定格，等玩家按新題目
     updateBestLabel();
     document.querySelectorAll('.levels [data-n]').forEach((b) => b.classList.toggle('on', Number(b.dataset.n) === state.n));
     return true;
