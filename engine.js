@@ -419,6 +419,16 @@ export function enumeratePlacements(n, limit = 200000) {
   return out;
 }
 
+const _flatPlacements = new Map();
+function flatPlacements(n, placements) {
+  if (!_flatPlacements.has(n)) {
+    const flat = new Int16Array(placements.length * n);
+    placements.forEach((cells, pi) => flat.set(cells, pi * n));
+    _flatPlacements.set(n, flat);
+  }
+  return _flatPlacements.get(n);
+}
+
 const _placementIndex = new Map();
 function placementIndex(n) {
   if (!_placementIndex.has(n)) {
@@ -438,9 +448,9 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   const size = new Array(n).fill(1);
   catCellOf.forEach((cell, region) => { owner[cell] = region; });
 
-  // 所有合法擺法，以及「每格可能是哪些擺法的貓位」（每個 n 只建一次；清單每盤複製一份，因為會就地壓縮）
+  // 所有合法擺法，以及「每格可能是哪些擺法的貓位」（每個 n 只建一次）
   const { placementCats, cellLists } = placementIndex(n);
-  const cellToPlacements = new Map(cellLists.map((list, cell) => [cell, list.slice()]));
+  const flat = flatPlacements(n, placementCats);
 
   // alive[pi] = 尚未被擋掉（正解本身不算）；regionCount[pi * n + region] = 該擺法在該色塊內已有幾隻貓
   const alive = new Uint8Array(placementCats.length).fill(1);
@@ -450,33 +460,36 @@ function buildUniquePartition(n, solution, rng, { chunkiness = 0.5 } = {}) {
   if (solutionIdx >= 0) { alive[solutionIdx] = 0; aliveCount--; }
   if (!aliveCount) return null;
 
+  // gainTable[cell * n + region] = 經過 cell、且在 region 已有 1 隻貓的存活擺法數
+  // （＝把 cell 劃給 region 能擋掉幾個擺法）；隨 commit 增量維護，killGain 直接查表
+  const gainTable = new Int32Array(total * n);
+  // 每盤複製一份清單，已擋掉的擺法順手移出（處理順序不影響結果：都是加減計數）
+  const lists = cellLists.map((list) => list.slice());
   const commit = (cell, region) => {
     owner[cell] = region;
     size[region] += 1;
-    const list = cellToPlacements.get(cell);
-    if (!list) return;
-    for (const pi of list) {
-      if (!alive[pi]) continue;
-      const idx = pi * n + region;
-      regionCount[idx] += 1;
-      if (regionCount[idx] >= 2) { alive[pi] = 0; aliveCount--; }
+    const list = lists[cell];
+    for (let k = 0; k < list.length;) {
+      const pi = list[k];
+      if (!alive[pi]) { list[k] = list[list.length - 1]; list.pop(); continue; }
+      k++;
+      const base = pi * n;
+      if (regionCount[base + region] === 0) {
+        regionCount[base + region] = 1;
+        for (let r = 0; r < n; r++) gainTable[flat[base + r] * n + region]++;
+      } else {
+        // 第二隻貓進同一色塊 → 擋掉；把它對各色塊貢獻過的增益扣回
+        regionCount[base + region] = 2;
+        alive[pi] = 0; aliveCount--;
+        for (let g = 0; g < n; g++) {
+          if (regionCount[base + g] === 0) continue;
+          for (let r = 0; r < n; r++) gainTable[flat[base + r] * n + g]--;
+        }
+      }
     }
   };
 
-  // 已經在色塊裡的擺法貓位（用來估算「還能殺多少」）
-  const killGain = (cell, region) => {
-    const list = cellToPlacements.get(cell);
-    if (!list) return 0;
-    let gain = 0;
-    for (let k = 0; k < list.length;) {
-      const pi = list[k];
-      // 已擋掉的擺法順手移出清單，之後不再掃到
-      if (!alive[pi]) { list[k] = list[list.length - 1]; list.pop(); continue; }
-      if (regionCount[pi * n + region] >= 1) gain++;
-      k++;
-    }
-    return gain;
-  };
+  const killGain = (cell, region) => gainTable[cell * n + region];
 
   let assigned = n;
   let guard = total * 200;
@@ -524,23 +537,31 @@ function repairPartition(n, solution, owner, size, placements, cellLists, soluti
   const maxSize = Math.ceil(n * 1.8);
   const minSize = Math.max(2, Math.floor(n / 3));
 
+  // 熱迴圈：擺法攤平成 typed array，用索引判斷，避免逐一走訪陣列物件
+  const flat = flatPlacements(n, placements);
   const seen = new Int32Array(n);
   let stamp = 0;
-  const isAlive = (cells) => {
-    if (cells === placements[solutionIdx]) return false;   // 正解本身不算「其他擺法」
+  const isAlive = (pi) => {
+    if (pi === solutionIdx) return false;   // 正解本身不算「其他擺法」
     stamp++;
-    for (const cell of cells) {
-      if (seen[owner[cell]] === stamp) return false;
-      seen[owner[cell]] = stamp;
+    for (let base = pi * n, r = 0; r < n; r++) {
+      const region = owner[flat[base + r]];
+      if (seen[region] === stamp) return false;
+      seen[region] = stamp;
     }
     return true;
   };
-  const aliveCount = () => { let k = 0; for (const p of placements) if (isAlive(p)) k++; return k; };
+  const aliveCount = () => { let k = 0; for (let pi = 0; pi < placements.length; pi++) if (isAlive(pi)) k++; return k; };
   // 改劃一格只影響「用到這格」的擺法，只重算這些即可（用完整清單：改劃可能讓已擋掉的擺法復活）
   const aliveThrough = (cell) => {
     let k = 0;
-    for (const pi of cellLists[cell]) if (isAlive(placements[pi])) k++;
+    for (const pi of cellLists[cell]) if (isAlive(pi)) k++;
     return k;
+  };
+  const alivePlacements = () => {
+    const out = [];
+    for (let pi = 0; pi < placements.length; pi++) if (isAlive(pi)) out.push(pi);
+    return out;
   };
 
   let alive = aliveCount();
@@ -548,7 +569,8 @@ function repairPartition(n, solution, owner, size, placements, cellLists, soluti
   while (alive > 0 && guard-- > 0) {
     // 依序嘗試仍成立的其他擺法，直到有一個能找到保持色塊連通的修補步
     let best = null;
-    for (const target of shuffle(placements.filter(isAlive), rng).slice(0, 40)) {
+    for (const ti of shuffle(alivePlacements(), rng).slice(0, 40)) {
+      const target = placements[ti];
       // 候選：把 target 的某個（非正解）貓位改劃到相鄰色塊
       const moves = [];
       for (const cell of target) {
