@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>貓咪邏輯謎題｜1 貓／列・行・色塊</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#2f6f63">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+<style>
+:root{
+  --bg:#eef3f1; --card:#fffdf9; --ink:#22322e; --muted:#5f736c; --line:#d8e2dd;
+  --accent:#2f6f63; --accent-soft:#dfeee9; --warn:#b4553f; --gold:#c9a227;
+  --radius:16px; --gap:10px;
+}
+:root[data-theme="dark"]{
+  --bg:#141d1b; --card:#1c2725; --ink:#e6efec; --muted:#9db0aa; --line:#2c3a37;
+  --accent:#6fc2ad; --accent-soft:#243a35; --warn:#e08a72; --gold:#e2c45c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  background:var(--bg); color:var(--ink); -webkit-text-size-adjust:100%;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(18px + env(safe-area-inset-bottom));
+  display:flex; flex-direction:column; align-items:center; gap:12px; min-height:100dvh;
+}
+header{width:min(560px,100%); text-align:center}
+h1{margin:0; font-size:1.25rem; letter-spacing:.02em}
+h1 span{font-size:1.4rem}
+.sub{margin:4px 0 0; color:var(--muted); font-size:.78rem; line-height:1.5}
+.card{width:min(560px,100%); background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:0 6px 20px rgba(20,40,35,.06)}
+.status{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 14px; font-size:.85rem}
+.status b{font-variant-numeric:tabular-nums}
+.hearts{letter-spacing:2px; font-size:1rem}
+.levels{display:flex; flex-wrap:wrap; gap:6px; padding:10px; justify-content:center}
+.levels button{flex:1 1 auto; min-width:88px}
+button{
+  font:inherit; font-size:.82rem; color:var(--ink); background:var(--card);
+  border:1px solid var(--line); border-radius:11px; padding:9px 11px; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700}
+button.on{background:var(--accent-soft); border-color:var(--accent); font-weight:700}
+button:disabled{opacity:.45; cursor:default}
+.boardWrap{width:min(560px,100%); padding:10px}
+.board{
+  position:relative; display:grid; gap:0; aspect-ratio:1/1; width:100%;
+  border-radius:12px; overflow:hidden; background:var(--card);
+  border:3px solid var(--ink); user-select:none; touch-action:manipulation;
+}
+.cell{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  font-size:clamp(14px,4.4vw,30px); line-height:1; cursor:pointer;
+  border:0; background:transparent; padding:0; margin:0;
+}
+.cell i{font-style:normal; pointer-events:none}
+.cell.mark i{color:var(--muted); opacity:.85}
+.cell.cat i{filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.cell.autox i{opacity:.5}
+.cell.cursor{outline:2px solid var(--accent); outline-offset:-3px}
+.cell.bad{animation:shake .3s; background:rgba(180,85,63,.25)}
+.cell.hint{animation:pulse 1s ease-in-out 2}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes pulse{0%,100%{background:transparent}50%{background:var(--accent-soft)}}
+.controls{display:flex; flex-wrap:wrap; gap:6px; padding:10px}
+.controls button{flex:1 1 auto; min-width:76px}
+.overlay{position:fixed; inset:0; background:rgba(12,22,20,.55); backdrop-filter:blur(3px);
+  display:flex; align-items:center; justify-content:center; padding:20px; z-index:20}
+.overlay.hidden{display:none}
+.sheet{background:var(--card); color:var(--ink); border-radius:18px; padding:20px; width:min(420px,100%); text-align:center}
+.sheet h2{margin:0 0 6px; font-size:1.2rem}
+.sheet p{margin:6px 0; color:var(--muted); font-size:.86rem; line-height:1.6}
+.sheet .row{display:flex; gap:8px; margin-top:14px}
+.sheet .row button{flex:1}
+.loading{position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(12,22,20,.35); z-index:30; color:#fff; font-size:.95rem; gap:10px}
+.loading.hidden{display:none}
+.spin{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer{color:var(--muted); font-size:.72rem; text-align:center; line-height:1.6; max-width:560px}
+kbd{background:var(--accent-soft); border-radius:5px; padding:1px 5px; font-size:.72rem}
+@media (max-width:400px){ .status{font-size:.78rem; padding:8px 10px} }
+</style>
+</head>
+<body>
+<header>
+  <h1><span>🐾</span> 貓咪邏輯謎題</h1>
+  <p class="sub">每個色塊 1 隻貓・每列 1 隻・每行 1 隻・貓不能相鄰（含斜角）<br>每題唯一解，純靠邏輯推導，不用猜</p>
+</header>
+
+<section class="card levels">
+  <button data-n="5">5×5 簡單</button>
+  <button data-n="7">7×7 普通</button>
+  <button data-n="9">9×9 困難</button>
+  <button id="dailyBtn">📅 每日挑戰</button>
+  <button id="themeBtn" title="切換深色／淺色">🌙</button>
+</section>
+
+<section class="card">
+  <div class="status">
+    <span class="hearts" id="hearts" title="剩餘小魚乾">🐟🐟🐟</span>
+    <span>⏱ <b id="timer">00:00</b></span>
+    <span>🐱 <b id="progress">0/5</b></span>
+    <span id="bestLabel" title="最佳時間">🏆 --:--</span>
+  </div>
+</section>
+
+<section class="card boardWrap">
+  <div class="board" id="board" role="grid" aria-label="謎題盤面"></div>
+</section>
+
+<section class="card controls">
+  <button id="modeMarkBtn" class="on">✕ 排除</button>
+  <button id="modeCatBtn">🐱 放貓</button>
+  <button id="hintBtn">💡 提示</button>
+  <button id="undoBtn">↶ 復原</button>
+  <button id="autoXBtn" class="on">自動打叉</button>
+  <button id="restartBtn">↻ 重來</button>
+  <button id="newBtn" class="primary">🎲 新題目</button>
+</section>
+
+<footer>
+  <p>點格子＝依目前模式動作（排除／放貓）；<b>長按或右鍵</b>可清除單格。放錯貓會扣 1 條小魚乾。<br>
+  鍵盤：<kbd>方向鍵</kbd>移動、<kbd>X</kbd> 打叉、<kbd>C</kbd> 放貓、<kbd>Backspace</kbd> 清除。</p>
+  <p>題目由本機即時生成並驗證「唯一解＋純邏輯可解」，不會上傳任何資料。</p>
+</footer>
+
+<div class="overlay hidden" id="overlay">
+  <div class="sheet">
+    <h2 id="overlayTitle">完成！</h2>
+    <p id="overlayBody"></p>
+    <div class="row">
+      <button id="overlayPrimary" class="primary">下一題</button>
+      <button id="overlaySecondary">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="loading hidden" id="loading"><span class="spin"></span><span id="loadingText">生成題目中…</span></div>
+
+<script type="module">
+import {
+  makeRng, hashSeed, generatePuzzle, logicSolve, findConflicts, isSolved,
+  orthoNeighbors, aroundNeighbors, rowColOf, indexOf,
+} from './engine.js';
+
+const $ = (id) => document.getElementById(id);
+const LS = {
+  best: (n) => `meowdoku.best.${n}`,
+  theme: 'meowdoku.theme',
+  autoX: 'meowdoku.autoX',
+  daily: 'meowdoku.daily',
+  resume: 'meowdoku.resume',
+};
+
+const MARK = '✕';
+const CAT = '🐱';
+const REGION_COLORS = [
+  '#e7f0ec', '#f3ebdc', '#e6ecf6', '#f6e8ec', '#eef2dd', '#e9e6f2', '#dfeef1', '#f4ead9', '#e8f0e2',
+];
+// 深色主題的色塊要「同一個暗度但色相明顯不同」，否則 9×9 會糊成一片
+const REGION_COLORS_DARK = [
+  '#1f2e49', '#3a2a22', '#1e3a30', '#3a2130', '#2a3320', '#33294a', '#123a44', '#3b3520', '#1d3a26',
+];
+
+const state = {
+  n: 5, owner: [], solution: [], cells: [], lives: 3, mode: 'mark', autoX: true,
+  startedAt: 0, elapsed: 0, timer: null, done: false, daily: false, dailyKey: null,
+  history: [], cursor: 0, hints: 0,
+};
+
+// ---------- 盤面繪製 ----------
+function regionColor(region) {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  return (dark ? REGION_COLORS_DARK : REGION_COLORS)[region % 9];
+}
+
+function renderBoard() {
+  const board = $('board');
+  const n = state.n;
+  board.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+  board.replaceChildren();
+  for (let i = 0; i < n * n; i++) {
+    const cell = document.createElement('button');
+    cell.className = 'cell';
+    cell.dataset.i = String(i);
+    cell.type = 'button';
+    cell.setAttribute('role', 'gridcell');
+    const [r, c] = rowColOf(n, i);
+    cell.style.background = regionColor(state.owner[i]);
+    // 色塊邊界：與相鄰格不同色塊就畫粗線
+    const bits = [];
+    const thick = '3px solid var(--ink)';
+    const thin = '1px solid rgba(120,140,132,.35)';
+    bits.push(`border-top:${r === 0 || state.owner[i - n] !== state.owner[i] ? thick : thin}`);
+    bits.push(`border-bottom:${r === n - 1 || state.owner[i + n] !== state.owner[i] ? thick : thin}`);
+    bits.push(`border-left:${c === 0 || state.owner[i - 1] !== state.owner[i] ? thick : thin}`);
+    bits.push(`border-right:${c === n - 1 || state.owner[i + 1] !== state.owner[i] ? thick : thin}`);
+    cell.style.cssText += bits.join(';');
+    cell.innerHTML = '<i></i>';
+    board.append(cell);
+  }
+  paintCells();
+}
+
+function paintCells() {
+  const board = $('board');
+  const bad = findConflicts(state.n, state.owner, catsOnBoard());
+  [...board.children].forEach((cell, i) => {
+    const kind = state.cells[i];
+    const icon = cell.firstElementChild;
+    icon.textContent = kind === 2 ? CAT : kind === 1 ? MARK : '';
+    cell.classList.toggle('cat', kind === 2);
+    cell.classList.toggle('mark', kind === 1);
+    cell.classList.toggle('autox', kind === 1 && state.cells[i] === 1 && state.autoMarked?.has(i));
+    cell.classList.toggle('bad', bad.has(i));
+    cell.classList.toggle('cursor', i === state.cursor);
+    cell.setAttribute('aria-label', `第 ${Math.floor(i / state.n) + 1} 列第 ${(i % state.n) + 1} 行`);
+  });
+  const cats = catsOnBoard().length;
+  $('progress').textContent = `${cats}/${state.n}`;
+  $('hearts').textContent = '🐟'.repeat(state.lives) + '·'.repeat(Math.max(0, 3 - state.lives));
+}
+
+function catsOnBoard() {
+  const out = [];
+  state.cells.forEach((v, i) => { if (v === 2) out.push(i); });
+  return out;
+}
+
+// ---------- 遊戲流程 ----------
+function setLoading(show, text = '生成題目中…') {
+  $('loadingText').textContent = text;
+  $('loading').classList.toggle('hidden', !show);
+}
+
+function startTimer() {
+  clearInterval(state.timer);
+  state.startedAt = Date.now() - state.elapsed * 1000;
+  state.timer = setInterval(() => {
+    state.elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
+    $('timer').textContent = fmtTime(state.elapsed);
+  }, 250);
+}
+
+function fmtTime(sec) {
+  const s = Math.max(0, Math.floor(sec));
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function newGame({ n = state.n, daily = false, seed = null } = {}) {
+  setLoading(true, daily ? '生成今日題目…' : '生成題目中…');
+  // 讓瀏覽器先畫出 spinner，再做（可能達 1 秒的）生成與驗證
+  requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(() => {
+    const rng = seed === null ? makeRng((Date.now() ^ (Math.random() * 4294967295)) >>> 0) : makeRng(seed);
+    const puzzle = generatePuzzle(n, { rng, chunkiness: n <= 5 ? 0.75 : n <= 7 ? 0.5 : 0.35, maxTries: 60 });
+    setLoading(false);
+    if (!puzzle) { showSheet('生成失敗', '這一輪沒能生出合格題目，請再試一次。', '再試一次', () => newGame({ n, daily, seed })); return; }
+
+    Object.assign(state, {
+      n: puzzle.n, owner: puzzle.owner, solution: puzzle.solution,
+      cells: new Array(puzzle.n * puzzle.n).fill(0), lives: 3, done: false,
+      elapsed: 0, history: [], cursor: 0, hints: 0, daily, dailyKey: daily ? todayKey() : null,
+      autoMarked: new Set(), genMs: puzzle.stats.ms,
+    });
+    $('timer').textContent = '00:00';
+    renderBoard();
+    startTimer();
+    updateBestLabel();
+    saveResume();
+    document.querySelectorAll('.levels [data-n]').forEach((b) => b.classList.toggle('on', Number(b.dataset.n) === state.n));
+  }, 20)));
+}
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function saveResume() {
+  try {
+    localStorage.setItem(LS.resume, JSON.stringify({
+      n: state.n, owner: state.owner, solution: state.solution, cells: state.cells,
+      lives: state.lives, elapsed: state.elapsed, daily: state.daily, dailyKey: state.dailyKey,
+      autoMarked: [...(state.autoMarked || [])],
+    }));
+  } catch {}
+}
+
+function loadResume() {
+  try {
+    const raw = localStorage.getItem(LS.resume);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (!s?.owner?.length || !s?.cells?.length) return false;
+    Object.assign(state, {
+      n: s.n, owner: s.owner, solution: s.solution, cells: s.cells, lives: s.lives ?? 3,
+      elapsed: s.elapsed || 0, daily: !!s.daily, dailyKey: s.dailyKey || null,
+      done: false, history: [], cursor: 0, hints: 0, autoMarked: new Set(s.autoMarked || []),
+    });
+    renderBoard();
+    $('timer').textContent = fmtTime(state.elapsed);
+    startTimer();
+    updateBestLabel();
+    document.querySelectorAll('.levels [data-n]').forEach((b) => b.classList.toggle('on', Number(b.dataset.n) === state.n));
+    return true;
+  } catch { return false; }
+}
+
+function updateBestLabel() {
+  const best = Number(localStorage.getItem(LS.best(state.n)) || 0);
+  $('bestLabel').textContent = best ? `🏆 ${fmtTime(best)}` : '🏆 --:--';
+}
+
+// ---------- 操作 ----------
+function pushHistory() {
+  state.history.push({ cells: state.cells.slice(), lives: state.lives, autoMarked: [...(state.autoMarked || [])] });
+  if (state.history.length > 200) state.history.shift();
+}
+
+function applyAutoMarks(cell) {
+  if (!state.autoX) return;
+  const n = state.n;
+  const touched = [];
+  const markIfEmpty = (i) => {
+    if (state.cells[i] === 0) { state.cells[i] = 1; state.autoMarked.add(i); touched.push(i); }
+  };
+  const [r, c] = rowColOf(n, cell);
+  for (let k = 0; k < n; k++) { markIfEmpty(indexOf(n, r, k)); markIfEmpty(indexOf(n, k, c)); }
+  for (let i = 0; i < n * n; i++) if (state.owner[i] === state.owner[cell]) markIfEmpty(i);
+  for (const nb of aroundNeighbors(n, cell)) markIfEmpty(nb);
+  return touched;
+}
+
+function clearAutoMarks() {
+  for (const i of state.autoMarked || []) if (state.cells[i] === 1) state.cells[i] = 0;
+  state.autoMarked = new Set();
+}
+
+function tapCell(i) {
+  if (state.done) return;
+  state.cursor = i;
+  if (state.mode === 'mark') {
+    pushHistory();
+    state.cells[i] = state.cells[i] === 1 ? 0 : 1;
+    state.autoMarked.delete(i);
+    paintCells(); saveResume();
+    return;
+  }
+  // 放貓模式
+  if (state.cells[i] === 2) { pushHistory(); state.cells[i] = 0; paintCells(); saveResume(); return; }
+  const trial = catsOnBoard();
+  trial.push(i);
+  const bad = findConflicts(state.n, state.owner, trial);
+  if (bad.size) {
+    state.lives -= 1;
+    paintCells();
+    const el = $('board').children[i];
+    el.classList.add('bad');
+    setTimeout(() => el.classList.remove('bad'), 320);
+    if (state.lives <= 0) {
+      clearInterval(state.timer);
+      showSheet('沒有小魚乾了 🐟', `這一局用了 ${fmtTime(state.elapsed)}。放錯位置會扣小魚乾，先打叉排除再放貓會順很多。`,
+        '再試一次', () => newGame({ n: state.n, daily: state.daily, seed: state.daily ? hashSeed(state.dailyKey) : null }));
+    }
+    saveResume();
+    return;
+  }
+  pushHistory();
+  state.cells[i] = 2;
+  state.autoMarked.delete(i);
+  applyAutoMarks(i);
+  setMode('mark');           // 放完自動切回排除，避免誤觸扣血
+  paintCells(); saveResume();
+  checkWin();
+}
+
+function clearCell(i) {
+  if (state.done) return;
+  pushHistory();
+  state.cells[i] = 0;
+  state.autoMarked.delete(i);
+  paintCells(); saveResume();
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  $('modeMarkBtn').classList.toggle('on', mode === 'mark');
+  $('modeCatBtn').classList.toggle('on', mode === 'cat');
+  localStorage.setItem('meowdoku.mode', mode);
+}
+
+function checkWin() {
+  const cats = catsOnBoard();
+  if (!isSolved(state.n, state.owner, cats)) return;
+  state.done = true;
+  clearInterval(state.timer);
+  state.elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
+  const key = LS.best(state.n);
+  const prev = Number(localStorage.getItem(key) || 0);
+  const isBest = !prev || state.elapsed < prev;
+  if (isBest) localStorage.setItem(key, String(state.elapsed));
+  updateBestLabel();
+  saveResume();
+
+  let extra = '';
+  if (state.daily) {
+    const rec = JSON.parse(localStorage.getItem(LS.daily) || '{}');
+    const yesterday = new Date(Date.now() - 86400000);
+    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+    const streak = rec.done && rec.date === yKey ? (rec.streak || 1) + 1 : 1;
+    localStorage.setItem(LS.daily, JSON.stringify({ date: state.dailyKey, done: true, streak }));
+    extra = `<br>📅 每日挑戰完成，連續 ${streak} 天`;
+  }
+  showSheet(isBest ? '新紀錄！🏆' : '完成！🎉',
+    `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>${isBest ? '（最佳紀錄）' : `（最佳 ${fmtTime(prev)}）`}${extra}`,
+    '下一題', () => newGame({ n: state.n }), '關閉');
+}
+
+// ---------- 提示：用純邏輯推理找一步 ----------
+function giveHint() {
+  if (state.done) return;
+  const result = logicSolve(state.n, state.owner, { collect: true });
+  const placed = new Set(catsOnBoard());
+  const technique = result.techniques?.find((t) => !placed.has(t.cell));
+  let target = technique?.cell;
+  if (target === undefined) {
+    // 邏輯解題器已經沒有一步到位的推理 → 退回「用解答指出目前這一列還沒放對的地方」
+    const remaining = [];
+    for (let r = 0; r < state.n; r++) {
+      const wanted = r * state.n + state.solution[r];
+      if (state.cells[wanted] !== 2) remaining.push(wanted);
+    }
+    if (!remaining.length) return;
+    target = remaining[0];
+    state.hints++;
+    state.cursor = target;
+    paintCells();
+    const el = $('board').children[target];
+    el.classList.add('hint'); setTimeout(() => el.classList.remove('hint'), 2100);
+    showSheet('提示', '這一步需要用較進階的推理。已幫你標出「這一列還缺的貓位」，建議先把同行、同列、同色塊與周圍打叉。', '知道了');
+    return;
+  }
+  state.hints++;
+  state.cursor = target;
+  paintCells();
+  const el = $('board').children[target];
+  el.classList.add('hint'); setTimeout(() => el.classList.remove('hint'), 2100);
+  const why = technique.why === 'region' ? '這個色塊只剩一個位置能放貓'
+    : technique.why === 'row' ? '這一列只剩一個位置能放貓' : '這一行只剩一個位置能放貓';
+  showSheet('提示', `${why}（已標出）。`, '知道了');
+}
+
+// ---------- 彈窗 ----------
+function showSheet(title, bodyHtml, primaryLabel, primaryFn, secondaryLabel = '') {
+  $('overlayTitle').textContent = title;
+  $('overlayBody').innerHTML = bodyHtml;
+  const primary = $('overlayPrimary');
+  primary.textContent = primaryLabel;
+  primary.onclick = () => { hideSheet(); primaryFn && primaryFn(); };
+  const secondary = $('overlaySecondary');
+  if (secondaryLabel) { secondary.textContent = secondaryLabel; secondary.style.display = ''; }
+  else secondary.style.display = 'none';
+  $('overlay').classList.remove('hidden');
+}
+function hideSheet() { $('overlay').classList.add('hidden'); }
+
+// ---------- 事件 ----------
+$('board').addEventListener('click', (e) => {
+  const cell = e.target.closest('.cell');
+  if (cell) tapCell(Number(cell.dataset.i));
+});
+$('board').addEventListener('contextmenu', (e) => {
+  const cell = e.target.closest('.cell');
+  if (cell) { e.preventDefault(); clearCell(Number(cell.dataset.i)); }
+});
+let pressTimer = 0, longPressed = false;
+$('board').addEventListener('pointerdown', (e) => {
+  const cell = e.target.closest('.cell');
+  if (!cell || e.pointerType === 'mouse') return;
+  longPressed = false;
+  pressTimer = setTimeout(() => { longPressed = true; clearCell(Number(cell.dataset.i)); }, 480);
+});
+['pointerup', 'pointercancel', 'pointerleave'].forEach((ev) =>
+  $('board').addEventListener(ev, () => clearTimeout(pressTimer)));
+$('board').addEventListener('click', (e) => { if (longPressed) { e.stopPropagation(); longPressed = false; } }, true);
+
+document.querySelectorAll('.levels [data-n]').forEach((btn) =>
+  btn.addEventListener('click', () => newGame({ n: Number(btn.dataset.n) })));
+$('newBtn').addEventListener('click', () => newGame({ n: state.n }));
+$('restartBtn').addEventListener('click', () => {
+  clearAutoMarks();
+  state.cells = new Array(state.n * state.n).fill(0);
+  state.lives = 3; state.elapsed = 0; state.done = false; state.history = []; state.autoMarked = new Set();
+  $('timer').textContent = '00:00';
+  startTimer(); paintCells(); saveResume();
+});
+$('undoBtn').addEventListener('click', () => {
+  const last = state.history.pop();
+  if (!last) return;
+  state.cells = last.cells; state.lives = last.lives; state.autoMarked = new Set(last.autoMarked);
+  paintCells(); saveResume();
+});
+$('modeMarkBtn').addEventListener('click', () => setMode('mark'));
+$('modeCatBtn').addEventListener('click', () => setMode('cat'));
+$('hintBtn').addEventListener('click', giveHint);
+$('autoXBtn').addEventListener('click', () => {
+  state.autoX = !state.autoX;
+  localStorage.setItem(LS.autoX, state.autoX ? '1' : '0');
+  $('autoXBtn').classList.toggle('on', state.autoX);
+  $('autoXBtn').textContent = state.autoX ? '自動打叉' : '自動打叉：關';
+  if (!state.autoX) { clearAutoMarks(); paintCells(); }
+});
+$('themeBtn').addEventListener('click', () => {
+  const dark = document.documentElement.dataset.theme !== 'dark';
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  localStorage.setItem(LS.theme, dark ? 'dark' : 'light');
+  $('themeBtn').textContent = dark ? '☀️' : '🌙';
+  renderBoard();
+});
+$('dailyBtn').addEventListener('click', () => {
+  const key = todayKey();
+  const rec = JSON.parse(localStorage.getItem(LS.daily) || '{}');
+  newGame({ n: 7, daily: true, seed: hashSeed(key) });
+  if (rec.done && rec.date === key) {
+    setTimeout(() => showSheet('今日已完成 ✅', `你已經完成今天的題目，連續 ${rec.streak || 1} 天。再玩一次也可以（不影響紀錄）。`, '開始', null, '關閉'), 400);
+  }
+});
+$('overlaySecondary').addEventListener('click', hideSheet);
+$('overlay').addEventListener('click', (e) => { if (e.target === $('overlay')) hideSheet(); });
+
+document.addEventListener('keydown', (e) => {
+  if (state.done) return;
+  const n = state.n;
+  const [r, c] = rowColOf(n, state.cursor);
+  if (e.key === 'ArrowLeft') { state.cursor = indexOf(n, r, Math.max(0, c - 1)); paintCells(); e.preventDefault(); }
+  else if (e.key === 'ArrowRight') { state.cursor = indexOf(n, r, Math.min(n - 1, c + 1)); paintCells(); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { state.cursor = indexOf(n, Math.max(0, r - 1), c); paintCells(); e.preventDefault(); }
+  else if (e.key === 'ArrowDown') { state.cursor = indexOf(n, Math.min(n - 1, r + 1), c); paintCells(); e.preventDefault(); }
+  else if (e.key === 'x' || e.key === 'X') { setMode('mark'); tapCell(state.cursor); }
+  else if (e.key === 'c' || e.key === 'C') { setMode('cat'); tapCell(state.cursor); }
+  else if (e.key === 'Backspace' || e.key === 'Delete') { clearCell(state.cursor); e.preventDefault(); }
+  else if (e.key === 'h' || e.key === 'H') giveHint();
+});
+
+// 供自動化測試與除錯使用（只讀狀態與既有函式，不影響遊戲邏輯）
+window.__meowdoku = {
+  state, newGame, tapCell, clearCell, setMode, giveHint, catsOnBoard,
+  board: () => $('board'),
+  todayKey,
+};
+
+// ---------- 啟動 ----------
+(function boot() {
+  const theme = localStorage.getItem(LS.theme);
+  if (theme) { document.documentElement.dataset.theme = theme; $('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙'; }
+  else if (matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.dataset.theme = 'dark'; $('themeBtn').textContent = '☀️'; }
+  const autoX = localStorage.getItem(LS.autoX);
+  state.autoX = autoX === null ? true : autoX === '1';
+  $('autoXBtn').classList.toggle('on', state.autoX);
+  $('autoXBtn').textContent = state.autoX ? '自動打叉' : '自動打叉：關';
+  setMode(localStorage.getItem('meowdoku.mode') === 'cat' ? 'cat' : 'mark');
+
+  if (!loadResume()) newGame({ n: 5 });
+  else if (state.daily && state.dailyKey !== todayKey()) newGame({ n: 5 });
+
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
