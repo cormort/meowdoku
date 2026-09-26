@@ -5,6 +5,7 @@ const SHELL = `${PREFIX}-shell-${BUILD_VERSION}`;
 const APP_SHELL = [
   './', './index.html', './engine.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png',
+  './icons/cats.webp',
 ];
 
 self.addEventListener('install', (e) => {

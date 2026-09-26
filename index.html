@@ -64,6 +64,13 @@ button:disabled{opacity:.45; cursor:default}
 .cell.mark i{color:var(--ink); opacity:.7}
 .cell.cat i{filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
 .cell.autox i{opacity:.5}
+/* 貓臉圖示：icons/cats.webp 為 9×9 張 sprite */
+.face{display:block; background:url(icons/cats.webp) 0 0/900% 900% no-repeat; border-radius:18%}
+.cell i.face{width:86%; height:86%}
+.skins{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; max-height:55vh; overflow:auto; margin-top:10px; padding:2px}
+.skins button{aspect-ratio:1/1; min-width:0; padding:3px; font-size:1.5rem; line-height:1; display:flex; align-items:center; justify-content:center}
+.skins button.wide{grid-column:span 3; aspect-ratio:auto; font-size:.85rem}
+.skins .face{width:100%; height:100%}
 .cell.cursor{outline:2px solid var(--accent); outline-offset:-3px}
 .cell.bad{animation:shake .3s; background:rgba(180,85,63,.25)}
 .cell.hint{animation:pulse 1s ease-in-out 2}
@@ -101,6 +108,7 @@ kbd{background:var(--accent-soft); border-radius:5px; padding:1px 5px; font-size
   <button data-n="9">9×9 困難</button>
   <button id="dailyBtn">📅 每日挑戰</button>
   <button id="themeBtn" title="切換深色／淺色">🌙</button>
+  <button id="skinBtn" title="更換貓咪圖示">🐱 換貓</button>
 </section>
 
 <section class="card">
@@ -158,6 +166,7 @@ const LS = {
   autoX: 'meowdoku.autoX',
   daily: 'meowdoku.daily',
   resume: 'meowdoku.resume',
+  skin: 'meowdoku.skin',
 };
 
 const MARK = '✕';
@@ -171,7 +180,7 @@ const REGION_COLORS_DARK = [
 ];
 
 const state = {
-  n: 5, owner: [], solution: [], cells: [], lives: 3, mode: 'mark', autoX: true,
+  n: 5, owner: [], solution: [], cells: [], lives: 3, mode: 'mark', autoX: true, skin: 'emoji',
   startedAt: 0, elapsed: 0, timer: null, done: false, daily: false, dailyKey: null,
   history: [], cursor: 0, hints: 0,
 };
@@ -219,7 +228,10 @@ function paintCells() {
   [...board.children].forEach((cell, i) => {
     const kind = state.cells[i];
     const icon = cell.firstElementChild;
-    icon.textContent = kind === 2 ? CAT : kind === 1 ? MARK : '';
+    const face = kind === 2 ? faceOf(i) : -1;
+    icon.classList.toggle('face', face >= 0);
+    if (face >= 0) icon.style.backgroundPosition = facePos(face);
+    icon.textContent = face >= 0 ? '' : kind === 2 ? CAT : kind === 1 ? MARK : '';
     cell.classList.toggle('cat', kind === 2);
     cell.classList.toggle('mark', kind === 1);
     cell.classList.toggle('autox', kind === 1 && state.cells[i] === 1 && state.autoMarked?.has(i));
@@ -230,6 +242,24 @@ function paintCells() {
   const cats = catsOnBoard().length;
   $('progress').textContent = `${cats}/${state.n}`;
   $('hearts').textContent = '🐟'.repeat(state.lives) + '·'.repeat(Math.max(0, 3 - state.lives));
+}
+
+// 貓咪圖示：'emoji'＝🐱、'mix'＝每個色塊不同貓臉、數字＝指定 sprite 第幾張
+function faceOf(i) {
+  if (state.skin === 'emoji') return -1;
+  if (state.skin === 'mix') return (state.owner[i] * 29 + state.n * 7) % 81;
+  return Number(state.skin);
+}
+function facePos(k) { return `${(k % 9) * 12.5}% ${Math.floor(k / 9) * 12.5}%`; }
+
+function showSkinPicker() {
+  const on = (v) => (state.skin === v ? ' on' : '');
+  let html = `<div class="skins"><button class="wide${on('emoji')}" data-skin="emoji">🐱 原本表情符號</button>`
+    + `<button class="wide${on('mix')}" data-skin="mix">🎲 每隻都不同</button>`;
+  for (let k = 0; k < 81; k++) {
+    html += `<button class="${on(String(k))}" data-skin="${k}" aria-label="貓臉 ${k + 1}"><i class="face" style="background-position:${facePos(k)}"></i></button>`;
+  }
+  showSheet('更換貓咪圖示', html + '</div>', '關閉');
 }
 
 function catsOnBoard() {
@@ -537,6 +567,15 @@ $('dailyBtn').addEventListener('click', () => {
   }
 });
 $('overlaySecondary').addEventListener('click', hideSheet);
+$('skinBtn').addEventListener('click', showSkinPicker);
+$('overlayBody').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-skin]');
+  if (!btn) return;
+  state.skin = btn.dataset.skin;
+  localStorage.setItem(LS.skin, state.skin);
+  paintCells();
+  hideSheet();
+});
 $('overlay').addEventListener('click', (e) => { if (e.target === $('overlay')) hideSheet(); });
 
 document.addEventListener('keydown', (e) => {
@@ -565,6 +604,7 @@ window.__meowdoku = {
   const theme = localStorage.getItem(LS.theme);
   if (theme) { document.documentElement.dataset.theme = theme; $('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙'; }
   else if (matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.dataset.theme = 'dark'; $('themeBtn').textContent = '☀️'; }
+  state.skin = localStorage.getItem(LS.skin) || 'emoji';
   const autoX = localStorage.getItem(LS.autoX);
   state.autoX = autoX === null ? true : autoX === '1';
   $('autoXBtn').classList.toggle('on', state.autoX);
