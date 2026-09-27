@@ -71,7 +71,16 @@ button:disabled{opacity:.45; cursor:default}
 .skins button{aspect-ratio:1/1; min-width:0; padding:3px; font-size:1.5rem; line-height:1; display:flex; align-items:center; justify-content:center}
 .skins button.wide{grid-column:span 3; aspect-ratio:auto; font-size:.85rem}
 .skins .face{width:100%; height:100%}
-.cell.cursor{outline:2px solid var(--accent); outline-offset:-3px}
+.skins{padding-bottom:12px}
+@media (hover:hover){
+  .skins button{transition:transform .12s}
+  .skins button:not(.wide):hover{transform:scale(1.5); position:relative; z-index:1; box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  /* 最左/最右一欄往內放大，避免被捲動容器裁掉 */
+  .skins button:not(.wide):nth-child(6n+3){transform-origin:left}
+  .skins button:not(.wide):nth-child(6n+2){transform-origin:right}
+}
+/* 游標框只在鍵盤操作時顯示，滑鼠／觸控時不畫（否則看起來像多一個色塊） */
+.board.kbd .cell.cursor{outline:2px solid var(--accent); outline-offset:-3px}
 .cell.bad{animation:shake .3s; background:rgba(180,85,63,.25)}
 .cell.hint{animation:pulse 1s ease-in-out 2}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
@@ -570,6 +579,7 @@ $('board').addEventListener('contextmenu', (e) => {
 });
 let pressTimer = 0, longPressed = false;
 $('board').addEventListener('pointerdown', (e) => {
+  $('board').classList.remove('kbd');
   const cell = e.target.closest('.cell');
   if (!cell || e.pointerType === 'mouse') return;
   longPressed = false;
@@ -636,6 +646,7 @@ document.addEventListener('keydown', (e) => {
   if (state.done) return;
   const n = state.n;
   const [r, c] = rowColOf(n, state.cursor);
+  if (/^(Arrow|[xXcC]$|Backspace|Delete)/.test(e.key)) $('board').classList.add('kbd');
   if (e.key === 'ArrowLeft') { state.cursor = indexOf(n, r, Math.max(0, c - 1)); paintCells(); e.preventDefault(); }
   else if (e.key === 'ArrowRight') { state.cursor = indexOf(n, r, Math.min(n - 1, c + 1)); paintCells(); e.preventDefault(); }
   else if (e.key === 'ArrowUp') { state.cursor = indexOf(n, Math.max(0, r - 1), c); paintCells(); e.preventDefault(); }
