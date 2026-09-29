@@ -7,6 +7,7 @@
     <title>貓咪邏輯謎題｜1 貓／列・行・色塊</title>
     <meta name="theme-color" content="#2f6f63" />
     <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./cathouse.css" />
     <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -327,8 +328,8 @@
       #overlayBody .pet-subnav {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
-      #overlayBody .pet-subnav.four {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+      #overlayBody .pet-subnav.five {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
       }
       @media (max-width: 600px), (hover: none) and (pointer: coarse) {
         #overlayBody .pet-hero {
@@ -2544,14 +2545,14 @@
         color: var(--muted);
         font-size: 0.7rem;
       }
-      .pet-subnav.four {
-        grid-template-columns: repeat(4, 1fr);
+      .pet-subnav.five {
+        grid-template-columns: repeat(5, 1fr);
       }
       @media (max-width: 600px), (hover: none) and (pointer: coarse) {
         .costume-collection {
           grid-template-columns: 1fr;
         }
-        .pet-subnav.four button {
+        .pet-subnav.five button {
           font-size: 0.56rem;
           padding: 4px 2px;
         }
@@ -2721,6 +2722,7 @@
         indexOf,
       } from "./engine.js?v=3";
       import { audio } from "./audio.js";
+      import { CatHouseController, CAT_BREEDS, addAffection } from "./cathouse.js";
       const $ = (id) => document.getElementById(id);
       const LS = {
         best: (n) => `meowdoku.best.${n}`,
@@ -3522,7 +3524,7 @@
         return messages.length ? `<div class="special-day">${messages.join("<br>")}</div>` : "";
       }
       function petSubnavHtml(view) {
-        return `<div class="pet-subnav four"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 貓咪小屋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號牆</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念日</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button></div>`;
+        return `<div class="pet-subnav five"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 貓咪小屋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號牆</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念日</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button><button data-pet-view="room" class="${view === "room" ? "active" : ""}">🎮 互動屋</button></div>`;
       }
       function eventKey() {
         const f = activeFestival();
@@ -3688,6 +3690,10 @@
           showSheet("🎂 生日與紀念日", datesHtml(key), "完成");
           return;
         }
+        if (view === "room") {
+          showPetRoom();
+          return;
+        }
         if (view === "events") {
           showSheet("🎊 節日活動與服裝", eventPageHtml(key), "完成");
           return;
@@ -3748,6 +3754,23 @@
         showSheet("🏠 貓咪小屋", body, "完成");
       }
 
+      // 互動屋：10 品種全身貓、撫摸／逗貓棒／貓砂盆／餵食，好感度獨立於貓咪小屋的養成系統
+      let catRoom = null;
+      function showPetRoom() {
+        showSheet("🎮 貓咪互動屋", `${petSubnavHtml("room")}<div id="catRoomMount"></div>`, "完成");
+        catRoom ??= new CatHouseController({
+          onSelectBreed: (bId) => {
+            const idle = String(CAT_BREEDS[bId].frames.idle);
+            if (!isUnlocked(idle)) return "這隻貓還沒解鎖，先多過幾關認識牠吧！🔒";
+            petData.selected = state.skin = idle;
+            localStorage.setItem(LS.skin, idle);
+            savePetData();
+            paintCells();
+            return `已將${CAT_BREEDS[bId].name}設為謎題夥伴！🐾`;
+          },
+        });
+        catRoom.mount($("catRoomMount"));
+      }
       function animatePet(cls, text) {
         const avatar = document.querySelector(".pet-avatar");
         if (!avatar) return;
@@ -4129,6 +4152,7 @@
         if (isBest) localStorage.setItem(key, String(state.elapsed));
         updateBestLabel();
         audio.playVictory();
+        addAffection(8);
         const reward = awardFood();
         addEventProgress("wins", 1);
         if (state.n >= 7) addEventProgress("hard", 1);
@@ -4192,6 +4216,7 @@
         $("overlay").classList.remove("hidden");
       }
       function hideSheet() {
+        catRoom?.close();
         $("overlay").classList.add("hidden");
       }
       /* 換貓動畫 */

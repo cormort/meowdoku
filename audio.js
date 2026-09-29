@@ -8,6 +8,12 @@ class MeowAudioEngine {
     this.sfxGain = null;
     this.masterGain = null;
     
+    // 呼嚕音效節點
+    this.purrOsc = null;
+    this.purrGain = null;
+    this.purrLfo = null;
+    this.isPurring = false;
+    
     // 設定
     this.bgmEnabled = localStorage.getItem('meowdoku.bgm') === '1'; // 預設開啟或由使用者開關
     this.sfxEnabled = localStorage.getItem('meowdoku.sfx') !== '0'; // 預設開啟
@@ -384,6 +390,65 @@ class MeowAudioEngine {
     } catch {}
   }
 
+  // 8. 貓咪呼嚕聲 (28Hz 低頻三角波 + 2.6Hz 呼吸調幅)
+  startPurr() {
+    if (!this.sfxEnabled) return;
+    this.init();
+    if (!this.ctx || this.isPurring) return;
+    try {
+      const now = this.ctx.currentTime;
+      this.purrOsc = this.ctx.createOscillator();
+      this.purrOsc.type = 'triangle';
+      this.purrOsc.frequency.setValueAtTime(29, now);
+
+      this.purrLfo = this.ctx.createOscillator();
+      this.purrLfo.type = 'sine';
+      this.purrLfo.frequency.setValueAtTime(2.6, now);
+
+      const lfoGain = this.ctx.createGain();
+      lfoGain.gain.setValueAtTime(0.08, now);
+
+      this.purrGain = this.ctx.createGain();
+      this.purrGain.gain.setValueAtTime(0.02, now);
+      this.purrGain.gain.linearRampToValueAtTime(0.14, now + 0.3);
+
+      this.purrLfo.connect(this.purrGain.gain);
+      this.purrOsc.connect(this.purrGain);
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(140, now);
+
+      this.purrGain.connect(filter);
+      filter.connect(this.sfxGain);
+
+      this.purrOsc.start();
+      this.purrLfo.start();
+      this.isPurring = true;
+    } catch {}
+  }
+
+  stopPurr() {
+    if (!this.ctx || !this.isPurring) return;
+    try {
+      const now = this.ctx.currentTime;
+      if (this.purrGain) {
+        this.purrGain.gain.linearRampToValueAtTime(0.001, now + 0.25);
+      }
+      setTimeout(() => {
+        try {
+          if (this.purrOsc) { this.purrOsc.stop(); this.purrOsc.disconnect(); }
+          if (this.purrLfo) { this.purrLfo.stop(); this.purrLfo.disconnect(); }
+        } catch {}
+        this.purrOsc = null;
+        this.purrLfo = null;
+        this.isPurring = false;
+      }, 260);
+    } catch {
+      this.isPurring = false;
+    }
+  }
+
   // 9. 萌萌貓叫聲
   playMeow(pitch = 1.0) {
     if (!this.sfxEnabled) return;
@@ -416,6 +481,68 @@ class MeowAudioEngine {
       osc.start(now);
       osc.stop(now + 0.45);
     } catch {}
+  }
+
+  // 10. 鈴鐺輕響 (逗貓棒 / 項圈)
+  playJingle() {
+    if (!this.sfxEnabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      [2200, 2900, 3700].forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.03);
+
+        gain.gain.setValueAtTime(0.06, now + i * 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.03 + 0.22);
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.start(now + i * 0.03);
+        osc.stop(now + i * 0.03 + 0.25);
+      });
+    } catch {}
+  }
+
+  // 11. 鏟砂沙沙聲
+  playSand() {
+    if (!this.sfxEnabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const bufferSize = this.ctx.sampleRate * 0.18;
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = this.ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1200, this.ctx.currentTime);
+      filter.Q.setValueAtTime(3.0, this.ctx.currentTime);
+
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.17);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.sfxGain);
+
+      noise.start();
+    } catch {}
+  }
+
+  // 12. 歡呼音效
+  playCheer() {
+    this.playVictory();
   }
 }
 
