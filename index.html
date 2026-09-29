@@ -317,6 +317,24 @@
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
       }
+      /* 捲動容器會裁掉超出寬度的內容：讓格線欄位可縮小，不被文字撐寬 */
+      #overlayBody .pet-home {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      #overlayBody .pet-hero {
+        grid-template-columns: 92px minmax(0, 1fr);
+      }
+      #overlayBody .pet-subnav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      #overlayBody .pet-subnav.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      @media (max-width: 600px), (hover: none) and (pointer: coarse) {
+        #overlayBody .pet-hero {
+          grid-template-columns: 78px minmax(0, 1fr);
+        }
+      }
       .sheet h2 {
         margin: 0 0 6px;
         font-size: 1.2rem;
@@ -1104,6 +1122,7 @@
       .pet-collection {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-auto-rows: max-content;
         gap: 6px;
         max-height: 158px;
         overflow: auto;
