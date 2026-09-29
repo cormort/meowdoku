@@ -6,6 +6,7 @@ import { audio } from './audio.js';
 export const CAT_BREEDS = {
   orange_tabby: {
     id: 'orange_tabby',
+    pitch: 0.92,   // 叫聲音高倍率
     name: '橘虎斑',
     nick: '胖橘',
     trait: '貪吃愛撒嬌・熱情親人',
@@ -18,6 +19,7 @@ export const CAT_BREEDS = {
   },
   white: {
     id: 'white',
+    pitch: 1.18,   // 叫聲音高倍率
     name: '純白貓',
     nick: '雪球',
     trait: '仙氣優雅・溫柔黏人',
@@ -30,6 +32,7 @@ export const CAT_BREEDS = {
   },
   black: {
     id: 'black',
+    pitch: 0.8,   // 叫聲音高倍率
     name: '黑貓',
     nick: '黑寶',
     trait: '神秘敏銳・深情呼嚕機',
@@ -42,6 +45,7 @@ export const CAT_BREEDS = {
   },
   orange_white: {
     id: 'orange_white',
+    pitch: 1.05,   // 叫聲音高倍率
     name: '橘白雙色',
     nick: '起司',
     trait: '活潑開朗・踏踏專家',
@@ -54,6 +58,7 @@ export const CAT_BREEDS = {
   },
   tuxedo: {
     id: 'tuxedo',
+    pitch: 0.88,   // 叫聲音高倍率
     name: '賓士貓',
     nick: '紳士',
     trait: '精力充沛・調皮搞怪',
@@ -66,6 +71,7 @@ export const CAT_BREEDS = {
   },
   calico: {
     id: 'calico',
+    pitch: 1.12,   // 叫聲音高倍率
     name: '幸運三花',
     nick: '花花',
     trait: '獨立聰明・招財開運',
@@ -79,6 +85,7 @@ export const CAT_BREEDS = {
   },
   siamese: {
     id: 'siamese',
+    pitch: 1.35,   // 叫聲音高倍率
     name: '暹羅貓',
     nick: '奶茶',
     trait: '聲音甜美・愛講話話嘮',
@@ -91,6 +98,7 @@ export const CAT_BREEDS = {
   },
   grey_tabby: {
     id: 'grey_tabby',
+    pitch: 1.0,   // 叫聲音高倍率
     name: '美短灰虎斑',
     nick: '小銀',
     trait: '身手敏捷・好奇心強',
@@ -103,6 +111,7 @@ export const CAT_BREEDS = {
   },
   grey_solid: {
     id: 'grey_solid',
+    pitch: 0.75,   // 叫聲音高倍率
     name: '英短藍貓',
     nick: '藍寶',
     trait: '沉穩紳士・軟糯慵懶',
@@ -115,6 +124,7 @@ export const CAT_BREEDS = {
   },
   brown_tabby: {
     id: 'brown_tabby',
+    pitch: 0.85,   // 叫聲音高倍率
     name: '經典狸花貓',
     nick: '阿狸',
     trait: '體質強健・元氣滿滿',
@@ -549,7 +559,7 @@ export class CatHouseController {
       } else if (this.tool === 'wand') {
         // 貓咪撲擊逗貓棒
         audio.playJingle();
-        audio.playMeow(1.2);
+        audio.playMeow(1.2 * this.breed.pitch);
         this.setExpression('play', 500);
         catHero.classList.add('pounce');
         this.addAffection(4);
@@ -557,7 +567,7 @@ export class CatHouseController {
         setTimeout(() => catHero.classList.remove('pounce'), 420);
       } else if (this.tool === 'treat') {
         // 餵食小魚乾
-        audio.playMeow(1.1);
+        audio.playMeow(1.1 * this.breed.pitch);
         this.setExpression('happy', 1200);
         audio.playVictory();
         this.addAffection(15);
@@ -599,7 +609,7 @@ export class CatHouseController {
 
         if (this.litterClumps === 0) {
           audio.playVictory();
-          audio.playMeow(0.95);
+          audio.playMeow(0.95 * this.breed.pitch);
           this.showSpeech('哇！貓砂盆乾乾淨淨了！貓咪超級開心🌟');
           this.setExpression('happy', 2000);
           // 隔一段時間後又會有小團
@@ -628,7 +638,7 @@ export class CatHouseController {
     // 設為遊戲夥伴按鈕
     this.container.querySelector('#setCompanionBtn')?.addEventListener('click', () => {
       localStorage.setItem('meowdoku.activeBreed', this.activeBreedId);
-      audio.playMeow(1.2);
+      audio.playMeow(1.2 * this.breed.pitch);
       this.showSpeech(this.onSelectBreed?.(this.activeBreedId) ?? '');
     });
   }
@@ -658,7 +668,7 @@ export class CatHouseController {
     const face = this.container.querySelector('#catHeroFace');
     if (face) face.style.backgroundPosition = facePos(b.frames.idle);
 
-    audio.playMeow(1.0);
+    audio.playMeow(1.0 * this.breed.pitch);
     this.showSpeech(`嗨！我是${b.name}（${b.nick}），${b.trait}！`);
   }
 }
