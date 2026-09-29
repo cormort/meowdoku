@@ -301,6 +301,21 @@
         padding: 20px;
         width: min(420px, 100%);
         text-align: center;
+        /* 內容過長時只捲動中間區塊，標題與按鈕固定可見 */
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100dvh - 40px);
+      }
+      .sheet > h2,
+      .sheet > .row {
+        flex-shrink: 0;
+      }
+      #overlayBody {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
       .sheet h2 {
         margin: 0 0 6px;
