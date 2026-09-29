@@ -371,6 +371,51 @@ html.low-fx .board.skin-arrive{animation-duration:.28s}
 .no-event{padding:16px;border:1px dashed var(--line);border-radius:13px;text-align:center;color:var(--muted);font-size:.7rem}.pet-subnav.four{grid-template-columns:repeat(4,1fr)}
 @media(max-width:600px),(hover:none) and (pointer:coarse){.costume-collection{grid-template-columns:1fr}.pet-subnav.four button{font-size:.56rem;padding:4px 2px}.event-mission{grid-template-columns:34px 1fr auto}.mission-icon{width:34px;height:34px}}
 
+
+/* v15 棋盤邊界精修：線條不越界、色塊轉角全面圓角 */
+.board{
+  gap:2px!important;
+  padding:0!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  background:color-mix(in srgb,var(--line) 75%,var(--card))!important;
+}
+.cell{
+  border-radius:8px!important;
+  overflow:hidden!important;
+}
+.region-lines{
+  inset:10px!important;
+  width:calc(100% - 20px)!important;
+  height:calc(100% - 20px)!important;
+  overflow:hidden!important;
+  border-radius:14px;
+  filter:none!important;
+}
+.region-lines .region-boundary{
+  fill:none;
+  stroke:var(--ink);
+  stroke-width:3.5;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  vector-effect:non-scaling-stroke;
+}
+.region-lines .outer-boundary{
+  fill:none;
+  stroke:var(--ink);
+  stroke-width:4;
+  stroke-linecap:round;
+  stroke-linejoin:round!important;
+  vector-effect:non-scaling-stroke;
+}
+@media(max-width:600px),(hover:none) and (pointer:coarse){
+  .board{gap:2px!important;border-radius:12px!important}
+  .cell{border-radius:7px!important}
+  .region-lines{inset:6px!important;width:calc(100% - 12px)!important;height:calc(100% - 12px)!important;border-radius:12px}
+  .region-lines .region-boundary{stroke-width:3}
+  .region-lines .outer-boundary{stroke-width:3.5}
+}
+
 </style>
 </head>
 <body>
@@ -395,31 +440,64 @@ function regionColor(r){return(document.documentElement.dataset.theme==='dark'?R
 function renderRegionLines(){
   const wrap=document.querySelector('.boardWrap');
   wrap.querySelector('.region-lines')?.remove();
-  const n=state.n;
-  const ns='http://www.w3.org/2000/svg';
+  const n=state.n,ns='http://www.w3.org/2000/svg';
   const svg=document.createElementNS(ns,'svg');
   svg.classList.add('region-lines');
   svg.setAttribute('viewBox',`0 0 ${n} ${n}`);
   svg.setAttribute('preserveAspectRatio','none');
   svg.setAttribute('aria-hidden','true');
-  const path=document.createElementNS(ns,'path');
-  path.classList.add('region-boundary');
-  const commands=[];
-  // 每條內部分界只畫一次，避免雙邊框重疊、交叉點缺口或粗細不一。
-  for(let r=0;r<n;r++)for(let c=0;c<n;c++){
-    const i=indexOf(n,r,c);
-    if(c<n-1&&state.owner[i]!==state.owner[i+1])commands.push(`M ${c+1} ${r} V ${r+1}`);
-    if(r<n-1&&state.owner[i]!==state.owner[i+n])commands.push(`M ${c} ${r+1} H ${c+1}`);
+
+  // 以每個色塊的封閉輪廓繪製，而非逐格拼接線段。
+  // 封閉路徑搭配 round join，可讓凸角與凹角都真正呈現圓角。
+  const regions=[...new Set(state.owner)];
+  const key=(x1,y1,x2,y2)=>`${x1},${y1},${x2},${y2}`;
+  const pointKey=p=>`${p[0]},${p[1]}`;
+  for(const reg of regions){
+    const edges=new Map();
+    const add=(a,b)=>edges.set(key(a[0],a[1],b[0],b[1]),{a,b});
+    for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+      const i=indexOf(n,r,c);if(state.owner[i]!==reg)continue;
+      // 順時針加入色塊外緣，確保相鄰格子的內邊不會被畫出。
+      if(r===0||state.owner[i-n]!==reg)add([c,r],[c+1,r]);
+      if(c===n-1||state.owner[i+1]!==reg)add([c+1,r],[c+1,r+1]);
+      if(r===n-1||state.owner[i+n]!==reg)add([c+1,r+1],[c,r+1]);
+      if(c===0||state.owner[i-1]!==reg)add([c,r+1],[c,r]);
+    }
+    const starts=new Map();
+    for(const e of edges.values()){
+      const k=pointKey(e.a);if(!starts.has(k))starts.set(k,[]);starts.get(k).push(e);
+    }
+    const used=new Set(),commands=[];
+    for(const first of edges.values()){
+      const fk=key(...first.a,...first.b);if(used.has(fk))continue;
+      let cur=first,guard=edges.size+2;
+      commands.push(`M ${cur.a[0]} ${cur.a[1]}`);
+      while(cur&&guard-->0){
+        const ck=key(...cur.a,...cur.b);if(used.has(ck))break;
+        used.add(ck);commands.push(`L ${cur.b[0]} ${cur.b[1]}`);
+        const choices=(starts.get(pointKey(cur.b))||[]).filter(e=>!used.has(key(...e.a,...e.b)));
+        cur=choices[0]||null;
+      }
+      commands.push('Z');
+    }
+    if(commands.length){
+      const path=document.createElementNS(ns,'path');
+      path.classList.add('region-boundary');
+      path.setAttribute('d',commands.join(' '));
+      svg.append(path);
+    }
   }
-  path.setAttribute('d',commands.join(' '));
+
+  // 外框向內縮半個線寬，再由 SVG 自身裁切，絕不超出顏色方塊。
   const outer=document.createElementNS(ns,'rect');
   outer.classList.add('outer-boundary');
-  outer.setAttribute('x','.025');outer.setAttribute('y','.025');
-  outer.setAttribute('width',String(n-.05));outer.setAttribute('height',String(n-.05));
-  outer.setAttribute('rx','.16');outer.setAttribute('ry','.16');
-  svg.append(path,outer);
+  outer.setAttribute('x','.035');outer.setAttribute('y','.035');
+  outer.setAttribute('width',String(n-.07));outer.setAttribute('height',String(n-.07));
+  outer.setAttribute('rx','.18');outer.setAttribute('ry','.18');
+  svg.append(outer);
   wrap.append(svg);
 }
+
 function renderBoard(){const board=$('board'),n=state.n;board.style.setProperty('--n',n);board.style.gridTemplateColumns=`repeat(${n},minmax(0,1fr))`;board.style.gridTemplateRows=`repeat(${n},minmax(0,1fr))`;board.replaceChildren();for(let i=0;i<n*n;i++){const cell=document.createElement('button');cell.className='cell';cell.dataset.i=i;cell.type='button';cell.setAttribute('role','gridcell');const[r,c]=rowColOf(n,i);cell.style.background=regionColor(state.owner[i]);cell.innerHTML='<i></i>';board.append(cell)}paintCells();renderRegionLines()}
 function paintCells(){const board=$('board'),bad=findConflicts(state.n,state.owner,catsOnBoard());[...board.children].forEach((cell,i)=>{const kind=state.cells[i],icon=cell.firstElementChild,face=kind===2?faceOf(i):-1;icon.classList.toggle('face',face>=0);if(face>=0)icon.style.backgroundPosition=facePos(face);else icon.style.backgroundPosition='';icon.textContent=face>=0?'':kind===2?CAT:kind===1?MARK:'';cell.classList.toggle('cat',kind===2);cell.classList.toggle('mark',kind===1);cell.classList.toggle('autox',kind===1&&state.autoMarked?.has(i));cell.classList.toggle('bad',bad.has(i));cell.classList.toggle('cursor',i===state.cursor);cell.setAttribute('aria-label',`第 ${Math.floor(i/state.n)+1} 列第 ${(i%state.n)+1} 行`)});$('progress').textContent=`${catsOnBoard().length}/${state.n}`;$('hearts').textContent='🐟'.repeat(state.lives)+'·'.repeat(Math.max(0,3-state.lives))}
 function faceOf(i){if(state.skin==='emoji')return-1;if(state.skin==='mix')return(state.owner[i]*29+state.n*7)%81;return Number(state.skin)}function facePos(k){return`${(k%9)*12.5}% ${Math.floor(k/9)*12.5}%`}
