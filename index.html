@@ -416,6 +416,28 @@ html.low-fx .board.skin-arrive{animation-duration:.28s}
   .region-lines .outer-boundary{stroke-width:3.5}
 }
 
+
+/* v16 四角溢色修正：外框佔用實際版面，不再疊在線條內側 */
+.board{
+  box-sizing:border-box!important;
+  border:4px solid var(--ink)!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+  background:var(--ink)!important;
+}
+.region-lines{
+  inset:14px!important;
+  width:calc(100% - 28px)!important;
+  height:calc(100% - 28px)!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+.region-lines .outer-boundary{display:none!important}
+@media(max-width:600px),(hover:none) and (pointer:coarse){
+  .board{border-width:4px!important;border-radius:14px!important}
+  .region-lines{inset:10px!important;width:calc(100% - 20px)!important;height:calc(100% - 20px)!important}
+}
+
 </style>
 </head>
 <body>
@@ -488,13 +510,6 @@ function renderRegionLines(){
     }
   }
 
-  // 外框向內縮半個線寬，再由 SVG 自身裁切，絕不超出顏色方塊。
-  const outer=document.createElementNS(ns,'rect');
-  outer.classList.add('outer-boundary');
-  outer.setAttribute('x','.035');outer.setAttribute('y','.035');
-  outer.setAttribute('width',String(n-.07));outer.setAttribute('height',String(n-.07));
-  outer.setAttribute('rx','.18');outer.setAttribute('ry','.18');
-  svg.append(outer);
   wrap.append(svg);
 }
 
