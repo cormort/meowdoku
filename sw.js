@@ -1,13 +1,18 @@
 /* 貓咪邏輯謎題 Service Worker：App Shell + 離線可玩。
  * 同源資源採網路優先、離線退回快取。 */
 const PREFIX='meowdoku';
-const SHELL=`${PREFIX}-shell-v17`;
+const SHELL=`${PREFIX}-shell-v18`;
 const APP_SHELL=[
   './',
   './index.html',
   './engine.js',
   './gen-worker.js',
+  './manifest.webmanifest',
   './icons/cats.webp',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png',
 ];
 
 self.addEventListener('install',event=>{
