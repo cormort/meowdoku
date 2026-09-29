@@ -2665,7 +2665,9 @@
       ><button data-n="9">9×9 困難</button><button id="dailyBtn">📅 每日挑戰</button
       ><button id="themeBtn" title="切換深色／淺色">🌙</button
       ><button id="skinBtn" title="更換貓咪圖示"><span id="skinBtnLabel">🐱 換貓</span></button
-      ><button id="petBtn" title="開啟貓咪小屋">🏠 貓屋</button>
+      ><button id="petBtn" title="開啟貓咪小屋">🏠 貓屋</button
+      ><button id="sfxBtn" title="切換音效">🔊</button
+      ><button id="bgmBtn" title="切換背景音樂">🎵 音樂：關</button>
     </section>
     <section class="card">
       <div class="status">
@@ -2718,6 +2720,7 @@
         rowColOf,
         indexOf,
       } from "./engine.js?v=3";
+      import { audio } from "./audio.js";
       const $ = (id) => document.getElementById(id);
       const LS = {
         best: (n) => `meowdoku.best.${n}`,
@@ -3779,6 +3782,7 @@
           savePetData();
           checkGrowthUpgrade(key, beforeStage);
         }
+        if (!limited) audio.playMeow(type === "rest" ? 0.85 : 1.1);
         const data =
           type === "play"
             ? ["pet-wiggle", "再玩一次！"]
@@ -4045,6 +4049,7 @@
           pushHistory();
           state.cells[i] = state.cells[i] === 1 ? 0 : 1;
           state.autoMarked.delete(i);
+          state.cells[i] ? audio.playMark() : audio.playClear();
           paintCells();
           saveResume();
           return;
@@ -4052,6 +4057,7 @@
         if (state.cells[i] === 2) {
           pushHistory();
           state.cells[i] = 0;
+          audio.playClear();
           if (lastPlacedCatIndex === i) {
             lastPlacedCatIndex = -1;
             refreshLastPlacedCatIndex();
@@ -4064,6 +4070,7 @@
         trial.push(i);
         if (findConflicts(state.n, state.owner, trial).size) {
           state.lives--;
+          audio.playError();
           paintCells();
           const el = $("board").children[i];
           el.classList.add("bad");
@@ -4084,6 +4091,7 @@
         pushHistory();
         state.cells[i] = 2;
         lastPlacedCatIndex = i;
+        audio.playCatPlace();
         state.autoMarked.delete(i);
         applyAutoMarks(i);
         setMode("mark");
@@ -4120,6 +4128,7 @@
           isBest = !prev || state.elapsed < prev;
         if (isBest) localStorage.setItem(key, String(state.elapsed));
         updateBestLabel();
+        audio.playVictory();
         const reward = awardFood();
         addEventProgress("wins", 1);
         if (state.n >= 7) addEventProgress("hard", 1);
@@ -4134,6 +4143,7 @@
       }
       function giveHint() {
         if (state.done) return;
+        audio.playHint();
         const result = logicSolve(state.n, state.owner, { collect: true }),
           placed = new Set(catsOnBoard()),
           technique = result.techniques?.find((t) => !placed.has(t.cell));
@@ -4719,6 +4729,29 @@
         if (!skinSelecting && !getSkinCooldownRemaining()) showSkinPicker();
       };
       $("petBtn").onclick = showPetHome;
+      function updateAudioUI() {
+        $("bgmBtn").textContent = audio.bgmEnabled ? "🎵 音樂：開" : "🎵 音樂：關";
+        $("bgmBtn").classList.toggle("on", audio.bgmEnabled);
+        $("sfxBtn").textContent = audio.sfxEnabled ? "🔊" : "🔇";
+      }
+      $("bgmBtn").onclick = () => {
+        audio.toggleBgm();
+        updateAudioUI();
+      };
+      $("sfxBtn").onclick = () => {
+        audio.toggleSfx();
+        updateAudioUI();
+      };
+      updateAudioUI();
+      // 瀏覽器要求先有使用者操作才能出聲：第一次互動時解鎖並補播背景音樂
+      window.addEventListener(
+        "pointerdown",
+        () => {
+          audio.init();
+          if (audio.bgmEnabled) audio.startBgm();
+        },
+        { once: true },
+      );
       $("overlayBody").addEventListener("change", (e) => {
         const filter = e.target.closest("[data-collection-filter]");
         if (filter) {
