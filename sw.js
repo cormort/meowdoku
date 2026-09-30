@@ -1,7 +1,7 @@
 /* 貓咪邏輯謎題 Service Worker：App Shell + 離線可玩。
  * 同源資源採網路優先、離線退回快取。 */
 const PREFIX='meowdoku';
-const SHELL=`${PREFIX}-shell-v23`;
+const SHELL=`${PREFIX}-shell-v24`;
 const APP_SHELL=[
   './',
   './index.html',
@@ -17,6 +17,22 @@ const APP_SHELL=[
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
+  './icons/room/cat_idle.webp',
+  './icons/room/cat_pet.webp',
+  './icons/room/cat_play.webp',
+  './icons/room/cat_sleep.webp',
+  './icons/room/orange_idle.webp',
+  './icons/room/orange_pet.webp',
+  './icons/room/orange_play.webp',
+  './icons/room/orange_sleep.webp',
+  './icons/room/black_idle.webp',
+  './icons/room/black_pet.webp',
+  './icons/room/black_play.webp',
+  './icons/room/black_sleep.webp',
+  './icons/room/calico_idle.webp',
+  './icons/room/calico_pet.webp',
+  './icons/room/calico_play.webp',
+  './icons/room/calico_sleep.webp',
 ];
 
 self.addEventListener('install',event=>{

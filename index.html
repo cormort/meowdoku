@@ -1026,11 +1026,224 @@
         }
       }
 
-      /* 貓咪小屋、飼料與好感度 */
+      /* 貓咪小屋、互動屋與好感度 */
       .pet-home {
         display: grid;
         gap: 12px;
         text-align: left;
+      }
+      .pet-room-stage {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 235px;
+        padding: 16px 14px 10px;
+        border-radius: 20px;
+        background: radial-gradient(circle at 50% 25%, rgba(255, 252, 245, 0.96), rgba(242, 246, 243, 0.9)), var(--accent-soft);
+        border: 1.5px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        user-select: none;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .pet-room-stage:active {
+        transform: scale(0.992);
+      }
+      .pet-room-badge {
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        color: var(--ink);
+        backdrop-filter: blur(4px);
+        z-index: 3;
+      }
+      .pet-speech {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        max-width: 210px;
+        padding: 6px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--ink);
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(6px) scale(0.94);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        z-index: 4;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      .pet-speech.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .room-hearts {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 5;
+      }
+      .room-heart-particle {
+        position: absolute;
+        font-size: 1.4rem;
+        animation: floatHeart 1.4s ease-out forwards;
+        opacity: 0;
+      }
+      @keyframes floatHeart {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(0.6) rotate(0deg);
+        }
+        50% {
+          opacity: 0.95;
+          transform: translateY(-45px) scale(1.18) rotate(var(--rot, 15deg));
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-90px) scale(0.9) rotate(var(--rot, 30deg));
+        }
+      }
+      .pet-room-rug {
+        position: absolute;
+        bottom: 10px;
+        width: 80%;
+        max-width: 280px;
+        height: 52px;
+        border-radius: 50%;
+        background: radial-gradient(ellipse at center, rgba(235, 215, 190, 0.82) 0%, rgba(220, 195, 165, 0.45) 70%, transparent 100%);
+        box-shadow: 0 4px 16px rgba(160, 120, 80, 0.1);
+        z-index: 1;
+      }
+      .pet-room-cat-wrap {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 185px;
+      }
+      .room-cat-img {
+        width: auto;
+        max-width: 210px;
+        height: 185px;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 16px rgba(40, 25, 10, 0.14));
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+        animation: roomCatBreathe 3.6s ease-in-out infinite;
+      }
+      @keyframes roomCatBreathe {
+        0%, 100% {
+          transform: translateY(0) scale(1, 1);
+        }
+        50% {
+          transform: translateY(-5px) scale(1.02, 0.98);
+        }
+      }
+      .room-cat-img.pet-bounce {
+        animation: roomCatBounce 0.65s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+      }
+      @keyframes roomCatBounce {
+        0%, 100% { transform: translateY(0) scale(1); }
+        30% { transform: translateY(-18px) scale(1.09, 0.94); }
+        60% { transform: translateY(2px) scale(0.96, 1.04); }
+        80% { transform: translateY(-4px) scale(1.02); }
+      }
+      .room-cat-img.pet-wiggle {
+        animation: roomCatWiggle 0.68s ease !important;
+      }
+      @keyframes roomCatWiggle {
+        0%, 100% { transform: rotate(0) translateY(0); }
+        20% { transform: rotate(-8deg) translateY(-8px) scale(1.06); }
+        40% { transform: rotate(8deg) translateY(-4px) scale(1.06); }
+        60% { transform: rotate(-5deg) translateY(-2px); }
+        80% { transform: rotate(4deg); }
+      }
+      .room-cat-img.pet-sleep {
+        animation: roomCatSleep 2.5s ease-in-out infinite !important;
+      }
+      @keyframes roomCatSleep {
+        0%, 100% { transform: scale(1) translateY(0); }
+        50% { transform: scale(0.97, 1.02) translateY(3px); }
+      }
+      .pet-room-hint {
+        position: relative;
+        z-index: 2;
+        margin-top: 4px;
+        font-size: 0.68rem;
+        color: var(--muted);
+        opacity: 0.85;
+      }
+      .room-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .room-actions button {
+        padding: 9px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        background: var(--card);
+        border: 1px solid var(--line);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+      }
+      .room-actions button:hover {
+        transform: translateY(-2px);
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+      .pet-status-card {
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--accent-soft);
+        display: grid;
+        gap: 8px;
+      }
+      .pet-status-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .pet-name-title {
+        font-weight: 800;
+        font-size: 1.05rem;
+      }
+      .starter-preview-stage {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 160px;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-radius: 16px;
+        background: radial-gradient(circle at 50% 30%, rgba(255, 252, 245, 0.95), rgba(242, 246, 243, 0.9)), var(--accent-soft);
+        border: 1px solid var(--line);
+      }
+      .starter-preview-stage .room-cat-img {
+        max-width: 170px;
+        height: 150px;
       }
       .pet-hero {
         display: grid;
@@ -1194,6 +1407,14 @@
       @media (max-width: 600px), (hover: none) and (pointer: coarse) {
         .levels {
           grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .pet-room-stage {
+          min-height: 200px;
+          padding: 12px 10px 8px;
+        }
+        .room-cat-img {
+          max-width: 175px;
+          height: 155px;
         }
         .pet-hero {
           grid-template-columns: 78px 1fr;
@@ -3203,6 +3424,90 @@
         const k = Math.max(0, Math.min(80, Number(key) || 0));
         return `<i class="${cls} face" style="background-position:${facePos(k)}"></i>`;
       }
+      const ROOM_CAT_BREEDS = {
+        "0": "white",
+        "1": "black",
+        "2": "orange",
+        "3": "orange",
+        "4": "calico",
+        "5": "white",
+        "6": "white",
+        "7": "calico",
+        "8": "orange",
+        "9": "white",
+        "10": "white",
+        "11": "orange",
+        "12": "black",
+      };
+      function getRoomCatBreed(key) {
+        const k = String(key);
+        if (ROOM_CAT_BREEDS[k]) return ROOM_CAT_BREEDS[k];
+        const breeds = ["white", "orange", "calico", "black"];
+        return breeds[(Number(k) || 0) % 4];
+      }
+      function getRoomCatSprite(key, pose = "idle") {
+        const breed = getRoomCatBreed(key);
+        const prefix = breed === "white" ? "cat" : breed;
+        return `./icons/room/${prefix}_${pose}.webp`;
+      }
+      let roomCatPose = "idle";
+      let roomCatTimer = null;
+      function spawnRoomHeart(x, y, emoji = "❤️") {
+        const container = $("roomHearts");
+        if (!container) return;
+        const heart = document.createElement("span");
+        heart.className = "room-heart-particle";
+        heart.textContent = emoji;
+        heart.style.left = `${x || (42 + Math.random() * 20)}%`;
+        heart.style.bottom = `${y || (30 + Math.random() * 30)}%`;
+        heart.style.setProperty("--rot", `${(Math.random() - 0.5) * 40}deg`);
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 1400);
+      }
+      function setRoomCatPose(pose, text, animClass = "pet-bounce") {
+        roomCatPose = pose;
+        const img = $("roomCatImg");
+        const key = activePetKey();
+        if (img) {
+          img.src = getRoomCatSprite(key, pose);
+          img.className = `room-cat-img ${animClass}`;
+        }
+        const speech = $("petSpeech");
+        if (speech && text) {
+          speech.textContent = text;
+          speech.classList.remove("show");
+          void speech.offsetWidth;
+          speech.classList.add("show");
+        }
+        clearTimeout(roomCatTimer);
+        if (pose === "pet" || pose === "play") {
+          roomCatTimer = setTimeout(() => {
+            roomCatPose = "idle";
+            const curImg = $("roomCatImg");
+            if (curImg) {
+              curImg.src = getRoomCatSprite(activePetKey(), "idle");
+              curImg.className = "room-cat-img";
+            }
+          }, 3200);
+        }
+      }
+      function updatePetHeroStats(key = activePetKey()) {
+        const aff = petAffection(key),
+          level = petLevel(aff),
+          progress = affectionProgress(aff),
+          mood = moodInfo();
+        const fill = document.querySelector(".affection-fill");
+        if (fill) fill.style.setProperty("--affection", `${progress}%`);
+        const affText = document.querySelector(".pet-affection");
+        if (affText)
+          affText.textContent = `💕 好感度 ${aff}${level < PET_LEVELS.length ? `／${PET_LEVELS[level]}` : "（最高等級）"}`;
+        const moodPill = document.querySelector(".mood-pill");
+        if (moodPill) moodPill.innerHTML = `${mood.icon} ${mood.label}`;
+        const moodVal = document.querySelector(".mood-val");
+        if (moodVal) moodVal.textContent = `心情 ${petMoodValue(key)}/100`;
+        const nameLvl = document.querySelector(".pet-name-title");
+        if (nameLvl) nameLvl.textContent = `${escapeHtml(petName(key))}　Lv.${level}`;
+      }
       function isUnlocked(key) {
         return petData.unlocked.includes(String(key));
       }
@@ -3214,7 +3519,7 @@
         let selected = STARTER_CATS[0];
         $("overlayTitle").textContent = "🐾 領養第一隻貓";
         $("overlayBody").innerHTML =
-          `<p class="starter-intro">一開始只能選擇一隻夥伴。完成關卡、累積合作紀錄後，會陸續認識更多貓咪。</p><div class="starter-cats">${STARTER_CATS.map((k) => `<button class="starter-cat${k === selected ? " selected" : ""}" data-starter="${k}">${petFaceHtml(k, "face")}<span class="starter-name">候選貓咪 ${Number(k) + 1}</span></button>`).join("")}</div><label class="name-field"><span>替貓咪取名字</span><input id="starterName" maxlength="12" placeholder="輸入 1～12 個字" autocomplete="off"></label>`;
+          `<p class="starter-intro">一開始只能選擇一隻夥伴。完成關卡、累積合作紀錄後，會陸續認識更多貓咪。</p><div class="starter-preview-stage"><img id="starterPreviewImg" class="room-cat-img" src="${getRoomCatSprite(selected, "idle")}" alt="候選貓咪" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="starter-cats">${STARTER_CATS.map((k) => `<button class="starter-cat${k === selected ? " selected" : ""}" data-starter="${k}">${petFaceHtml(k, "face")}<span class="starter-name">候選貓咪 ${Number(k) + 1}</span></button>`).join("")}</div><label class="name-field"><span>替貓咪取名字</span><input id="starterName" maxlength="12" placeholder="輸入 1～12 個字" autocomplete="off"></label>`;
         const primary = $("overlayPrimary");
         primary.textContent = "開始一起冒險";
         primary.onclick = () => {
@@ -3245,6 +3550,8 @@
           const b = e.target.closest("[data-starter]");
           if (!b) return;
           selected = b.dataset.starter;
+          const previewImg = $("starterPreviewImg");
+          if (previewImg) previewImg.src = getRoomCatSprite(selected, "idle");
           $("overlayBody")
             .querySelectorAll(".starter-cat")
             .forEach((x) => x.classList.toggle("selected", x === b));
@@ -3726,12 +4033,12 @@
             petAffection(b) - petAffection(a),
         };
         cats.sort(sorters[collectionSort] || sorters.index);
-        const body = `<div class="pet-home">${petSubnavHtml("home")}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-hero" id="petHero"><div class="${petAvatarWrapClass(key)}">${birthdayDressHtml(key)}${petFaceHtml(key)}<span class="pet-speech" id="petSpeech"></span></div><div><div class="pet-name">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div><div class="title-list">${titles
+        const body = `<div class="pet-home">${petSubnavHtml("home")}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-room-stage" id="petRoomStage" data-interact-cat="true" title="點擊摸摸貓咪"><div class="pet-room-badge">🏠 互動貓屋・點擊摸摸</div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div><div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="pet-room-hint">👋 輕觸貓咪可以摸摸互動喔！</div></div><div class="interaction-row room-actions"><button data-interact="pet">👋 摸摸</button><button data-interact="play">🧶 玩耍</button><button data-interact="rest">💤 休息</button></div><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
           .slice(-4)
           .map((t) => `<span class="mini-title">${t}</span>`)
           .join(
             "",
-          )}</div>${titleConditionsHtml(key)}<div class="mood-row"><span class="mood-pill">${mood.icon} ${mood.label}</span><span>心情 ${petMoodValue(key)}/100</span></div><div class="affection-bar"><div class="affection-fill" style="--affection:${progress}%"></div></div><div class="pet-affection">💕 好感度 ${aff}${level < PET_LEVELS.length ? `／${PET_LEVELS[level]}` : "（最高等級）"}</div>${growthTrackHtml(key)}<div class="rename-row"><input id="renameInput" maxlength="12" value="${escapeHtml(petName(key))}"><button data-rename>改名</button></div></div></div><div class="daily-feed"><span><b>📅 每日餵食獎勵</b><small>${dailyFeedAvailable() ? "今天可領取小魚乾與好感度" : "今天已經領過了"}</small></span><button data-daily-feed ${dailyFeedAvailable() ? "" : "disabled"}>${dailyFeedAvailable() ? "領取" : "已領取"}</button></div><div class="interaction-row"><button data-interact="pet">👋 摸摸</button><button data-interact="play">🧶 玩耍</button><button data-interact="rest">💤 休息</button></div><div class="pet-stats"><div class="pet-stat"><b>${rec.total}</b><small>合作關卡</small></div><div class="pet-stat"><b>${rec.easy}/${rec.normal}/${rec.hard}</b><small>簡單／普通／困難</small></div><div class="pet-stat"><b>${rec.daily}</b><small>每日挑戰</small></div></div><div class="food-grid">${Object.entries(
+          )}</div>${titleConditionsHtml(key)}<div class="mood-row"><span class="mood-pill">${mood.icon} ${mood.label}</span><span class="mood-val">心情 ${petMoodValue(key)}/100</span></div><div class="affection-bar"><div class="affection-fill" style="--affection:${progress}%"></div></div><div class="pet-affection">💕 好感度 ${aff}${level < PET_LEVELS.length ? `／${PET_LEVELS[level]}` : "（最高等級）"}</div>${growthTrackHtml(key)}<div class="rename-row"><input id="renameInput" maxlength="12" value="${escapeHtml(petName(key))}"><button data-rename>改名</button></div></div><div class="daily-feed"><span><b>📅 每日餵食獎勵</b><small>${dailyFeedAvailable() ? "今天可領取小魚乾與好感度" : "今天已經領過了"}</small></span><button data-daily-feed ${dailyFeedAvailable() ? "" : "disabled"}>${dailyFeedAvailable() ? "領取" : "已領取"}</button></div><div class="pet-stats"><div class="pet-stat"><b>${rec.total}</b><small>合作關卡</small></div><div class="pet-stat"><b>${rec.easy}/${rec.normal}/${rec.hard}</b><small>簡單／普通／困難</small></div><div class="pet-stat"><b>${rec.daily}</b><small>每日挑戰</small></div></div><div class="food-grid">${Object.entries(
           FOODS,
         )
           .map(
@@ -3773,16 +4080,54 @@
       }
       function animatePet(cls, text) {
         const avatar = document.querySelector(".pet-avatar");
-        if (!avatar) return;
-        avatar.classList.remove("pet-bounce", "pet-wiggle", "pet-sleep");
-        void avatar.offsetWidth;
-        avatar.classList.add(cls);
-        const speech = $("petSpeech");
-        if (speech) {
-          speech.textContent = text;
-          speech.classList.remove("show");
-          void speech.offsetWidth;
-          speech.classList.add("show");
+        if (avatar) {
+          avatar.classList.remove("pet-bounce", "pet-wiggle", "pet-sleep");
+          void avatar.offsetWidth;
+          avatar.classList.add(cls);
+        }
+        let pose = "idle";
+        if (cls === "pet-bounce") pose = "pet";
+        else if (cls === "pet-wiggle") pose = "play";
+        else if (cls === "pet-sleep") pose = "sleep";
+
+        setRoomCatPose(pose, text, cls);
+
+        if (pose === "pet") {
+          for (let i = 0; i < 4; i++) {
+            setTimeout(
+              () =>
+                spawnRoomHeart(
+                  38 + Math.random() * 25,
+                  25 + Math.random() * 35,
+                  ["❤️", "💖", "✨", "🌸"][i % 4],
+                ),
+              i * 150,
+            );
+          }
+        } else if (pose === "play") {
+          for (let i = 0; i < 3; i++) {
+            setTimeout(
+              () =>
+                spawnRoomHeart(
+                  35 + Math.random() * 30,
+                  25 + Math.random() * 30,
+                  ["🧶", "⭐", "✨"][i % 3],
+                ),
+              i * 180,
+            );
+          }
+        } else if (pose === "sleep") {
+          for (let i = 0; i < 3; i++) {
+            setTimeout(
+              () =>
+                spawnRoomHeart(
+                  45 + Math.random() * 20,
+                  35 + Math.random() * 30,
+                  ["💤", "✨", "☁️"][i % 3],
+                ),
+              i * 300,
+            );
+          }
         }
       }
       function interactPet(type) {
@@ -3805,14 +4150,38 @@
           savePetData();
           checkGrowthUpgrade(key, beforeStage);
         }
-        if (!limited) audio.playMeow(type === "rest" ? 0.85 : 1.1);
-        const data =
+        if (!limited && typeof audio !== "undefined" && audio.playMeow)
+          audio.playMeow(type === "rest" ? 0.85 : 1.1);
+        const petQuotes = [
+          "呼嚕呼嚕...好舒服喵~",
+          "最喜歡你了喵！",
+          "摸摸下巴最開心了~",
+          "喵嗚~ 幸福滿滿！",
+        ];
+        const playQuotes = [
+          "抓到了！好開心喵！",
+          "看我的貓貓無影拳！",
+          "好好玩！再來一次喵！",
+          "喵哈哈！抓住毛線球了！",
+        ];
+        const sleepQuotes = [
+          "呼...呼...做個好夢喵...",
+          "小睡一下充充電...💤",
+          "呼嚕呼嚕...好溫暖...",
+          "抱著尾巴睡著了...zZZ",
+        ];
+        const quote =
           type === "play"
-            ? ["pet-wiggle", "再玩一次！"]
+            ? playQuotes[Math.floor(Math.random() * playQuotes.length)]
             : type === "rest"
-              ? ["pet-sleep", "呼嚕呼嚕…"]
-              : ["pet-bounce", "最喜歡你了！"];
-        animatePet(data[0], limited ? "今天已經玩得很滿足了！" : data[1]);
+              ? sleepQuotes[Math.floor(Math.random() * sleepQuotes.length)]
+              : petQuotes[Math.floor(Math.random() * petQuotes.length)];
+        const animCls =
+          type === "play" ? "pet-wiggle" : type === "rest" ? "pet-sleep" : "pet-bounce";
+        playSkinArrivalSound();
+        navigator.vibrate?.([15, 20]);
+        animatePet(animCls, limited ? "今天已經玩得很滿足了！" : quote);
+        updatePetHeroStats(key);
       }
       function feedPet(type) {
         addEventProgress("feed", 1);
@@ -3828,7 +4197,9 @@
         playSkinArrivalSound();
         navigator.vibrate?.(20);
         showPetHome();
-        requestAnimationFrame(() => animatePet("pet-bounce", `${food.name}真好吃！`));
+        requestAnimationFrame(() =>
+          animatePet("pet-bounce", `${food.name}真好吃！最喜歡你了喵~`),
+        );
       }
       function selectPet(key) {
         if (!isUnlocked(key)) return;
@@ -4828,6 +5199,11 @@
         const daily = e.target.closest("[data-daily-feed]");
         if (daily) {
           claimDailyFeed();
+          return;
+        }
+        const catTouch = e.target.closest("[data-interact-cat]");
+        if (catTouch && !e.target.closest("button") && !e.target.closest("input")) {
+          interactPet("pet");
           return;
         }
         const interact = e.target.closest("[data-interact]");
