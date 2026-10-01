@@ -1,6 +1,7 @@
 // academy.js — 學院排課測驗（題庫來自 quizzes/，見 js/quiz.js）、能力象限與日常照護
 import { audio } from "../audio.js";
 import { activePetKey, addCoins, addPetStat, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, savePetData, setPetView, showPetHome, updatePetStatus } from "./pet.js";
+import { showClinic, sickInfo } from "./life.js";
 import { QUIZ_SUBJECTS, calculateQuizResult, isCorrect, pickRound } from "./quiz.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
 export function academyPageHtml(key = activePetKey()) {
@@ -162,6 +163,10 @@ export function startQuizSession(subjectId) {
   if (!QUIZ_SUBJECTS[subjectId]) return;
   const key = activePetKey();
   const st = petStatus(key);
+  if (sickInfo(key)) {
+    showSheet("貓咪生病了 🤒", `${sickInfo(key).icon} ${sickInfo(key).name}中，先帶去看醫生再來上課吧！`, "去看醫生", showClinic, "取消");
+    return;
+  }
   if (st.energy < 15) {
     showSheet("貓咪體力不足 ⚡", "貓咪太累了喵！請先前往「屬性」面板讓貓咪「睡覺休息」恢復體力後再來上課！", "前往休息", () => setPetView("stats"));
     return;

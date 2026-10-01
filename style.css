@@ -3739,3 +3739,117 @@ html.low-fx .board.skin-arrive {
 #petView:empty {
   display: none;
 }
+
+/* ===== 貓咪生活：走動、動作、隨機事件、生病 ===== */
+.pet-quick-status-bar {
+  flex-wrap: wrap;
+}
+.pet-quick-pill.sick {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--warn);
+  color: var(--warn);
+  font: inherit;
+  font-weight: 800;
+}
+/* 位置與轉向用獨立的 translate/scale，transform 留給各動作的 keyframes */
+.pet-room-cat-wrap {
+  translate: var(--cat-x, 0px) 0;
+  scale: var(--cat-flip, 1) 1;
+  transition: translate var(--cat-walk-ms, 1.6s) ease-in-out;
+}
+.pet-room-cat-wrap.cat-walk {
+  animation: catWalk 0.36s ease-in-out infinite;
+}
+.pet-room-cat-wrap.cat-jump {
+  animation: catJump 0.8s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.pet-room-cat-wrap.cat-lick {
+  animation: catLick 0.55s ease-in-out 2;
+}
+.pet-room-cat-wrap.cat-stretch {
+  animation: catStretch 1.1s ease-in-out;
+}
+.pet-room-cat-wrap.cat-spin {
+  animation: catSpin 1.1s ease-in-out;
+}
+.pet-room-cat-wrap.cat-scratch {
+  animation: catScratch 0.16s linear infinite;
+}
+@keyframes catWalk {
+  50% { transform: translateY(-5px) rotate(1.5deg); }
+}
+@keyframes catJump {
+  0%, 100% { transform: translateY(0) scale(1); }
+  15% { transform: translateY(4px) scale(1.06, 0.9); }
+  45% { transform: translateY(-62px) scale(0.95, 1.06); }
+  80% { transform: translateY(0) scale(1.05, 0.93); }
+}
+@keyframes catLick {
+  50% { transform: rotate(-7deg) translateY(4px); }
+}
+@keyframes catStretch {
+  40%, 60% { transform: scale(1.14, 0.88) translateY(8px); }
+}
+@keyframes catSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes catScratch {
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+.room-event {
+  position: absolute;
+  z-index: 14;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  border: 1.5px solid var(--accent);
+  background: rgba(255, 255, 255, 0.96);
+  color: #22322e;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  animation: eventPulse 1s ease-in-out infinite;
+}
+.room-event span {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.room-event small {
+  font-size: 0.66rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+@keyframes eventPulse {
+  50% { transform: scale(1.08); }
+}
+.room-sick-badge {
+  position: absolute;
+  top: 52px;
+  left: 12px;
+  z-index: 14;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--warn);
+  background: rgba(255, 255, 255, 0.96);
+  color: #b4553f;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.clinic-box {
+  display: grid;
+  gap: 10px;
+}
+.clinic-box small {
+  color: var(--muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-room-cat-wrap,
+  .room-event {
+    transition: none;
+    animation: none !important;
+  }
+}

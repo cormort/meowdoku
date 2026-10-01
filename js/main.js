@@ -3,6 +3,7 @@
 //   #/meowdoku   貓咪邏輯謎題（數獨打工）
 import { audio } from "../audio.js";
 import { enterPuzzle, initPuzzle, leavePuzzle, renderBoard } from "./meowdoku.js";
+import { startLife } from "./life.js";
 import { petData, showPetHome, showStarterSetup, syncGrowthStages } from "./pet.js";
 import { loadSubjects } from "./quiz.js";
 import { $, LS, hideSheet } from "./ui.js";
@@ -82,6 +83,7 @@ window.addEventListener("hashchange", route);
   initPuzzle(
     petData.initialized ? localStorage.getItem(LS.skin) || petData.selected || "0" : "emoji",
   );
+  startLife();
   if (petData.initialized) syncGrowthStages();
   else setTimeout(showStarterSetup, 180);
   await subjectsReady; // 學院頁需要學科表
