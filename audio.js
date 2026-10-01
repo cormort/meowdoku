@@ -544,6 +544,44 @@ class MeowAudioEngine {
   playCheer() {
     this.playVictory();
   }
+
+  // 13. 相機快門聲 (拍照留念)
+  playShutter() {
+    if (!this.sfxEnabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      // 反光鏡彈起
+      const osc = this.ctx.createOscillator();
+      const oscGain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(650, now);
+      osc.frequency.exponentialRampToValueAtTime(160, now + 0.04);
+      oscGain.gain.setValueAtTime(0.3, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+      osc.connect(oscGain);
+      oscGain.connect(this.sfxGain);
+      osc.start(now);
+      osc.stop(now + 0.05);
+
+      // 機械快門聲
+      const bufSize = Math.floor(this.ctx.sampleRate * 0.09);
+      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.35));
+      }
+      const noise = this.ctx.createBufferSource();
+      noise.buffer = buf;
+      const noiseGain = this.ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.25, now + 0.025);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+      noise.connect(noiseGain);
+      noiseGain.connect(this.sfxGain);
+      noise.start(now + 0.025);
+    } catch {}
+  }
 }
 
 export const audio = new MeowAudioEngine();
