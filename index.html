@@ -1176,6 +1176,597 @@
       .photo-action-btn.primary:hover {
         background: var(--accent-strong);
       }
+
+      /* 貓咪快捷狀態條 (金幣、飽食、體力、疲勞) */
+      .pet-quick-status-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 6px 12px;
+        margin-bottom: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .pet-quick-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--ink);
+      }
+      .coin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 1px solid #fcd34d;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 0.74rem;
+      }
+
+      /* 貓咪學院排課介面 */
+      .academy-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .academy-hero {
+        background: linear-gradient(135deg, #f0fdf4, #e0f2fe);
+        border: 1px solid #bae6fd;
+        border-radius: 14px;
+        padding: 10px 12px;
+        font-size: 0.74rem;
+        line-height: 1.45;
+        color: #0369a1;
+      }
+      .academy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .academy-card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .academy-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+      }
+      .academy-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .academy-card-title {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 800;
+        font-size: 0.82rem;
+      }
+      .academy-stat-val {
+        font-size: 0.68rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 999px;
+      }
+      .academy-desc {
+        font-size: 0.65rem;
+        color: var(--muted);
+        line-height: 1.35;
+        min-height: 28px;
+      }
+      .academy-action-btn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 7px 10px;
+        font-weight: 700;
+        font-size: 0.74rem;
+        cursor: pointer;
+        transition: filter 0.15s ease, transform 0.1s ease;
+      }
+      .academy-action-btn:hover {
+        filter: brightness(1.08);
+      }
+      .academy-action-btn:active {
+        transform: scale(0.97);
+      }
+      .academy-work-card {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        border: 1.5px dashed #f59e0b;
+      }
+
+      /* 隨堂測驗題庫視窗 */
+      .quiz-box {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        text-align: left;
+      }
+      .quiz-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 6px;
+      }
+      .quiz-counter {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .quiz-question {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1.5;
+        background: var(--card);
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      }
+      .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .quiz-option-btn {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--ink);
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.15s ease;
+      }
+      .quiz-option-btn:hover:not(:disabled) {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        transform: translateX(3px);
+      }
+      .quiz-option-btn.correct {
+        background: #ecfdf5 !important;
+        border-color: #10b981 !important;
+        color: #065f46 !important;
+        font-weight: 800;
+      }
+      .quiz-option-btn.wrong {
+        background: #fef2f2 !important;
+        border-color: #ef4444 !important;
+        color: #991b1b !important;
+      }
+      .quiz-feedback {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        border: 1px solid var(--line);
+        animation: fadeIn 0.25s ease;
+      }
+      .quiz-feedback b {
+        display: block;
+        margin-bottom: 3px;
+      }
+
+      /* 測驗結果畫面 */
+      .quiz-result-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        text-align: center;
+      }
+      .quiz-grade-badge {
+        font-size: 2.2rem;
+        font-weight: 900;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #fef08a, #f59e0b);
+        color: #78350f;
+        box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+      }
+      .quiz-rewards-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin: 6px 0;
+      }
+      .quiz-reward-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        background: var(--card);
+        border: 1px solid var(--line);
+      }
+
+      /* 狀態六芒星與生理作息面板 */
+      .stats-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .stats-bars-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .stat-bar-box {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 8px 10px;
+      }
+      .stat-bar-head {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .stat-meter-track {
+        height: 8px;
+        background: var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .stat-meter-fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.4s ease;
+      }
+      .daily-care-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .daily-care-btn {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        color: var(--ink);
+        transition: all 0.15s ease;
+      }
+      .daily-care-btn:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+      .daily-care-btn small {
+        font-size: 0.62rem;
+        color: var(--muted);
+      }
+      .win-coins-notice {
+        margin-top: 6px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #d97706;
+      }
+
+      /* 商店與家具工坊樣式 */
+      .shop-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .shop-tab-btn {
+        flex: 1;
+        padding: 7px 4px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        color: var(--ink);
+        transition: all 0.15s ease;
+      }
+      .shop-tab-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .shop-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .shop-item-card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        transition: transform 0.15s ease;
+      }
+      .shop-item-card:hover {
+        transform: translateY(-2px);
+      }
+      .shop-item-thumb {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.02);
+      }
+      .shop-item-name {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .shop-item-desc {
+        font-size: 0.65rem;
+        color: var(--muted);
+        line-height: 1.35;
+        min-height: 26px;
+      }
+      .shop-buy-btn {
+        width: 100%;
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.74rem;
+        font-weight: 800;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        transition: filter 0.15s ease;
+      }
+      .shop-buy-btn:hover {
+        filter: brightness(1.08);
+      }
+      .shop-buy-btn:disabled {
+        background: var(--line);
+        color: var(--muted);
+        cursor: not-allowed;
+      }
+
+      /* 扭蛋機樣式 */
+      .gacha-stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 0;
+        text-align: center;
+      }
+      .gacha-machine-wrap {
+        position: relative;
+        width: 190px;
+        height: 230px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .gacha-machine-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 20px rgba(245, 158, 11, 0.35));
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .gacha-machine-wrap.cranking .gacha-machine-img {
+        animation: gachaShake 0.5s ease-in-out infinite;
+      }
+      @keyframes gachaShake {
+        0% { transform: rotate(0deg) scale(1); }
+        25% { transform: rotate(-3deg) scale(1.04); }
+        50% { transform: rotate(3deg) scale(1.04); }
+        75% { transform: rotate(-2deg) scale(1.02); }
+        100% { transform: rotate(0deg) scale(1); }
+      }
+      .gacha-rates-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #92400e;
+        background: #fef3c7;
+        border: 1px solid #fcd34d;
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
+      .gacha-pity-text {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .gacha-actions-row {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+      }
+      .gacha-pull-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 10px;
+        border-radius: 14px;
+        border: none;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .gacha-pull-btn.single {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      .gacha-pull-btn.multi {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35);
+      }
+      .gacha-pull-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        filter: brightness(1.08);
+      }
+      .gacha-pull-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* 扭蛋開獎展示卡 */
+      .gacha-reveal-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 0;
+        text-align: center;
+      }
+      .gacha-capsule-anim {
+        width: 130px;
+        height: 130px;
+        object-fit: contain;
+        animation: capsulePop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        filter: drop-shadow(0 8px 24px rgba(236, 72, 153, 0.45));
+      }
+      @keyframes capsulePop {
+        0% { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+        60% { transform: scale(1.15) rotate(10deg); opacity: 1; }
+        100% { transform: scale(1) rotate(0deg); }
+      }
+      .gacha-results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 8px;
+        width: 100%;
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 4px;
+      }
+      .gacha-res-card {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-align: center;
+      }
+      .gacha-res-card.ssr {
+        border-color: #f59e0b;
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+      }
+      .gacha-res-card.sr {
+        border-color: #8b5cf6;
+        background: linear-gradient(135deg, #fbf7ff, #f3e8ff);
+      }
+      .gacha-res-thumb {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+      }
+
+      /* 客廳家具與壁紙裝飾 */
+      .pet-room-stage.wallpaper-tatami {
+        background-image: url("./icons/room/wallpaper_tatami.webp");
+        background-size: 160px;
+        background-repeat: repeat;
+      }
+      .room-furniture-kotatsu {
+        position: absolute;
+        left: 86px;
+        bottom: 12px;
+        width: 100px;
+        height: auto;
+        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.14));
+        cursor: pointer;
+        z-index: 4;
+        transition: transform 0.15s ease;
+      }
+      .room-furniture-kotatsu:hover {
+        transform: scale(1.06);
+      }
+      .room-furniture-cattree {
+        position: absolute;
+        left: 8px;
+        bottom: 20px;
+        width: 76px;
+        height: auto;
+        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+        cursor: pointer;
+        z-index: 4;
+        transition: transform 0.15s ease;
+      }
+      .room-furniture-cattree:hover {
+        transform: scale(1.06);
+      }
+      .costume-thumb-img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+      }
+      .costume-layer-sprite {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        z-index: 5;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+      }
       .pet-room-stage .pet-speech {
         position: absolute;
         top: 10px;
@@ -1246,12 +1837,13 @@
       }
       .pet-room-cat-wrap {
         position: relative;
-        z-index: 2;
+        z-index: 3;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         min-height: 185px;
+        pointer-events: none;
       }
       .room-cat-img {
         width: auto;
@@ -1261,6 +1853,7 @@
         filter: drop-shadow(0 8px 16px rgba(40, 25, 10, 0.14));
         transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
         animation: roomCatBreathe 3.6s ease-in-out infinite;
+        pointer-events: auto;
       }
       @keyframes roomCatBreathe {
         0%, 100% {
@@ -3200,6 +3793,12 @@
         indexOf,
       } from "./engine.js?v=3";
       import { audio } from "./audio.js";
+      import {
+        QUIZ_SUBJECTS,
+        QUIZ_QUESTIONS,
+        generateQuizSession,
+        calculateQuizResult,
+      } from "./quiz.js";
       const $ = (id) => document.getElementById(id);
       const LS = {
         best: (n) => `meowdoku.best.${n}`,
@@ -3576,11 +4175,13 @@
       }
 
       let petData = loadPetData();
+      window.petData = petData;
       collectionFilter = petData.collectionFilter || "all";
       collectionSort = petData.collectionSort || "index";
       function defaultPetData() {
         return {
           initialized: false,
+          coins: 500,
           food: { fish: 0, chicken: 0, tuna: 0, premium: 0 },
           affection: {},
           mood: {},
@@ -3604,6 +4205,9 @@
           equippedCostumes: {},
           eventProgress: {},
           eventClaims: {},
+          stats: {},
+          status: {},
+          inventory: {},
         };
       }
       function loadPetData() {
@@ -3612,6 +4216,7 @@
             d = defaultPetData();
           if (raw) {
             Object.assign(d, raw);
+            d.coins = Number(raw.coins ?? 500);
             d.food = { ...defaultPetData().food, ...raw.food };
             d.affection = { ...raw.affection };
             d.mood = { ...raw.mood };
@@ -3631,6 +4236,9 @@
             d.equippedCostumes = { ...(raw.equippedCostumes || {}) };
             d.eventProgress = { ...(raw.eventProgress || {}) };
             d.eventClaims = { ...(raw.eventClaims || {}) };
+            d.stats = { ...(raw.stats || {}) };
+            d.status = { ...(raw.status || {}) };
+            d.inventory = { ...(raw.inventory || {}) };
           }
           return d;
         } catch {
@@ -3641,6 +4249,64 @@
         try {
           localStorage.setItem(LS.pet, JSON.stringify(petData));
         } catch {}
+      }
+      function petCoins() {
+        return Number(petData.coins ?? 500);
+      }
+      function addCoins(n) {
+        petData.coins = Math.max(0, petCoins() + n);
+        savePetData();
+        if (n > 0 && typeof audio !== "undefined") audio.playCoin?.();
+      }
+      function petStats(key = activePetKey()) {
+        petData.stats = petData.stats || {};
+        if (!petData.stats[key]) {
+          petData.stats[key] = {
+            literacy: 12,
+            math: 15,
+            language: 10,
+            science: 10,
+            art: 10,
+            stamina: 25,
+          };
+        }
+        return petData.stats[key];
+      }
+      function addPetStat(key, statKey, amount = 1) {
+        const stats = petStats(key);
+        stats[statKey] = (stats[statKey] || 0) + amount;
+        savePetData();
+      }
+      function petStatus(key = activePetKey()) {
+        petData.status = petData.status || {};
+        if (!petData.status[key]) {
+          petData.status[key] = {
+            hunger: 80,
+            energy: 100,
+            fatigue: 10,
+            cleanliness: 90,
+          };
+        }
+        return petData.status[key];
+      }
+      function updatePetStatus(key, delta = {}) {
+        const s = petStatus(key);
+        if (delta.hunger !== undefined) s.hunger = Math.max(0, Math.min(100, s.hunger + delta.hunger));
+        if (delta.energy !== undefined) s.energy = Math.max(0, Math.min(100, s.energy + delta.energy));
+        if (delta.fatigue !== undefined) s.fatigue = Math.max(0, Math.min(100, s.fatigue + delta.fatigue));
+        if (delta.cleanliness !== undefined) s.cleanliness = Math.max(0, Math.min(100, s.cleanliness + delta.cleanliness));
+        savePetData();
+      }
+      function petQuickStatusBarHtml(key = activePetKey()) {
+        const st = petStatus(key);
+        return `
+          <div class="pet-quick-status-bar">
+            <span class="coin-badge" title="金幣：可用於上課、商店、家具與高階扭蛋">🪙 ${petCoins()}</span>
+            <span class="pet-quick-pill" title="飽食度">🍖 ${st.hunger}%</span>
+            <span class="pet-quick-pill" title="體力值">⚡ ${st.energy}%</span>
+            <span class="pet-quick-pill" title="疲勞度">💤 ${st.fatigue}%</span>
+          </div>
+        `;
       }
       function localDay() {
         const d = new Date();
@@ -3980,6 +4646,38 @@
           right: "🎁",
           desc: "完成聖誕活動任務解鎖",
         },
+        {
+          id: "costume_wizard",
+          name: "大魔法師套裝",
+          icon: "🧙‍♂️",
+          image: "./icons/room/costume_wizard.webp",
+          desc: "🌟 SSR 扭蛋傳奇！奧術星輝法袍與星月尖帽",
+          permanent: true,
+        },
+        {
+          id: "costume_royal",
+          name: "皇家至尊套裝",
+          icon: "👑",
+          image: "./icons/room/costume_royal.webp",
+          desc: "🌟 SSR 扭蛋傳奇！純金鑲鑽王冠與雍容披風",
+          permanent: true,
+        },
+        {
+          id: "costume_detective",
+          name: "名偵探套裝",
+          icon: "🕵️",
+          image: "./icons/room/costume_detective.webp",
+          desc: "✨ SR 扭蛋限定！英倫格紋獵鹿帽與放大鏡",
+          permanent: true,
+        },
+        {
+          id: "costume_sailor",
+          name: "青春水手服",
+          icon: "⚓",
+          image: "./icons/room/costume_sailor.webp",
+          desc: "✨ SR 扭蛋限定！蔚藍水手領巾與海軍帽",
+          permanent: true,
+        },
       ];
       const EVENT_MISSIONS = [
         {
@@ -4040,9 +4738,11 @@
       }
       function festivalCostumeHtml(key = activePetKey()) {
         const f = selectedCostume(key);
-        return f && f.id !== "default"
-          ? `<span class="festival-costume"><span class="costume-hat">${f.hat}</span><span class="costume-left">${f.left}</span><span class="costume-right">${f.right}</span><span class="costume-label">${f.name}</span></span>`
-          : "";
+        if (!f || f.id === "default") return "";
+        if (f.image) {
+          return `<span class="festival-costume"><img class="costume-layer-sprite" src="${f.image}" alt="${escapeHtml(f.name)}"><span class="costume-label">${f.name}</span></span>`;
+        }
+        return `<span class="festival-costume"><span class="costume-hat">${f.hat || "✨"}</span><span class="costume-left">${f.left || ""}</span><span class="costume-right">${f.right || ""}</span><span class="costume-label">${f.name}</span></span>`;
       }
       function festivalWrapClass(key = activePetKey()) {
         const f = selectedCostume(key);
@@ -4087,7 +4787,7 @@
         return messages.length ? `<div class="special-day">${messages.join("<br>")}</div>` : "";
       }
       function petSubnavHtml(view) {
-        return `<div class="pet-subnav"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 貓咪小屋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號牆</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念日</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button></div>`;
+        return `<div class="pet-subnav"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 小屋</button><button data-pet-view="academy" class="${view === "academy" ? "active" : ""}">📚 學院</button><button data-pet-view="stats" class="${view === "stats" ? "active" : ""}">📊 屬性</button><button data-pet-view="shop" class="${view === "shop" ? "active" : ""}">🛍️ 商店</button><button data-pet-view="gacha" class="${view === "gacha" ? "active" : ""}">🎰 扭蛋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button></div>`;
       }
       function eventKey() {
         const f = activeFestival();
@@ -4145,11 +4845,14 @@
           total = FESTIVAL_COSTUMES.length,
           percent = Math.round((owned / total) * 100),
           selected = selectedCostume(key);
-        return `<div class="collection-progress"><div class="collection-progress-head"><span>👗 服裝收藏進度</span><span>${owned}/${total}</span></div><div class="collection-progress-bar"><i style="--collection-progress:${percent}%"></i></div><small>完成節日活動任務，即可永久收藏並在活動結束後繼續穿著。</small></div><div class="costume-collection">${FESTIVAL_COSTUMES.map(
+        return `<div class="collection-progress"><div class="collection-progress-head"><span>👗 服裝收藏進度</span><span>${owned}/${total}</span></div><div class="collection-progress-bar"><i style="--collection-progress:${percent}%"></i></div><small>轉動扭蛋機或完成活動任務，即可永久收藏並自由更換造型！</small></div><div class="costume-collection">${FESTIVAL_COSTUMES.map(
           (c) => {
-            const unlocked = petData.unlockedCostumes.includes(c.id),
+            const unlocked = c.id === "default" || petData.unlockedCostumes.includes(c.id),
               equipped = selected.id === c.id;
-            return `<div class="costume-card${unlocked ? "" : " locked"}${equipped ? " equipped" : ""}"><span class="costume-thumb">${c.icon}</span><span><b>${c.name}</b><small>${c.desc}</small></span>${!unlocked ? '<span class="costume-lock">🔒</span>' : ""}${equipped ? '<span class="costume-equipped">穿著中</span>' : ""}${unlocked ? `<button data-equip-costume="${c.id}" ${equipped ? "disabled" : ""}>${equipped ? "✓ 目前穿著" : "換上服裝"}</button>` : ""}</div>`;
+            const thumb = c.image
+              ? `<img class="costume-thumb-img" src="${c.image}" alt="${escapeHtml(c.name)}">`
+              : `<span class="costume-thumb">${c.icon}</span>`;
+            return `<div class="costume-card${unlocked ? "" : " locked"}${equipped ? " equipped" : ""}">${thumb}<span><b>${c.name}</b><small>${c.desc}</small></span>${!unlocked ? '<span class="costume-lock">🔒</span>' : ""}${equipped ? '<span class="costume-equipped">穿著中</span>' : ""}${unlocked ? `<button data-equip-costume="${c.id}" ${equipped ? "disabled" : ""}>${equipped ? "✓ 目前穿著" : "換上服裝"}</button>` : ""}</div>`;
           },
         ).join("")}</div>`;
       }
@@ -4201,6 +4904,7 @@
         savePetData();
         showPetHome();
       }
+      window.setPetView = setPetView;
       function savePetDates() {
         const key = activePetKey(),
           birthday = $("petBirthday")?.value || "",
@@ -4512,12 +5216,30 @@
         ctx.clip();
 
         // Room Background
-        const bgGrad = ctx.createRadialGradient(fx + fw / 2, fy + fh * 0.25, 40, fx + fw / 2, fy + fh * 0.45, fw * 0.7);
-        bgGrad.addColorStop(0, "#fffdf8");
-        bgGrad.addColorStop(0.7, "#f2f5f3");
-        bgGrad.addColorStop(1, "#e6ece8");
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(fx, fy, fw, fh);
+        if (petData.roomWallpaper === "tatami") {
+          const bgGrad = ctx.createLinearGradient(fx, fy, fx, fy + fh);
+          bgGrad.addColorStop(0, "#fdf6e9");
+          bgGrad.addColorStop(1, "#f1e3be");
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(fx, fy, fw, fh);
+          ctx.save();
+          ctx.strokeStyle = "rgba(180, 150, 100, 0.18)";
+          ctx.lineWidth = 1.5;
+          for (let y = fy; y < fy + fh; y += 28) {
+            ctx.beginPath();
+            ctx.moveTo(fx, y);
+            ctx.lineTo(fx + fw, y);
+            ctx.stroke();
+          }
+          ctx.restore();
+        } else {
+          const bgGrad = ctx.createRadialGradient(fx + fw / 2, fy + fh * 0.25, 40, fx + fw / 2, fy + fh * 0.45, fw * 0.7);
+          bgGrad.addColorStop(0, "#fffdf8");
+          bgGrad.addColorStop(0.7, "#f2f5f3");
+          bgGrad.addColorStop(1, "#e6ece8");
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(fx, fy, fw, fh);
+        }
 
         // Rug
         ctx.save();
@@ -4535,6 +5257,30 @@
         ctx.fill();
         ctx.restore();
 
+        // Left Furniture: Cat Tree (if placed)
+        if (petData.roomFurniture?.cattree) {
+          const cattreeEl = $("roomFurnitureCattree");
+          if (cattreeEl && cattreeEl.complete && cattreeEl.naturalWidth > 0) {
+            const treeW = 155;
+            const treeH = cattreeEl.naturalHeight * (treeW / cattreeEl.naturalWidth);
+            const treeX = fx + 16;
+            const treeY = fy + fh - treeH - 45;
+            ctx.drawImage(cattreeEl, treeX, treeY, treeW, treeH);
+          }
+        }
+
+        // Mid-Left Furniture: Kotatsu (if placed)
+        if (petData.roomFurniture?.kotatsu) {
+          const kotatsuEl = $("roomFurnitureKotatsu");
+          if (kotatsuEl && kotatsuEl.complete && kotatsuEl.naturalWidth > 0) {
+            const kw = 175;
+            const kh = kotatsuEl.naturalHeight * (kw / kotatsuEl.naturalWidth);
+            const kx = fx + 150;
+            const ky = fy + fh - kh - 24;
+            ctx.drawImage(kotatsuEl, kx, ky, kw, kh);
+          }
+        }
+
         // Cat
         const catImg = $("roomCatImg");
         if (catImg && catImg.complete && catImg.naturalWidth > 0) {
@@ -4543,6 +5289,15 @@
           const catX = fx + (fw - catW) / 2;
           const catY = fy + fh - catH - 50;
           ctx.drawImage(catImg, catX, catY, catW, catH);
+
+          // Costume Sprite Overlay (if equipped)
+          const activeCostume = selectedCostume(activePetKey());
+          if (activeCostume && activeCostume.image) {
+            const costImg = stage.querySelector(".costume-layer-sprite");
+            if (costImg && costImg.complete && costImg.naturalWidth > 0) {
+              ctx.drawImage(costImg, catX, catY, catW, catH);
+            }
+          }
         }
 
         // Corner Litter Box
@@ -4677,6 +5432,658 @@
         });
       }
 
+      function academyPageHtml(key = activePetKey()) {
+        const stats = petStats(key);
+        const name = petName(key);
+        const subList = Object.values(QUIZ_SUBJECTS);
+
+        const cards = subList
+          .map((sub) => {
+            const val = stats[sub.id] || 0;
+            const lvl = Math.floor(val / 10) + 1;
+            const progressPercent = Math.min(100, Math.round(((val % 10) / 10) * 100));
+            return `
+              <div class="academy-card">
+                <div class="academy-card-head">
+                  <span class="academy-card-title">${sub.icon} ${sub.name}</span>
+                  <span class="academy-stat-val" style="background:${sub.bgLight}; color:${sub.color};">Lv.${lvl} (${val}pt)</span>
+                </div>
+                <div class="academy-desc">${sub.desc}</div>
+                <div class="stat-meter-track" title="當前學科進度 ${val % 10}/10">
+                  <div class="stat-meter-fill" style="width:${progressPercent}%; background:${sub.color};"></div>
+                </div>
+                <button class="academy-action-btn" data-start-quiz="${sub.id}">排課測驗 (耗 15⚡)</button>
+              </div>
+            `;
+          })
+          .join("");
+
+        return `
+          ${petSubnavHtml("academy")}
+          ${petQuickStatusBarHtml(key)}
+          <div class="academy-panel">
+            <div class="academy-hero">
+              <b>🎓 貓咪導師學院開課中！</b><br>
+              替 <b>${escapeHtml(name)}</b> 排定六大學科隨堂測驗（3 題趣味通識），合格即可增加學科能力、賺取 <b>高額金幣 🪙</b> 與稀有掉落物！
+            </div>
+            <div class="academy-grid">
+              ${cards}
+              <div class="academy-card academy-work-card">
+                <div class="academy-card-head">
+                  <span class="academy-card-title">🧩 數獨打工兼職・邏輯特訓</span>
+                  <span class="academy-stat-val" style="background:#fef3c7; color:#b45309;">金幣 +60~200</span>
+                </div>
+                <div class="academy-desc">在數獨謎題中擔任貓咪小助手，每完成一局立即賺取大量金幣與算術邏輯屬性！</div>
+                <button class="academy-action-btn" style="background:#d97706;" data-close-to-game="true">前往數獨打工 🐾</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function statsPageHtml(key = activePetKey()) {
+        const stats = petStats(key);
+        const st = petStatus(key);
+        const name = petName(key);
+        const aff = petAffection(key);
+        const lvl = petLevel(aff);
+        const stage = growthStage(aff);
+
+        const subList = Object.values(QUIZ_SUBJECTS);
+        const statBars = subList
+          .map((sub) => {
+            const val = stats[sub.id] || 0;
+            const percent = Math.min(100, Math.round((val / 100) * 100));
+            return `
+              <div class="stat-bar-box">
+                <div class="stat-bar-head">
+                  <span>${sub.icon} ${sub.name}</span>
+                  <span style="color:${sub.color};">${val} pts</span>
+                </div>
+                <div class="stat-meter-track">
+                  <div class="stat-meter-fill" style="width:${percent}%; background:${sub.color};"></div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        return `
+          ${petSubnavHtml("stats")}
+          ${petQuickStatusBarHtml(key)}
+          <div class="stats-panel">
+            <div class="pet-status-card" style="margin:0;">
+              <div class="pet-status-head">
+                <div class="pet-name-title">🐾 ${escapeHtml(name)}　Lv.${lvl}</div>
+                <div class="growth-badges">
+                  <span class="growth-badge">${stage.icon} ${stage.name}</span>
+                  <span class="title-badge">🏅 ${primaryTitle(key)}・已裝備</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-title" style="font-size:0.78rem; font-weight:800; color:var(--muted); margin-top:2px;">📊 學科能力六芒星分佈</div>
+            <div class="stats-bars-grid">
+              ${statBars}
+            </div>
+
+            <div class="section-title" style="font-size:0.78rem; font-weight:800; color:var(--muted); margin-top:4px;">🌱 電子雞生理作息健康指標</div>
+            <div class="stats-bars-grid">
+              <div class="stat-bar-box">
+                <div class="stat-bar-head">
+                  <span>🍖 飽食度</span>
+                  <span>${st.hunger}/100</span>
+                </div>
+                <div class="stat-meter-track">
+                  <div class="stat-meter-fill" style="width:${st.hunger}%; background:#10b981;"></div>
+                </div>
+              </div>
+              <div class="stat-bar-box">
+                <div class="stat-bar-head">
+                  <span>⚡ 體力值</span>
+                  <span>${st.energy}/100</span>
+                </div>
+                <div class="stat-meter-track">
+                  <div class="stat-meter-fill" style="width:${st.energy}%; background:#3b82f6;"></div>
+                </div>
+              </div>
+              <div class="stat-bar-box">
+                <div class="stat-bar-head">
+                  <span>💤 疲勞度</span>
+                  <span>${st.fatigue}/100</span>
+                </div>
+                <div class="stat-meter-track">
+                  <div class="stat-meter-fill" style="width:${st.fatigue}%; background:#f59e0b;"></div>
+                </div>
+              </div>
+              <div class="stat-bar-box">
+                <div class="stat-bar-head">
+                  <span>🧹 清潔度</span>
+                  <span>${st.cleanliness}/100</span>
+                </div>
+                <div class="stat-meter-track">
+                  <div class="stat-meter-fill" style="width:${st.cleanliness}%; background:#06b6d4;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="daily-care-row">
+              <button class="daily-care-btn" data-care="feed">
+                <span>🍖 飽餐一頓</span>
+                <small>飽食+35 體力+10</small>
+              </button>
+              <button class="daily-care-btn" data-care="sleep">
+                <span>💤 睡覺休息</span>
+                <small>體力=100 疲勞-40</small>
+              </button>
+              <button class="daily-care-btn" data-care="bath">
+                <span>🛁 梳理洗澡</span>
+                <small>清潔=100 心情+15</small>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      let currentQuizState = null;
+
+      function startQuizSession(subjectId) {
+        const key = activePetKey();
+        const st = petStatus(key);
+        if (st.energy < 15) {
+          showSheet("貓咪體力不足 ⚡", "貓咪太累了喵！請先前往「屬性」面板讓貓咪「睡覺休息」恢復體力後再來上課！", "前往休息", () => setPetView("stats"));
+          return;
+        }
+        if (st.hunger < 10) {
+          showSheet("肚子咕嚕嚕 🍖", "貓咪太餓了喵！請先前往餵食飽餐一頓，補足元氣再來學習！", "前往餵食", () => setPetView("stats"));
+          return;
+        }
+
+        const session = generateQuizSession(subjectId, 3);
+        currentQuizState = {
+          subjectId,
+          questions: session.questions,
+          currentIndex: 0,
+          correctCount: 0,
+          answered: false,
+        };
+
+        renderQuizQuestion();
+      }
+
+      function renderQuizQuestion() {
+        if (!currentQuizState) return;
+        const { subjectId, questions, currentIndex } = currentQuizState;
+        if (currentIndex >= questions.length) {
+          finishQuizSession();
+          return;
+        }
+
+        const sub = QUIZ_SUBJECTS[subjectId] || QUIZ_SUBJECTS.literacy;
+        const q = questions[currentIndex];
+        currentQuizState.answered = false;
+
+        const optionsHtml = q.options
+          .map(
+            (opt, i) => `
+          <button class="quiz-option-btn" data-quiz-opt="${i}">
+            <span style="opacity:0.6;">${["A", "B", "C", "D"][i]}.</span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
+        `,
+          )
+          .join("");
+
+        const body = `
+          <div class="quiz-box">
+            <div class="quiz-header">
+              <span style="font-weight:800; color:${sub.color};">${sub.icon} ${sub.name}</span>
+              <span class="quiz-counter">第 ${currentIndex + 1} / ${questions.length} 題</span>
+            </div>
+            <div class="quiz-question">${escapeHtml(q.q)}</div>
+            <div class="quiz-options" id="quizOptionsWrap">
+              ${optionsHtml}
+            </div>
+            <div id="quizFeedbackBox"></div>
+          </div>
+        `;
+
+        showSheet(`📚 隨堂測驗・${sub.name}`, body, "退出測驗", () => setPetView("academy"));
+      }
+
+      function handleQuizAnswer(selectedIndex) {
+        if (!currentQuizState || currentQuizState.answered) return;
+        currentQuizState.answered = true;
+
+        const { questions, currentIndex } = currentQuizState;
+        const q = questions[currentIndex];
+        const isCorrect = Number(selectedIndex) === q.answer;
+
+        if (isCorrect) {
+          currentQuizState.correctCount++;
+          audio.playQuizCorrect?.();
+          audio.playCoin?.();
+        } else {
+          audio.playError?.();
+        }
+        navigator.vibrate?.(isCorrect ? [20, 20] : 40);
+
+        const buttons = document.querySelectorAll("#quizOptionsWrap .quiz-option-btn");
+        buttons.forEach((btn, idx) => {
+          btn.disabled = true;
+          if (idx === q.answer) btn.classList.add("correct");
+          else if (idx === Number(selectedIndex)) btn.classList.add("wrong");
+        });
+
+        const feedbackBox = $("quizFeedbackBox");
+        if (feedbackBox) {
+          feedbackBox.innerHTML = `
+            <div class="quiz-feedback" style="border-left: 4px solid ${isCorrect ? "#10b981" : "#ef4444"};">
+              <b>${isCorrect ? "🎉 答對了！太厲害了喵！" : "😿 答錯囉！下次加油！"}</b>
+              <div>💡 <b>解析：</b>${escapeHtml(q.explain)}</div>
+              ${q.tip ? `<div style="margin-top:4px; color:var(--muted);"><small>🐾 提示：${escapeHtml(q.tip)}</small></div>` : ""}
+            </div>
+            <button class="academy-action-btn" id="btnNextQuizQuestion" style="margin-top:10px; width:100%; font-size:0.85rem; padding:10px;">
+              ${currentIndex + 1 < questions.length ? "下一題 ➔" : "查看成績單 🏆"}
+            </button>
+          `;
+          $("btnNextQuizQuestion")?.addEventListener("click", () => {
+            currentQuizState.currentIndex++;
+            renderQuizQuestion();
+          });
+        }
+      }
+
+      function finishQuizSession() {
+        if (!currentQuizState) return;
+        const { subjectId, correctCount, questions } = currentQuizState;
+        const total = questions.length;
+        const res = calculateQuizResult(subjectId, correctCount, total);
+        const sub = QUIZ_SUBJECTS[subjectId] || QUIZ_SUBJECTS.literacy;
+        const key = activePetKey();
+
+        addCoins(res.coins);
+        addPetStat(key, subjectId, res.statGain);
+        updatePetStatus(key, {
+          energy: -res.staminaCost,
+          hunger: -res.hungerCost,
+          fatigue: res.fatigueGain,
+        });
+
+        if (res.dropItem) {
+          const itemKey = res.dropItem.type === "premium_snack" ? "premium" : "fish";
+          petData.food[itemKey] = (petData.food[itemKey] || 0) + res.dropItem.qty;
+        }
+
+        savePetData();
+        audio.playVictory?.();
+
+        const grade = res.perfect ? "S" : res.pass ? "A" : "B";
+
+        const body = `
+          <div class="quiz-result-card">
+            <div class="quiz-grade-badge">${grade}</div>
+            <div style="font-size:1.1rem; font-weight:800; color:var(--ink);">
+              ${res.perfect ? "全對滿分！天資聰穎喵！🎉" : res.pass ? "測驗合格！進步神速喵！✨" : "完成測驗！繼續加油喵！🐾"}
+            </div>
+            <div style="font-size:0.82rem; color:var(--muted);">
+              答對 ${res.correctCount} / ${res.totalCount} 題 · 得分 ${res.score} 分
+            </div>
+            <div class="quiz-rewards-row">
+              <span class="quiz-reward-pill">🪙 +${res.coins} 金幣</span>
+              <span class="quiz-reward-pill" style="color:${sub.color};">${sub.icon} ${sub.statName} +${res.statGain}</span>
+              ${res.dropItem ? `<span class="quiz-reward-pill" style="color:#b45309;">${res.dropItem.name} ×${res.dropItem.qty}</span>` : ""}
+            </div>
+            <div style="font-size:0.72rem; color:var(--muted); line-height:1.4;">
+              體力 -${res.staminaCost}⚡ · 飽食 -${res.hungerCost}🍖 · 疲勞 +${res.fatigueGain}💤
+            </div>
+          </div>
+        `;
+
+        currentQuizState = null;
+        showSheet("🏆 測驗成績單結算", body, "返回學院", () => setPetView("academy"));
+      }
+
+      function handleDailyCare(type) {
+        const key = activePetKey();
+        if (type === "feed") {
+          updatePetStatus(key, { hunger: 35, energy: 10 });
+          audio.playCatPlace?.();
+          showPetHome();
+        } else if (type === "sleep") {
+          const s = petStatus(key);
+          s.energy = 100;
+          s.fatigue = Math.max(0, s.fatigue - 40);
+          savePetData();
+          audio.playPurr?.();
+          showPetHome();
+        } else if (type === "bath") {
+          const s = petStatus(key);
+          s.cleanliness = 100;
+          savePetData();
+          audio.playCatPet?.();
+          showPetHome();
+        }
+      }
+
+      const SHOP_ITEMS = [
+        {
+          id: "premium_snack",
+          cat: "goods",
+          name: "特級營養罐頭",
+          icon: "🥫",
+          thumb: "./icons/room/litter_box.webp",
+          cost: 100,
+          desc: "極致鮮美！飽食度 +60，體力 +30",
+          effect: (key) => {
+            updatePetStatus(key, { hunger: 60, energy: 30 });
+            petData.food.premium = (petData.food.premium || 0) + 1;
+          },
+        },
+        {
+          id: "catnip_spray",
+          cat: "goods",
+          name: "天然特級貓薄荷",
+          icon: "🌿",
+          thumb: "./icons/room/teaser_wand.webp",
+          cost: 120,
+          desc: "舒緩身心！疲勞度瞬間歸零，心情滿分",
+          effect: (key) => {
+            const s = petStatus(key);
+            s.fatigue = 0;
+            savePetData();
+            animatePet("pet-wiggle", "貓薄荷太嗨了喵～！");
+          },
+        },
+        {
+          id: "clean_shampoo",
+          cat: "goods",
+          name: "極上貓咪香波",
+          icon: "🧴",
+          thumb: "./icons/room/poop_clump.webp",
+          cost: 80,
+          desc: "清潔度立即補滿 100%，好感度 +15",
+          effect: (key) => {
+            const s = petStatus(key);
+            s.cleanliness = 100;
+            petData.affection[key] = (petData.affection[key] || 0) + 15;
+            savePetData();
+          },
+        },
+        {
+          id: "furniture_cattree",
+          cat: "furniture",
+          name: "北歐原木貓跳台",
+          icon: "🪵",
+          thumb: "./icons/room/furniture_cat_tree.webp",
+          cost: 400,
+          desc: "放置於客廳左側，讓貓咪攀爬俯瞰客廳",
+          furnitureKey: "cattree",
+        },
+        {
+          id: "furniture_kotatsu",
+          cat: "furniture",
+          name: "日式暖被桌",
+          icon: "🍵",
+          thumb: "./icons/room/furniture_kotatsu.webp",
+          cost: 600,
+          desc: "放置於客廳右側，寒冬裡最溫暖的被爐",
+          furnitureKey: "kotatsu",
+        },
+        {
+          id: "wallpaper_tatami",
+          cat: "wallpaper",
+          name: "和風榻榻米壁紙",
+          icon: "🌸",
+          thumb: "./icons/room/wallpaper_tatami.webp",
+          cost: 500,
+          desc: "切換為溫馨日式和風客廳壁紙",
+          wallpaperKey: "tatami",
+        },
+      ];
+
+      const GACHA_POOL = {
+        ssr: [
+          { id: "costume_wizard", name: "星空大魔法師套裝", type: "costume", rarity: "SSR", thumb: "./icons/room/costume_wizard.webp", desc: "傳奇魔法學徒披風與巫師帽" },
+          { id: "costume_royal", name: "皇家加冕金冠王袍", type: "costume", rarity: "SSR", thumb: "./icons/room/costume_royal.webp", desc: "尊貴無比的皇室金冠與貂皮披風" },
+        ],
+        sr: [
+          { id: "costume_detective", name: "福爾摩斯名偵探風衣", type: "costume", rarity: "SR", thumb: "./icons/room/costume_detective.webp", desc: "千鳥格斗篷與獵鹿帽" },
+          { id: "costume_sailor", name: "高校青春水手服", type: "costume", rarity: "SR", thumb: "./icons/room/costume_sailor.webp", desc: "元氣滿滿的水手領與紅領結" },
+          { id: "furniture_kotatsu", name: "日式暖被桌", type: "furniture", rarity: "SR", thumb: "./icons/room/furniture_kotatsu.webp", desc: "擺放在客廳的暖暖被爐" },
+          { id: "furniture_cattree", name: "北歐原木貓跳台", type: "furniture", rarity: "SR", thumb: "./icons/room/furniture_cat_tree.webp", desc: "客廳豪華原木貓爬架" },
+        ],
+        r: [
+          { id: "title_gacha_king", name: "🏅 稱號【扭蛋大富豪】", type: "title", rarity: "R", title: "扭蛋大富豪" },
+          { id: "title_lucky_cat", name: "🏅 稱號【幸運招財貓】", type: "title", rarity: "R", title: "幸運招財貓" },
+          { id: "bundle_catnip", name: "特級貓薄荷 ×2", type: "item", rarity: "R", icon: "🌿", count: 2 },
+          { id: "bundle_tuna", name: "頂級鮪魚大餐 ×3", type: "item", rarity: "R", icon: "🐟", count: 3 },
+        ],
+        n: [
+          { id: "item_fish", name: "香酥小魚乾 ×5", type: "food", rarity: "N", foodId: "fish", count: 5, icon: "🐟" },
+          { id: "item_chicken", name: "鮮嫩雞胸肉 ×3", type: "food", rarity: "N", foodId: "chicken", count: 3, icon: "🍗" },
+        ],
+      };
+
+      let activeShopTab = "goods";
+
+      function shopPageHtml(key = activePetKey()) {
+        const coins = petCoins();
+        const tabs = [
+          { id: "goods", name: "🛒 道具雜貨" },
+          { id: "furniture", name: "🛋️ 家具工坊" },
+          { id: "wallpaper", name: "🖼️ 和風壁紙" },
+        ];
+
+        const tabHtml = `<div class="shop-tabs">${tabs.map((t) => `<button class="shop-tab-btn${activeShopTab === t.id ? " active" : ""}" data-shop-tab="${t.id}">${t.name}</button>`).join("")}</div>`;
+
+        const items = SHOP_ITEMS.filter((it) => it.cat === activeShopTab);
+        const gridHtml = `<div class="shop-grid">${items
+          .map((it) => {
+            const isFurniture = it.cat === "furniture";
+            const isWallpaper = it.cat === "wallpaper";
+            const owned = isFurniture
+              ? !!(petData.roomFurniture && petData.roomFurniture[it.furnitureKey])
+              : isWallpaper
+                ? petData.roomWallpaper === it.wallpaperKey
+                : false;
+            const canBuy = coins >= it.cost && !owned;
+            const label = owned ? "已擁有" : `🪙 ${it.cost} 購買`;
+
+            return `
+            <div class="shop-item-card">
+              <img class="shop-item-thumb" src="${it.thumb || "./icons/room/litter_box.webp"}" alt="${escapeHtml(it.name)}">
+              <span class="shop-item-name">${escapeHtml(it.name)}</span>
+              <span class="shop-item-desc">${escapeHtml(it.desc)}</span>
+              <button class="shop-buy-btn" data-buy-item="${it.id}" ${canBuy ? "" : "disabled"}>${label}</button>
+            </div>
+          `;
+          })
+          .join("")}</div>`;
+
+        return `
+          ${petSubnavHtml("shop")}
+          ${petQuickStatusBarHtml(key)}
+          <div class="shop-panel">
+            <div class="academy-hero" style="color:#0f766e; background:linear-gradient(135deg, #f0fdfa, #ccfbf1); border-color:#99f6e4;">
+              <b>🛍️ 貓咪生活館・雜貨與裝修</b><br>
+              使用測驗與打工累積的 <b>金幣 🪙</b> 購買美味點心、貓薄荷，以及打造專屬溫馨貓咪小屋！
+            </div>
+            ${tabHtml}
+            ${gridHtml}
+          </div>
+        `;
+      }
+
+      function buyShopItem(itemId) {
+        const it = SHOP_ITEMS.find((x) => x.id === itemId);
+        if (!it) return;
+        if (petCoins() < it.cost) {
+          showSheet("金幣不足 🪙", `購買「${it.name}」需要 ${it.cost} 金幣喵！請先前往「學院」測驗排課賺取金幣！`, "前往學院", () => setPetView("academy"));
+          return;
+        }
+
+        addCoins(-it.cost);
+        audio.playCoin?.();
+        navigator.vibrate?.([20, 20]);
+
+        const key = activePetKey();
+        if (it.cat === "goods" && it.effect) {
+          it.effect(key);
+        } else if (it.cat === "furniture") {
+          petData.roomFurniture = petData.roomFurniture || {};
+          petData.roomFurniture[it.furnitureKey] = true;
+          savePetData();
+        } else if (it.cat === "wallpaper") {
+          petData.roomWallpaper = it.wallpaperKey;
+          savePetData();
+        }
+
+        showPetHome();
+      }
+      window.buyShopItem = buyShopItem;
+      window.pullGacha = pullGacha;
+      window.showPetHome = showPetHome;
+      window.equipCostume = equipCostume;
+
+      function gachaPageHtml(key = activePetKey()) {
+        const coins = petCoins();
+        petData.gachaPity = petData.gachaPity || { total: 0, sinceSR: 0, sinceSSR: 0 };
+        const pity = petData.gachaPity;
+
+        return `
+          ${petSubnavHtml("gacha")}
+          ${petQuickStatusBarHtml(key)}
+          <div class="gacha-stage">
+            <div class="gacha-rates-badge">🌟 SSR 3% · ✨ SR 15% · 🔹 R 32% · 🍪 N 50%</div>
+            <div class="gacha-machine-wrap" id="gachaMachineWrap">
+              <img class="gacha-machine-img" id="gachaMachineImg" src="./icons/room/gacha_machine.webp" alt="豪華招財貓扭蛋機">
+            </div>
+            <div class="gacha-pity-text">
+              ✨ 距下次保底 SR：<b>${Math.max(1, 10 - (pity.sinceSR % 10))}</b> 抽<br>
+              🌟 距下次保底 SSR 限定時裝：<b>${Math.max(1, 40 - (pity.sinceSSR % 40))}</b> 抽
+            </div>
+            <div class="gacha-actions-row">
+              <button class="gacha-pull-btn single" data-pull-gacha="1" ${coins >= 300 ? "" : "disabled"}>
+                <span>單抽扭蛋</span>
+                <small>🪙 300 金幣</small>
+              </button>
+              <button class="gacha-pull-btn multi" data-pull-gacha="10" ${coins >= 2700 ? "" : "disabled"}>
+                <span>十連保底抽 🎁</span>
+                <small>🪙 2,700 金幣 (9折)</small>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      function pullGacha(count) {
+        const cost = count === 1 ? 300 : 2700;
+        if (petCoins() < cost) {
+          showSheet("金幣不足 🪙", `扭蛋需要 ${cost} 金幣喵！請先前往「學院」排課測驗或「數獨打工」賺取金幣！`, "前往學院", () => setPetView("academy"));
+          return;
+        }
+
+        addCoins(-cost);
+        audio.playCoin?.();
+        navigator.vibrate?.([30, 40, 50]);
+
+        const machineWrap = $("gachaMachineWrap");
+        if (machineWrap) machineWrap.classList.add("cranking");
+
+        petData.gachaPity = petData.gachaPity || { total: 0, sinceSR: 0, sinceSSR: 0 };
+        const results = [];
+
+        for (let i = 0; i < count; i++) {
+          petData.gachaPity.total++;
+          petData.gachaPity.sinceSR++;
+          petData.gachaPity.sinceSSR++;
+
+          let poolKey = "n";
+          // Check SSR pity (40)
+          if (petData.gachaPity.sinceSSR >= 40) {
+            poolKey = "ssr";
+            petData.gachaPity.sinceSSR = 0;
+            petData.gachaPity.sinceSR = 0;
+          }
+          // Check SR pity (10)
+          else if (petData.gachaPity.sinceSR >= 10 || (count === 10 && i === 9 && !results.some((r) => r.rarity === "SR" || r.rarity === "SSR"))) {
+            poolKey = "sr";
+            petData.gachaPity.sinceSR = 0;
+          } else {
+            const rand = Math.random();
+            if (rand < 0.03) {
+              poolKey = "ssr";
+              petData.gachaPity.sinceSSR = 0;
+              petData.gachaPity.sinceSR = 0;
+            } else if (rand < 0.18) {
+              poolKey = "sr";
+              petData.gachaPity.sinceSR = 0;
+            } else if (rand < 0.50) {
+              poolKey = "r";
+            } else {
+              poolKey = "n";
+            }
+          }
+
+          const pool = GACHA_POOL[poolKey];
+          const item = pool[Math.floor(Math.random() * pool.length)];
+          results.push(item);
+
+          // Apply item unlock
+          if (item.type === "costume") {
+            if (!petData.unlockedCostumes.includes(item.id)) petData.unlockedCostumes.push(item.id);
+          } else if (item.type === "furniture") {
+            petData.roomFurniture = petData.roomFurniture || {};
+            petData.roomFurniture[item.id.replace("furniture_", "")] = true;
+          } else if (item.type === "title") {
+            earnedTitles(activePetKey());
+          } else if (item.type === "food") {
+            petData.food[item.foodId] = (petData.food[item.foodId] || 0) + item.count;
+          }
+        }
+
+        savePetData();
+
+        setTimeout(() => {
+          if (machineWrap) machineWrap.classList.remove("cranking");
+          showGachaResultModal(results);
+        }, 850);
+      }
+
+      function showGachaResultModal(results) {
+        audio.playVictory?.();
+        const hasSSR = results.some((r) => r.rarity === "SSR");
+        const hasSR = results.some((r) => r.rarity === "SR");
+
+        const cards = results
+          .map((r) => {
+            const thumb = r.thumb ? `<img class="gacha-res-thumb" src="${r.thumb}" alt="${escapeHtml(r.name)}">` : `<span style="font-size:1.8rem;">${r.icon || "🎁"}</span>`;
+            return `
+              <div class="gacha-res-card ${r.rarity.toLowerCase()}">
+                <span style="font-weight:900; color:${r.rarity === "SSR" ? "#f59e0b" : r.rarity === "SR" ? "#8b5cf6" : "#64748b"}">${r.rarity}</span>
+                ${thumb}
+                <span>${escapeHtml(r.name)}</span>
+              </div>
+            `;
+          })
+          .join("");
+
+        const body = `
+          <div class="gacha-reveal-wrap">
+            <img class="gacha-capsule-anim" src="./icons/room/gacha_capsule_ssr.webp" alt="彩虹扭蛋開出">
+            <div style="font-size:1.15rem; font-weight:900; color:var(--ink);">
+              ${hasSSR ? "🌟 奇蹟爆發！獲得傳奇 SSR 時裝！🌟" : hasSR ? "✨ 金光閃耀！獲得 SR 稀有獎勵！✨" : "🎉 扭蛋結果揭曉！"}
+            </div>
+            <div class="gacha-results-grid">
+              ${cards}
+            </div>
+          </div>
+        `;
+
+        showSheet("🎰 扭蛋開獎結果", body, "再抽一次", () => setPetView("gacha"), "返回客廳");
+      }
+
       function showPetHome() {
         const key = activePetKey();
         let view = petData.petView || "home";
@@ -4692,6 +6099,22 @@
         }
         if (view === "events") {
           showSheet("🎊 節日活動與服裝", eventPageHtml(key), "完成");
+          return;
+        }
+        if (view === "academy") {
+          showSheet("📚 貓咪學院・排課測驗", academyPageHtml(key), "完成");
+          return;
+        }
+        if (view === "stats") {
+          showSheet("📊 貓咪全方位能力象限", statsPageHtml(key), "完成");
+          return;
+        }
+        if (view === "shop") {
+          showSheet("🛍️ 貓咪生活館・雜貨與裝修", shopPageHtml(key), "完成");
+          return;
+        }
+        if (view === "gacha") {
+          showSheet("🎰 豪華貓咪扭蛋機", gachaPageHtml(key), "完成");
           return;
         }
         const aff = petAffection(key),
@@ -4722,7 +6145,14 @@
             petAffection(b) - petAffection(a),
         };
         cats.sort(sorters[collectionSort] || sorters.index);
-        const body = `<div class="pet-home">${petSubnavHtml("home")}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-room-stage" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div><div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
+        const tatamiClass = petData.roomWallpaper === "tatami" ? " wallpaper-tatami" : "";
+        const cattreeHtml = petData.roomFurniture?.cattree
+          ? '<img class="room-furniture-cattree" id="roomFurnitureCattree" src="./icons/room/furniture_cat_tree.webp" alt="貓跳台" title="點擊在貓跳台玩耍">'
+          : "";
+        const kotatsuHtml = petData.roomFurniture?.kotatsu
+          ? '<img class="room-furniture-kotatsu" id="roomFurnitureKotatsu" src="./icons/room/furniture_kotatsu.webp" alt="暖被桌" title="點擊在暖被桌旁打盹">'
+          : "";
+        const body = `<div class="pet-home">${petSubnavHtml("home")}${petQuickStatusBarHtml(key)}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
           .slice(-4)
           .map((t) => `<span class="mini-title">${t}</span>`)
           .join(
@@ -5205,15 +6635,18 @@
           isBest = !prev || state.elapsed < prev;
         if (isBest) localStorage.setItem(key, String(state.elapsed));
         updateBestLabel();
-        audio.playVictory();
-        petData.affection[activePetKey()] = (petData.affection[activePetKey()] || 0) + 8;
+        const activeKey = activePetKey();
+        petData.affection[activeKey] = (petData.affection[activeKey] || 0) + 8;
+        const wonCoins = state.n === 5 ? 60 : state.n === 7 ? 120 : 200;
+        addCoins(wonCoins);
+        addPetStat(activeKey, "math", 4);
         const reward = awardFood();
         addEventProgress("wins", 1);
         if (state.n >= 7) addEventProgress("hard", 1);
         saveResume();
         showSheet(
           isBest ? "新紀錄！🏆" : "完成！🎉",
-          `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>${rewardHtml(reward)}`,
+          `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>${rewardHtml(reward)}<div class="win-coins-notice">🪙 +${wonCoins} 金幣 · 📐 算術邏輯 +4</div>`,
           "下一題",
           () => newGame({ n: state.n }),
           "前往貓屋",
@@ -5253,7 +6686,7 @@
           "知道了",
         );
       }
-      function showSheet(title, bodyHtml, primaryLabel, primaryFn, secondaryLabel = "") {
+      function showSheet(title, bodyHtml, primaryLabel, primaryFn, secondaryLabel = "", secondaryFn = null) {
         $("overlayTitle").textContent = title;
         $("overlayBody").innerHTML = bodyHtml;
         const p = $("overlayPrimary");
@@ -5265,6 +6698,11 @@
         const s = $("overlaySecondary");
         if (secondaryLabel) {
           s.textContent = secondaryLabel;
+          s.onclick = () => {
+            hideSheet();
+            if (secondaryFn) secondaryFn();
+            else if (secondaryLabel === "前往貓屋" || secondaryLabel === "返回客廳") setPetView("home");
+          };
           s.style.display = "";
         } else s.style.display = "none";
         $("overlay").classList.remove("hidden");
@@ -5866,6 +7304,54 @@
         const view = e.target.closest("[data-pet-view]");
         if (view) {
           setPetView(view.dataset.petView);
+          return;
+        }
+        const shopTab = e.target.closest("[data-shop-tab]");
+        if (shopTab) {
+          activeShopTab = shopTab.dataset.shopTab;
+          showPetHome();
+          return;
+        }
+        const buyItem = e.target.closest("[data-buy-item]");
+        if (buyItem) {
+          buyShopItem(buyItem.dataset.buyItem);
+          return;
+        }
+        const pullGachaBtn = e.target.closest("[data-pull-gacha]");
+        if (pullGachaBtn) {
+          pullGacha(Number(pullGachaBtn.dataset.pullGacha));
+          return;
+        }
+        const cattreeClick = e.target.closest("#roomFurnitureCattree");
+        if (cattreeClick) {
+          setRoomCatPose("play", "在貓跳台上玩得超開心喵！", "pet-wiggle");
+          spawnRoomHeart(25, 45, "🐾");
+          return;
+        }
+        const kotatsuClick = e.target.closest("#roomFurnitureKotatsu");
+        if (kotatsuClick) {
+          setRoomCatPose("sleep", "暖被桌裡好溫暖喵～想睡了...", "pet-sleep");
+          spawnRoomHeart(30, 70, "💤");
+          return;
+        }
+        const startQuiz = e.target.closest("[data-start-quiz]");
+        if (startQuiz) {
+          startQuizSession(startQuiz.dataset.startQuiz);
+          return;
+        }
+        const quizOpt = e.target.closest("[data-quiz-opt]");
+        if (quizOpt) {
+          handleQuizAnswer(quizOpt.dataset.quizOpt);
+          return;
+        }
+        const careBtn = e.target.closest("[data-care]");
+        if (careBtn) {
+          handleDailyCare(careBtn.dataset.care);
+          return;
+        }
+        const closeToGame = e.target.closest("[data-close-to-game]");
+        if (closeToGame) {
+          hideSheet();
           return;
         }
         const saveDates = e.target.closest("[data-save-dates]");

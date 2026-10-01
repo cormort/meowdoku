@@ -582,6 +582,54 @@ class MeowAudioEngine {
       noise.start(now + 0.025);
     } catch {}
   }
+
+  // 14. 金幣叮噹聲
+  playCoin() {
+    if (!this.sfxEnabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(987.77, now); // B5
+      osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(this.sfxGain);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    } catch {}
+  }
+
+  // 15. 測驗答對叮咚音效
+  playQuizCorrect() {
+    if (!this.sfxEnabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      [
+        { f: 523.25, t: 0 },
+        { f: 659.25, t: 0.09 },
+        { f: 783.99, t: 0.18 },
+        { f: 1046.50, t: 0.28 }
+      ].forEach(({ f, t }) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, now + t);
+        gain.gain.setValueAtTime(0.15, now + t);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.28);
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+        osc.start(now + t);
+        osc.stop(now + t + 0.3);
+      });
+    } catch {}
+  }
 }
 
 export const audio = new MeowAudioEngine();
