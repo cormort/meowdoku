@@ -7,7 +7,6 @@
     <title>貓咪邏輯謎題｜1 貓／列・行・色塊</title>
     <meta name="theme-color" content="#2f6f63" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./cathouse.css" />
     <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -326,10 +325,7 @@
         grid-template-columns: 92px minmax(0, 1fr);
       }
       #overlayBody .pet-subnav {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      #overlayBody .pet-subnav.five {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
       @media (max-width: 600px), (hover: none) and (pointer: coarse) {
         #overlayBody .pet-hero {
@@ -1038,8 +1034,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-end;
-        min-height: 235px;
-        padding: 16px 14px 10px;
+        min-height: 255px;
+        padding: 14px 14px 14px;
         border-radius: 20px;
         background: radial-gradient(circle at 50% 25%, rgba(255, 252, 245, 0.96), rgba(242, 246, 243, 0.9)), var(--accent-soft);
         border: 1.5px solid color-mix(in srgb, var(--accent) 35%, var(--line));
@@ -1069,29 +1065,35 @@
         backdrop-filter: blur(4px);
         z-index: 3;
       }
-      .pet-speech {
+      .pet-room-stage .pet-speech {
         position: absolute;
         top: 10px;
         right: 12px;
-        max-width: 210px;
-        padding: 6px 12px;
+        left: auto;
+        bottom: auto;
+        max-width: 220px;
+        padding: 7px 12px;
         border-radius: 14px;
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        border: 1.5px solid color-mix(in srgb, var(--accent) 45%, var(--line));
         font-size: 0.78rem;
-        font-weight: 700;
+        font-weight: 800;
         color: var(--ink);
         pointer-events: none;
         opacity: 0;
         transform: translateY(6px) scale(0.94);
         transition: opacity 0.25s ease, transform 0.25s ease;
-        z-index: 4;
+        z-index: 15;
         backdrop-filter: blur(4px);
-        border: 1px solid rgba(0, 0, 0, 0.06);
       }
-      .pet-speech.show {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+      .pet-room-stage .pet-speech.show {
+        animation: roomSpeechShow 2.8s ease forwards !important;
+      }
+      @keyframes roomSpeechShow {
+        0% { opacity: 0; transform: translateY(6px) scale(0.92); }
+        10%, 85% { opacity: 1; transform: translateY(0) scale(1); }
+        100% { opacity: 0; transform: translateY(-4px) scale(0.96); }
       }
       .room-hearts {
         position: absolute;
@@ -1122,10 +1124,10 @@
       }
       .pet-room-rug {
         position: absolute;
-        bottom: 10px;
-        width: 80%;
-        max-width: 280px;
-        height: 52px;
+        bottom: 18px;
+        width: 78%;
+        max-width: 270px;
+        height: 50px;
         border-radius: 50%;
         background: radial-gradient(ellipse at center, rgba(235, 215, 190, 0.82) 0%, rgba(220, 195, 165, 0.45) 70%, transparent 100%);
         box-shadow: 0 4px 16px rgba(160, 120, 80, 0.1);
@@ -1186,30 +1188,181 @@
       .pet-room-hint {
         position: relative;
         z-index: 2;
-        margin-top: 4px;
-        font-size: 0.68rem;
+        margin-top: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
         color: var(--muted);
-        opacity: 0.85;
+        opacity: 0.9;
+        pointer-events: none;
+        text-align: center;
       }
-      .room-actions {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+      /* 逗貓棒跟隨器 */
+      .room-wand-follower {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 84px;
+        height: 84px;
+        pointer-events: none;
+        z-index: 12;
+        display: none;
+        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+        transform: translate(-999px, -999px);
+        will-change: transform;
       }
-      .room-actions button {
-        padding: 9px 12px;
+      .pet-room-stage.wand-active {
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .pet-room-stage.wand-active .room-wand-follower {
+        display: block;
+      }
+      .room-wand-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transform-origin: 20% 15%;
+        animation: wandGentleSway 2.2s ease-in-out infinite;
+      }
+      @keyframes wandGentleSway {
+        0%, 100% { transform: rotate(-8deg); }
+        50% { transform: rotate(10deg); }
+      }
+      .room-wand-img.wand-whip {
+        animation: wandWhip 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.2) !important;
+      }
+      @keyframes wandWhip {
+        0% { transform: rotate(-18deg) scale(0.92); }
+        45% { transform: rotate(32deg) scale(1.18) translateY(6px); }
+        100% { transform: rotate(-8deg) scale(1); }
+      }
+
+      /* 角落貓砂盆 */
+      .room-litter-corner {
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
+        width: 96px;
+        z-index: 6;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        user-select: none;
+      }
+      .room-litter-corner:hover {
+        transform: scale(1.06) translateY(-2px);
+      }
+      .room-litter-corner:active {
+        transform: scale(0.96);
+      }
+      .room-litter-badge {
+        font-size: 0.62rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--ink);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 2px;
+        backdrop-filter: blur(4px);
+        white-space: nowrap;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+      .room-litter-badge.clean {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-color: #a5d6a7;
+      }
+      .room-litter-tray {
+        position: relative;
+        width: 100%;
+      }
+      .room-litter-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12));
+      }
+      .room-litter-clumps {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .room-sand-clump {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        pointer-events: auto;
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18));
+      }
+      .room-sand-clump img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        animation: clumpPulse 2.8s ease-in-out infinite;
+      }
+      @keyframes clumpPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1) rotate(4deg); }
+      }
+      .room-sand-clump:hover {
+        transform: translate(-50%, -50%) scale(1.28) rotate(-6deg);
+      }
+      .room-sand-clump.scooped {
+        transform: translate(-50%, -80%) scale(0) rotate(20deg);
+        opacity: 0;
+      }
+      @media (max-width: 480px) {
+        .room-litter-corner {
+          width: 82px;
+          right: 10px;
+          bottom: 8px;
+        }
+        .room-sand-clump {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .interaction-row.room-actions {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px;
+      }
+      .interaction-row.room-actions button {
+        padding: 9px 4px;
+        min-height: 42px;
         border-radius: 12px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 700;
         background: var(--card);
         border: 1px solid var(--line);
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-        transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+        transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+        white-space: nowrap;
       }
-      .room-actions button:hover {
+      .interaction-row.room-actions button:hover {
         transform: translateY(-2px);
         background: var(--accent-soft);
         border-color: var(--accent);
+      }
+      .interaction-row.room-actions button.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+      @media (max-width: 600px), (hover: none) and (pointer: coarse) {
+        .interaction-row.room-actions button {
+          padding: 8px 2px;
+          font-size: 0.72rem;
+        }
       }
       .pet-status-card {
         padding: 12px 14px;
@@ -2057,7 +2210,7 @@
       /* v11 稱號展示牆、生日與紀念日、升級動畫跳過 */
       .pet-subnav {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 6px;
       }
       .pet-subnav button {
@@ -2766,16 +2919,9 @@
         color: var(--muted);
         font-size: 0.7rem;
       }
-      .pet-subnav.five {
-        grid-template-columns: repeat(5, 1fr);
-      }
       @media (max-width: 600px), (hover: none) and (pointer: coarse) {
         .costume-collection {
           grid-template-columns: 1fr;
-        }
-        .pet-subnav.five button {
-          font-size: 0.56rem;
-          padding: 4px 2px;
         }
         .event-mission {
           grid-template-columns: 34px 1fr auto;
@@ -2943,7 +3089,6 @@
         indexOf,
       } from "./engine.js?v=3";
       import { audio } from "./audio.js";
-      import { CatHouseController, CAT_BREEDS, addAffection } from "./cathouse.js";
       const $ = (id) => document.getElementById(id);
       const LS = {
         best: (n) => `meowdoku.best.${n}`,
@@ -3831,7 +3976,7 @@
         return messages.length ? `<div class="special-day">${messages.join("<br>")}</div>` : "";
       }
       function petSubnavHtml(view) {
-        return `<div class="pet-subnav five"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 貓咪小屋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號牆</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念日</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button><button data-pet-view="room" class="${view === "room" ? "active" : ""}">🎮 互動屋</button></div>`;
+        return `<div class="pet-subnav"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 貓咪小屋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號牆</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念日</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button></div>`;
       }
       function eventKey() {
         const f = activeFestival();
@@ -3985,9 +4130,227 @@
           setTimeout(() => animatePet("pet-bounce", "今天是特別的日子！"), 250);
         }
       }
+      let roomLitterClumps = 2;
+      let roomToolMode = "pet"; // "pet" | "wand" | "litter" | "rest"
+
+      function renderRoomLitter() {
+        const container = $("roomLitterClumps");
+        const badge = $("roomLitterBadge");
+        if (!container) return;
+        container.innerHTML = "";
+        const cleanRate = Math.max(0, Math.round((1 - roomLitterClumps / 3) * 100));
+        if (badge) {
+          if (cleanRate === 100) {
+            badge.textContent = "✨ 乾淨度 100%";
+            badge.className = "room-litter-badge clean";
+          } else {
+            badge.textContent = `🧹 乾淨度 ${cleanRate}%`;
+            badge.className = "room-litter-badge";
+          }
+        }
+        const positions = [
+          { x: 32, y: 38 },
+          { x: 58, y: 48 },
+          { x: 44, y: 62 },
+        ];
+        for (let i = 0; i < roomLitterClumps; i++) {
+          const pos = positions[i % positions.length];
+          const clump = document.createElement("div");
+          clump.className = "room-sand-clump";
+          clump.dataset.clumpIndex = String(i);
+          clump.style.left = `${pos.x}%`;
+          clump.style.top = `${pos.y}%`;
+          clump.title = "點擊鏟除便便";
+          clump.innerHTML = `<img src="./icons/room/poop_clump.webp" alt="便便" onerror="this.onerror=null; this.src='./icons/room/poop_clump.png';">`;
+          container.appendChild(clump);
+        }
+      }
+
+      function scoopLitterClump(clumpEl) {
+        if (roomLitterClumps <= 0) {
+          setRoomCatPose("pet", "貓砂盆已經超級乾淨了喵！✨", "pet-bounce");
+          return;
+        }
+        audio.init();
+        audio.playSand();
+        navigator.vibrate?.(25);
+
+        if (clumpEl) {
+          clumpEl.classList.add("scooped");
+        }
+
+        const rect = (clumpEl || $("roomLitterCorner"))?.getBoundingClientRect();
+        const stageRect = $("petRoomStage")?.getBoundingClientRect();
+        if (rect && stageRect) {
+          const px = ((rect.left + rect.width / 2 - stageRect.left) / stageRect.width) * 100;
+          const py = (1 - (rect.top + rect.height / 2 - stageRect.top) / stageRect.height) * 100;
+          spawnRoomHeart(px, py, "✨");
+          setTimeout(() => spawnRoomHeart(px + (Math.random() - 0.5) * 8, py + 5, "⭐"), 100);
+        }
+
+        roomLitterClumps = Math.max(0, roomLitterClumps - 1);
+        setTimeout(() => renderRoomLitter(), 160);
+
+        const key = activePetKey();
+        const beforeStage = growthStage(petAffection(key)).index;
+        petData.affection[key] = (petData.affection[key] || 0) + 3;
+        petData.mood[key] = Math.min(100, petMoodValue(key) + 5);
+        addEventProgress("play", 1);
+        savePetData();
+        checkGrowthUpgrade(key, beforeStage);
+        updatePetHeroStats(key);
+
+        if (roomLitterClumps === 0) {
+          audio.playVictory();
+          audio.playMeow(1.18);
+          setRoomCatPose("pet", "哇！貓砂盆好乾淨！最愛主人了喵～✨", "pet-bounce");
+          for (let i = 0; i < 5; i++) {
+            setTimeout(
+              () =>
+                spawnRoomHeart(
+                  70 + (Math.random() - 0.5) * 20,
+                  20 + Math.random() * 30,
+                  ["💖", "✨", "🌸", "⭐"][i % 4],
+                ),
+              i * 140,
+            );
+          }
+          setTimeout(() => {
+            if (roomLitterClumps === 0) {
+              roomLitterClumps = 2;
+              renderRoomLitter();
+            }
+          }, 30000);
+        } else {
+          setRoomCatPose("idle", "沙沙沙～鏟乾淨了！好舒服喵🧹");
+        }
+      }
+
+      function triggerWandPlay(e) {
+        audio.init();
+        audio.playJingle();
+        audio.playMeow(1.22);
+        navigator.vibrate?.([15, 20]);
+
+        const follower = $("roomWandFollower");
+        if (follower) {
+          const wandImg = follower.querySelector(".room-wand-img");
+          if (wandImg) {
+            wandImg.classList.remove("wand-whip");
+            void wandImg.offsetWidth;
+            wandImg.classList.add("wand-whip");
+          }
+        }
+
+        const stage = $("petRoomStage");
+        if (e && stage) {
+          const rect = stage.getBoundingClientRect();
+          const px = Math.max(10, Math.min(90, ((e.clientX - rect.left) / rect.width) * 100));
+          const py = Math.max(10, Math.min(90, (1 - (e.clientY - rect.top) / rect.height) * 100));
+          spawnRoomHeart(px, py, "🪶");
+          spawnRoomHeart(px + (Math.random() - 0.5) * 8, py + 4, "⭐");
+          spawnRoomHeart(px + (Math.random() - 0.5) * 8, py - 4, "🐾");
+        }
+
+        const key = activePetKey();
+        const beforeStage = growthStage(petAffection(key)).index;
+        petData.affection[key] = (petData.affection[key] || 0) + 2;
+        petData.mood[key] = Math.min(100, petMoodValue(key) + 6);
+        addEventProgress("play", 1);
+        savePetData();
+        checkGrowthUpgrade(key, beforeStage);
+        updatePetHeroStats(key);
+
+        const wandQuotes = [
+          "撲到了！好身手喵！⚡",
+          "看我的貓貓無影爪！🐾",
+          "抓住毛毛了！太好玩了喵！",
+          "喵哈哈！逗貓棒逃不出我的手心！",
+        ];
+        const quote = wandQuotes[Math.floor(Math.random() * wandQuotes.length)];
+        setRoomCatPose("play", quote, "pet-wiggle");
+      }
+
+      function bindRoomStageInteractions() {
+        const stage = $("petRoomStage");
+        if (!stage || stage.dataset.boundWand === "true") return;
+        stage.dataset.boundWand = "true";
+
+        let lastJingleTime = 0;
+
+        stage.addEventListener("pointermove", (e) => {
+          if (roomToolMode !== "wand") return;
+          const follower = $("roomWandFollower");
+          if (!follower) return;
+          const rect = stage.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          follower.style.transform = `translate(${x - 42}px, ${y - 42}px)`;
+
+          const catImg = $("roomCatImg");
+          if (catImg) {
+            const catRect = catImg.getBoundingClientRect();
+            const catCenterX = catRect.left - rect.left + catRect.width / 2;
+            const deltaX = (x - catCenterX) / 20;
+            const clampedDeltaX = Math.max(-10, Math.min(10, deltaX));
+            catImg.style.transform = `translateX(${clampedDeltaX}px) rotate(${clampedDeltaX * 0.35}deg)`;
+          }
+
+          const now = Date.now();
+          if (now - lastJingleTime > 900) {
+            lastJingleTime = now;
+            audio.playJingle();
+          }
+        });
+
+        stage.addEventListener("pointerleave", () => {
+          const catImg = $("roomCatImg");
+          if (catImg && roomToolMode === "wand") {
+            catImg.style.transform = "";
+          }
+        });
+      }
+
+      function setRoomToolMode(mode) {
+        roomToolMode = mode;
+        document.querySelectorAll("[data-room-mode]").forEach((b) => {
+          b.classList.toggle("active", b.dataset.roomMode === mode);
+        });
+        const stage = $("petRoomStage");
+        const hint = $("petRoomHint");
+        audio.init();
+
+        if (mode === "wand") {
+          stage?.classList.add("wand-active");
+          audio.playJingle();
+          audio.playMeow(1.2);
+          setRoomCatPose("play", "哇！好玩的逗貓棒！看爪！🐾", "pet-wiggle");
+          if (hint) hint.textContent = "🪶 在客廳移動帶動逗貓棒，點擊讓貓咪飛撲！";
+        } else if (mode === "litter") {
+          stage?.classList.remove("wand-active");
+          if (roomLitterClumps > 0) {
+            scoopLitterClump();
+          } else {
+            setRoomCatPose("pet", "貓砂盆已經超級乾淨了喵！✨", "pet-bounce");
+          }
+          if (hint) hint.textContent = "🧹 點擊貓砂盆裡的便便把它們鏟乾淨吧！";
+        } else if (mode === "rest") {
+          stage?.classList.remove("wand-active");
+          interactPet("rest");
+          if (hint) hint.textContent = "💤 貓咪正在香甜小憩充電中...";
+        } else {
+          // "pet"
+          stage?.classList.remove("wand-active");
+          interactPet("pet");
+          if (hint) hint.textContent = "👋 輕觸貓咪可以摸摸互動喔！";
+        }
+      }
+
       function showPetHome() {
-        const key = activePetKey(),
-          view = petData.petView || "home";
+        const key = activePetKey();
+        let view = petData.petView || "home";
+        if (view === "room") view = "home";
         claimSpecialDayBonus(key);
         if (view === "titles") {
           showSheet("🏅 稱號展示牆", titleWallHtml(key), "完成");
@@ -3995,10 +4358,6 @@
         }
         if (view === "dates") {
           showSheet("🎂 生日與紀念日", datesHtml(key), "完成");
-          return;
-        }
-        if (view === "room") {
-          showPetRoom();
           return;
         }
         if (view === "events") {
@@ -4033,7 +4392,7 @@
             petAffection(b) - petAffection(a),
         };
         cats.sort(sorters[collectionSort] || sorters.index);
-        const body = `<div class="pet-home">${petSubnavHtml("home")}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-room-stage" id="petRoomStage" data-interact-cat="true" title="點擊摸摸貓咪"><div class="pet-room-badge">🏠 互動貓屋・點擊摸摸</div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div><div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="pet-room-hint">👋 輕觸貓咪可以摸摸互動喔！</div></div><div class="interaction-row room-actions"><button data-interact="pet">👋 摸摸</button><button data-interact="play">🧶 玩耍</button><button data-interact="rest">💤 休息</button></div><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
+        const body = `<div class="pet-home">${petSubnavHtml("home")}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-room-stage" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div><div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
           .slice(-4)
           .map((t) => `<span class="mini-title">${t}</span>`)
           .join(
@@ -4053,30 +4412,19 @@
                 .map((k) => {
                   const unlocked = isUnlocked(k),
                     g = growthStage(petAffection(k));
-                  return `<button class="pet-cat${k === key ? " active" : ""}${unlocked ? "" : " locked"}" ${unlocked ? `data-pet-select="${k}"` : "disabled"} aria-label="${unlocked ? petName(k) : "尚未解鎖"}">${petFaceHtml(k, "face")}${unlocked ? `<span class="pet-cat-stage">${g.icon}</span><span class="pet-cat-level">Lv.${petLevel(petAffection(k))}</span><span class="pet-cat-title" title="裝備稱號：${escapeHtml(primaryTitle(k))}">🏅 ${escapeHtml(primaryTitle(k))}</span><span class="pet-cat-name">${escapeHtml(petName(k))}</span>` : '<span class="pet-lock">🔒</span>'}</button>`;
+                  return `<button class="pet-cat${k === key ? " active" : ""}${unlocked ? "" : " locked"}" ${unlocked ? `data-pet-select="${k}"` : "disabled"} aria-label="${unlocked ? petName(k) : "尚未解鎖"}">${petFaceHtml(k, "face")}${unlocked ? `<span class="pet-cat-stage">${g.icon}</span><span class="pet-cat-level">Lv.${petLevel(petAffection(k))}</span><span class="pet-cat-title" title="裝備稱號：${escapeHtml(primaryTitle(k))}">🏅 ${escapeHtml(primaryTitle(k))}</span><span class="pet-cat-name">${escapeHtml(petName(key))}</span>` : '<span class="pet-lock">🔒</span>'}</button>`;
                 })
                 .join("")
             : '<div class="collection-empty">目前沒有符合條件的貓咪</div>'
         }</div></div>`;
         showSheet("🏠 貓咪小屋", body, "完成");
-      }
-
-      // 互動屋：10 品種全身貓、撫摸／逗貓棒／貓砂盆／餵食，好感度獨立於貓咪小屋的養成系統
-      let catRoom = null;
-      function showPetRoom() {
-        showSheet("🎮 貓咪互動屋", `${petSubnavHtml("room")}<div id="catRoomMount"></div>`, "完成");
-        catRoom ??= new CatHouseController({
-          onSelectBreed: (bId) => {
-            const idle = String(CAT_BREEDS[bId].frames.idle);
-            if (!isUnlocked(idle)) return "這隻貓還沒解鎖，先多過幾關認識牠吧！🔒";
-            petData.selected = state.skin = idle;
-            localStorage.setItem(LS.skin, idle);
-            savePetData();
-            paintCells();
-            return `已將${CAT_BREEDS[bId].name}設為謎題夥伴！🐾`;
-          },
+        requestAnimationFrame(() => {
+          renderRoomLitter();
+          bindRoomStageInteractions();
+          if (roomToolMode === "wand") {
+            $("petRoomStage")?.classList.add("wand-active");
+          }
         });
-        catRoom.mount($("catRoomMount"));
       }
       function animatePet(cls, text) {
         const avatar = document.querySelector(".pet-avatar");
@@ -4150,8 +4498,13 @@
           savePetData();
           checkGrowthUpgrade(key, beforeStage);
         }
-        if (!limited && typeof audio !== "undefined" && audio.playMeow)
-          audio.playMeow(type === "rest" ? 0.85 : 1.1);
+        if (!limited && typeof audio !== "undefined") {
+          if (audio.playMeow) audio.playMeow(type === "rest" ? 0.85 : 1.1);
+          if (type === "pet" && audio.startPurr) {
+            audio.startPurr();
+            setTimeout(() => audio.stopPurr?.(), 1600);
+          }
+        }
         const petQuotes = [
           "呼嚕呼嚕...好舒服喵~",
           "最喜歡你了喵！",
@@ -4523,7 +4876,7 @@
         if (isBest) localStorage.setItem(key, String(state.elapsed));
         updateBestLabel();
         audio.playVictory();
-        addAffection(8);
+        petData.affection[activePetKey()] = (petData.affection[activePetKey()] || 0) + 8;
         const reward = awardFood();
         addEventProgress("wins", 1);
         if (state.n >= 7) addEventProgress("hard", 1);
@@ -4587,7 +4940,6 @@
         $("overlay").classList.remove("hidden");
       }
       function hideSheet() {
-        catRoom?.close();
         $("overlay").classList.add("hidden");
       }
       /* 換貓動畫 */
@@ -5201,9 +5553,30 @@
           claimDailyFeed();
           return;
         }
-        const catTouch = e.target.closest("[data-interact-cat]");
-        if (catTouch && !e.target.closest("button") && !e.target.closest("input")) {
-          interactPet("pet");
+        const litterClump = e.target.closest(".room-sand-clump");
+        if (litterClump) {
+          scoopLitterClump(litterClump);
+          return;
+        }
+        const litterCorner = e.target.closest("#roomLitterCorner");
+        if (litterCorner) {
+          scoopLitterClump();
+          return;
+        }
+        const roomModeBtn = e.target.closest("[data-room-mode]");
+        if (roomModeBtn) {
+          setRoomToolMode(roomModeBtn.dataset.roomMode);
+          return;
+        }
+        const stageTouch = e.target.closest("[data-interact-stage], [data-interact-cat]");
+        if (stageTouch && !e.target.closest("button") && !e.target.closest("input")) {
+          if (roomToolMode === "wand") {
+            triggerWandPlay(e);
+          } else if (roomToolMode === "litter") {
+            scoopLitterClump();
+          } else {
+            interactPet("pet");
+          }
           return;
         }
         const interact = e.target.closest("[data-interact]");
