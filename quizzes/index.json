@@ -1,0 +1,10 @@
+{
+  "subjects": [
+    "literacy.json",
+    "math.json",
+    "language.json",
+    "science.json",
+    "art.json",
+    "stamina.json"
+  ]
+}

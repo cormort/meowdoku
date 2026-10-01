@@ -1,7 +1,7 @@
 {
-  "name": "貓咪邏輯謎題",
-  "short_name": "貓咪謎題",
-  "description": "每個色塊 1 隻貓、每列每行各 1 隻、貓不能相鄰；唯一解且純邏輯可解",
+  "name": "貓咪小屋",
+  "short_name": "貓咪小屋",
+  "description": "養貓小屋：照顧貓咪、上學測驗、解邏輯謎題",
   "lang": "zh-Hant-TW",
   "start_url": "./",
   "scope": "./",
