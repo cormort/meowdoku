@@ -1,7 +1,7 @@
 // academy.js — 學院排課測驗（題庫來自 quizzes/，見 js/quiz.js）、能力象限與日常照護
 import { audio } from "../audio.js";
 import { activePetKey, addCoins, addPetStat, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, savePetData, setPetView, showPetHome, updatePetStatus } from "./pet.js";
-import { showClinic, sickInfo } from "./life.js";
+import { showClinic, sickInfo, startCare } from "./life.js";
 import { QUIZ_SUBJECTS, calculateQuizResult, isCorrect, pickRound } from "./quiz.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
 export function academyPageHtml(key = activePetKey()) {
@@ -336,11 +336,9 @@ export function handleDailyCare(type) {
     audio.playPurr?.();
     showPetHome();
   } else if (type === "bath") {
-    const s = petStatus(key);
-    s.cleanliness = 100;
-    savePetData();
-    audio.playCatPet?.();
-    showPetHome();
+    // 洗澡改到客廳親手洗
+    setPetView("home");
+    startCare("bath");
   }
 }
 

@@ -16,7 +16,7 @@ import {
   showPetHome,
   updatePetHeroStats,
 } from "./pet.js";
-import { addLitterClump, setRoomCatPose, spawnRoomHeart } from "./room.js";
+import { addLitterClump, getRoomCatSprite, setRoomCatPose, spawnRoomHeart } from "./room.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
 
 // ---------- 需求隨時間變化 ----------
@@ -297,6 +297,7 @@ const EVENTS = {
     miss: () => say("哼，不理你了…"),
   },
   scratch: {
+    when: () => !recently("nailsAt", 7 * DAY), // 剪過指甲一週內不太會抓
     icon: "🙅",
     label: "在抓地毯！制止",
     weight: 2,
@@ -337,6 +338,30 @@ const EVENTS = {
     },
     miss: () => say("毛球還在地上…"),
   },
+  wantBrush: {
+    icon: "🪮",
+    label: "掉毛了，幫我梳",
+    weight: 2,
+    when: () => (petStatus(activePetKey()).hairballs || 0) > 0,
+    pos: () => [catXPercent() - 14, 30],
+    start: () => say("身上好癢…想梳毛喵"),
+    tap: () => startCare("brush"),
+  },
+  muddy: {
+    icon: "🪴",
+    label: "滾得髒兮兮，洗澡",
+    weight: 1,
+    pos: () => [catXPercent() + 14, 30],
+    start: () => {
+      const s = petStatus(activePetKey());
+      s.cleanliness = clamp(s.cleanliness - 15);
+      savePetData();
+      animate("cat-spin", 1100);
+      say("在盆栽裡打滾～好好玩！（清潔 -15）");
+    },
+    tap: () => startCare("bath"),
+    miss: () => say("沾著土到處走…"),
+  },
   hungry: {
     icon: "🍽️",
     label: "肚子餓，餵飯",
@@ -367,7 +392,7 @@ let activeEvent = null;
 
 function startEvent() {
   const s = petStatus(activePetKey());
-  const ids = Object.keys(EVENTS).filter((id) => EVENTS[id].weight > 0);
+  const ids = Object.keys(EVENTS).filter((id) => EVENTS[id].weight > 0 && (EVENTS[id].when?.() ?? true));
   const id =
     s.hunger < 35 && Math.random() < 0.6
       ? "hungry"
@@ -398,6 +423,7 @@ function startEvent() {
 export function handleLifeEvent(action) {
   if (action === "clinic") return showClinic();
   if (action === "treat") return treat();
+  if (action.startsWith("care:")) return startCare(action.slice(5));
   if (!action.startsWith("ev:") || !activeEvent) return;
   clearTimeout(activeEvent.timer);
   activeEvent.btn.remove();
@@ -422,6 +448,305 @@ function syncSickBadge() {
   );
 }
 
+// ---------- 照護小遊戲：梳毛、洗澡、剪指甲 ----------
+// 放大貓咪，身上的部位會輪流亮起，要在它消失前點到；每個階段有倒數計時，時間到還沒點滿就失敗。
+// 越點越快（目標存活時間從 life[0] 縮到 life[1]）；每次成功照護等級 +1，倒數時間跟著變短（最多 Lv.5）。
+const DAY = 24 * 3600 * 1000;
+function recently(field, ms) {
+  return Date.now() - (petStatus(activePetKey())[field] || 0) < ms;
+}
+// 部位座標：貓咪圖片的百分比位置（各品種坐姿略不同，取大致位置）
+const PARTS = {
+  head: [50, 16, "頭頂"],
+  earL: [30, 9, "左耳"],
+  earR: [71, 9, "右耳"],
+  cheek: [40, 40, "臉頰"],
+  chin: [55, 50, "下巴"],
+  chest: [53, 63, "胸口"],
+  back: [33, 66, "背"],
+  waist: [62, 80, "腰"],
+  tail: [80, 86, "尾巴"],
+};
+const BODY = ["head", "cheek", "chin", "chest", "back", "waist", "tail"];
+const CARES = {
+  brush: {
+    title: "🪮 梳毛",
+    phases: [{ label: "點亮起來的部位，順著毛梳！", parts: [...BODY, "earL", "earR"], icon: "🪮", fx: "✨", goal: 8, time: 12, life: [1700, 900], flinch: 0 }],
+    start: () => (recently("brushedAt", 2 * 3600 * 1000) ? "剛剛才梳過…好吧再一下下" : "呼嚕～要梳毛了嗎"),
+    finish: (s) => {
+      const annoyed = recently("brushedAt", 2 * 3600 * 1000);
+      s.brushedAt = Date.now();
+      s.hairballs = Math.max(0, (s.hairballs || 0) - 1);
+      s.cleanliness = clamp(s.cleanliness + 10);
+      if (annoyed) {
+        befriend(0, -3);
+        return "梳太多次了啦！😾（清潔 +10）";
+      }
+      audio.startPurr();
+      setTimeout(() => audio.stopPurr(), 1800);
+      befriend(3, 6);
+      return "毛毛蓬鬆又柔順～（清潔 +10、毛球 -1）";
+    },
+    abort: () => "梳到一半跑掉了…",
+  },
+  bath: {
+    title: "🛁 洗澡",
+    phases: [
+      { label: "搓泡泡！（會掙扎亂動）", parts: BODY, icon: "🧽", fx: "🫧", goal: 6, time: 10, life: [1500, 800], flinch: 0.15 },
+      { label: "快沖水！", parts: BODY, icon: "🚿", fx: "💧", goal: 5, time: 7, life: [1300, 750], flinch: 0.15 },
+      { label: "吹乾～", parts: [...BODY, "earL", "earR"], icon: "💨", fx: "💨", goal: 5, time: 7, life: [1300, 750], flinch: 0 },
+    ],
+    start: () => "咦？水？！不要啊喵——",
+    finish: (s) => {
+      const again = recently("bathedAt", 3 * DAY);
+      s.bathedAt = Date.now();
+      s.cleanliness = 100;
+      befriend(2, again ? -15 : -6);
+      animate("cat-spin", 1100);
+      return again ? "又洗澡！？三天內洗太多次了…😿（清潔 100%）" : "抖抖抖～香噴噴的！（清潔 100%）";
+    },
+    abort: (s) => {
+      s.cleanliness = clamp(s.cleanliness + 20);
+      befriend(0, -8);
+      return "濕答答地逃走了！🙀（清潔 +20）";
+    },
+  },
+  nails: {
+    title: "✂️ 剪指甲",
+    // 放大鏡：一次放大一隻腳，剪完 3 個爪尖鏡頭移到下一隻腳
+    phases: [
+      {
+        label: "放大鏡對準貓掌，點亮起來的爪尖喀擦！（會縮手）",
+        loupe: { zoom: 3.2, claws: [[-13, 12], [0, 16], [13, 12]] }, // 腳掌位置見 BREED_PAWS
+        icon: "✂️",
+        fx: "✨",
+        goal: 12, // 4 隻腳 × 3 爪；看得到的腳較少的品種，目標數與時間等比例減少
+        time: 16,
+        life: [1300, 700],
+        flinch: 0.3,
+      },
+    ],
+    refuse: () => (recently("nailsAt", 7 * DAY) ? "指甲還很短喵，一週後再剪吧" : null),
+    start: () => "剪指甲…要輕輕的喔",
+    finish: (s) => {
+      s.nailsAt = Date.now();
+      befriend(2, -2);
+      return "剪好了！這週比較不會亂抓了✨";
+    },
+    abort: () => {
+      befriend(0, -4);
+      return "掙脫了，剩下的下次再剪…";
+    },
+  },
+};
+const MAX_CARE_LV = 5;
+const careLevel = (id) => petData.careLevels?.[id] || 1;
+let care = null;
+
+export function startCare(id) {
+  const cfg = CARES[id];
+  if (!cfg || care || !$("petRoomStage")) return;
+  if (sickInfo()) return say("不舒服…先帶我去看醫生嘛");
+  const refuse = cfg.refuse?.();
+  if (refuse) return say(refuse);
+  if (activeEvent) {
+    clearTimeout(activeEvent.timer);
+    activeEvent.btn.remove();
+    activeEvent = null;
+  }
+  const lv = careLevel(id),
+    sprite = getRoomCatSprite(activePetKey(), "idle"),
+    el = document.createElement("div");
+  el.className = "care-overlay";
+  el.innerHTML = `<div class="care-card"><div class="care-head"><b>${cfg.title}</b><small class="care-lv">Lv.${lv}</small><small class="care-phase"></small><button class="care-stop">結束</button></div><div class="care-label"></div><div class="care-meta"><b class="care-count"></b><div class="care-timer"><i></i></div><span class="care-sec"></span></div><div class="care-cat"><div class="care-lens"><img src="${sprite}" alt=""></div><div class="care-minimap"><img src="${sprite}" alt=""><i></i></div><span class="care-say"></span></div></div>`;
+  document.body.append(el);
+  el.querySelector(".care-stop").onclick = () => endCare(false);
+  el.querySelector(".care-cat").addEventListener("pointerdown", (e) => {
+    const t = e.target.closest(".care-target");
+    if (t) {
+      e.preventDefault();
+      hitTarget(t);
+    }
+  });
+  care = { id, cfg, el, lv, phase: -1, timers: new Set(), breed: sprite.match(/room\/(\w+)_/)?.[1] };
+  careSay(cfg.start());
+  nextPhase();
+}
+
+function careSay(text) {
+  const b = care?.el.querySelector(".care-say");
+  if (!b) return;
+  b.textContent = text;
+  b.classList.remove("show");
+  void b.offsetWidth;
+  b.classList.add("show");
+}
+function careLater(fn, ms) {
+  const t = setTimeout(() => {
+    care?.timers.delete(t);
+    fn();
+  }, ms);
+  care.timers.add(t);
+  return t;
+}
+function nextPhase() {
+  const c = care;
+  c.phase++;
+  if (c.phase >= c.cfg.phases.length) return endCare(true);
+  const p = c.cfg.phases[c.phase];
+  c.hits = 0;
+  c.goal = p.loupe ? (BREED_PAWS[c.breed] || BREED_PAWS.cat).paws.length * p.loupe.claws.length : p.goal;
+  c.total = p.time * (c.goal / p.goal) * 1000 * (1 - (c.lv - 1) * 0.08); // 等級越高倒數越短
+  c.deadline = performance.now() + c.total;
+  c.el.querySelector(".care-label").textContent = p.label;
+  c.el.querySelector(".care-phase").textContent = c.cfg.phases.length > 1 ? `${c.phase + 1}／${c.cfg.phases.length}` : "";
+  c.el.querySelectorAll(".care-target").forEach((t) => t.remove());
+  c.el.querySelector(".care-cat").classList.toggle("loupe", !!p.loupe);
+  if (p.loupe) {
+    c.paw = 0;
+    c.clawsLeft = p.loupe.claws.map((_, i) => String(i));
+    aimLoupe(true); // 一打開就對準，不要從左上角滑過來
+  }
+  updateCareHud();
+  clearInterval(c.clock);
+  c.clock = setInterval(() => {
+    if (updateCareHud() <= 0) endCare(false);
+  }, 100);
+  spawnTarget();
+}
+function updateCareHud() {
+  const c = care,
+    p = c.cfg.phases[c.phase],
+    left = Math.max(0, c.deadline - performance.now());
+  c.el.querySelector(".care-count").textContent = `${c.hits}／${c.goal}`;
+  c.el.querySelector(".care-sec").textContent = `${(left / 1000).toFixed(1)}s`;
+  const bar = c.el.querySelector(".care-timer i");
+  bar.style.width = `${(left / c.total) * 100}%`;
+  bar.classList.toggle("hurry", left < 3000);
+  return left;
+}
+// 放大鏡要精準對到腳掌：各品種立繪坐姿與比例不同，看得到的腳掌也不同，分別量測
+// paws：[名稱, x%, y%]（爪尖所在位置，圖片寬高的百分比）；ratio＝圖片高/寬
+const BREED_PAWS = {
+  cat: { ratio: 401 / 318, paws: [["左後腳", 24, 93], ["左前腳", 37, 94], ["右前腳", 54, 94], ["右後腳", 66, 93]] },
+  black: { ratio: 432 / 345, paws: [["左前腳", 45, 93], ["右前腳", 60, 93], ["右後腳", 73, 92]] },
+  calico: { ratio: 405 / 400, paws: [["左後腳", 23, 93], ["左前腳", 33, 94], ["右前腳", 42, 94], ["右後腳", 53, 94]] },
+  orange: { ratio: 445 / 350, paws: [["左前腳", 60, 94], ["右前腳", 72, 92]] }, // 後腳藏在身體下
+};
+// 放大鏡對準目前這隻腳：圖片放大 zoom 倍，讓腳掌落在鏡片（正方形）正中央；左上小地圖標出位置
+function aimLoupe(instant = false) {
+  const c = care,
+    { zoom } = c.cfg.phases[c.phase].loupe,
+    breed = BREED_PAWS[c.breed] || BREED_PAWS.cat,
+    [, x, toeY] = breed.paws[c.paw],
+    y = toeY - 3, // 鏡頭略高於爪尖，讓整隻腳掌落在鏡片中央（爪尖目標再往下偏移）
+    img = c.el.querySelector(".care-lens img");
+  img.style.transition = instant ? "none" : "";
+  Object.assign(img.style, {
+    width: `${zoom * 100}%`,
+    height: `${zoom * 100 * breed.ratio}%`,
+    left: `${50 - x * zoom}%`,
+    top: `${50 - y * zoom * breed.ratio}%`,
+  });
+  c.el.querySelector(".care-minimap").style.aspectRatio = `1 / ${breed.ratio}`;
+  Object.assign(c.el.querySelector(".care-minimap i").style, { left: `${x}%`, top: `${y}%` });
+}
+// 亮起一個部位（放大鏡模式是這隻腳還沒剪的爪尖）；存活時間隨進度縮短；沒點到就扣時間
+function spawnTarget(avoid) {
+  const c = care,
+    p = c.cfg.phases[c.phase],
+    life = Math.round(p.life[0] - (p.life[0] - p.life[1]) * (c.hits / c.goal));
+  let key, x, y, name;
+  if (p.loupe) {
+    const others = c.clawsLeft.filter((k) => k !== avoid),
+      pool = others.length ? others : c.clawsLeft;
+    key = pool[Math.floor(Math.random() * pool.length)];
+    const [dx, dy] = p.loupe.claws[key];
+    [x, y, name] = [50 + dx, 50 + dy, ""];
+  } else {
+    const choices = p.parts.filter((k) => k !== avoid);
+    key = choices[Math.floor(Math.random() * choices.length)];
+    [x, y, name] = PARTS[key];
+  }
+  const t = document.createElement("button");
+  t.className = "care-target";
+  t.dataset.part = key;
+  t.style.cssText = `left:${x}%;top:${y}%;--life:${life}ms`;
+  t.innerHTML = `<span>${p.icon}</span><small>${name}</small>`;
+  c.el.querySelector(".care-cat").append(t);
+  t.expire = careLater(() => {
+    if (!t.isConnected) return;
+    t.remove();
+    c.deadline -= 600;
+    careSay(["慢吞吞的～", "這邊啦！", "喵？"][Math.floor(Math.random() * 3)]);
+    spawnTarget(key);
+  }, life);
+}
+function hitTarget(t) {
+  const c = care,
+    p = c.cfg.phases[c.phase];
+  clearTimeout(t.expire);
+  c.timers.delete(t.expire);
+  t.remove();
+  if (Math.random() < p.flinch) {
+    // 貓咪掙扎：這下不算，換個位置
+    audio.playMeow(1.4);
+    navigator.vibrate?.(30);
+    careSay(["喵嗚！不要！", "嘶——", "放開我喵！"][Math.floor(Math.random() * 3)]);
+    const lens = c.el.querySelector(".care-lens");
+    lens.classList.remove("flinch");
+    void lens.offsetWidth;
+    lens.classList.add("flinch");
+    return spawnTarget(t.dataset.part);
+  }
+  c.hits++;
+  navigator.vibrate?.(8);
+  const fx = document.createElement("span");
+  fx.className = "care-fx";
+  fx.textContent = p.fx;
+  fx.style.cssText = t.style.cssText;
+  c.el.querySelector(".care-cat").append(fx);
+  setTimeout(() => fx.remove(), 700);
+  updateCareHud();
+  if (c.hits >= c.goal) return nextPhase();
+  if (p.loupe) {
+    c.clawsLeft = c.clawsLeft.filter((k) => k !== t.dataset.part);
+    if (!c.clawsLeft.length) {
+      // 這隻腳剪完了：鏡頭移到下一隻腳，等移動動畫結束再亮爪尖
+      const paws = (BREED_PAWS[c.breed] || BREED_PAWS.cat).paws;
+      c.paw = (c.paw + 1) % paws.length;
+      c.clawsLeft = p.loupe.claws.map((_, i) => String(i));
+      aimLoupe();
+      careSay(`換${paws[c.paw][0]}～`);
+      return careLater(spawnTarget, 450);
+    }
+  }
+  spawnTarget(t.dataset.part);
+}
+function endCare(done) {
+  const c = care;
+  if (!c) return;
+  care = null;
+  clearInterval(c.clock);
+  c.timers.forEach(clearTimeout);
+  const s = petStatus(activePetKey()),
+    msg = done ? c.cfg.finish(s) : c.cfg.abort(s);
+  if (done) {
+    petData.careLevels = { ...petData.careLevels, [c.id]: Math.min(MAX_CARE_LV, c.lv + 1) };
+    audio.playVictory();
+  }
+  savePetData();
+  // 在放大畫面上顯示結果，稍等再關，避免最後一下點擊穿透到客廳
+  c.el.querySelectorAll(".care-target").forEach((t) => t.remove());
+  c.el.querySelector(".care-label").textContent = done
+    ? `完成！${c.lv < MAX_CARE_LV ? `下次 Lv.${c.lv + 1}，時間更短` : "已經是最高難度"}`
+    : "時間到／放棄了…";
+  c.el.classList.add(done ? "done" : "failed");
+  setTimeout(() => c.el.remove(), 1100);
+  say(msg);
+  refreshStatusBar();
+}
+
 // ---------- 主迴圈 ----------
 const TICK_MS = 7000;
 function tick() {
@@ -433,6 +758,7 @@ function tick() {
     clearTimeout(activeEvent.timer); // 小屋重繪過，事件按鈕已不在畫面上
     activeEvent = null;
   }
+  if (care) return; // 照護中不亂跑
   if (!activeEvent && !petStatus(activePetKey()).sick && Math.random() < 0.2) startEvent();
   else doBehavior();
 }
