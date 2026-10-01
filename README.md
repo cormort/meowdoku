@@ -1,10 +1,14 @@
-# 🐾 貓咪邏輯謎題（Meowdoku-like）
+# 🐾 貓咪小屋
 
-純前端的貓咪空間邏輯謎題，零依賴、可離線、手機優先。玩法致敬 Oakever Games 的 **Meowdoku**（本專案為自行實作，未使用其程式或素材）。
+純前端的養貓小屋，零依賴、可離線、手機優先。首頁是貓咪小屋：客廳互動（摸摸、逗貓棒、鏟貓砂、拍照）、
+學院排課測驗、能力象限、商店裝修、扭蛋、稱號、紀念日、節日活動。
 
-線上版：<https://cormort.github.io/meowdoku/>
+小屋裡的小遊戲：
 
-## 規則
+- **🧩 貓咪邏輯謎題（數獨打工）**：玩法致敬 Oakever Games 的 **Meowdoku**（本專案為自行實作，未使用其程式或素材）
+- **📚 學院測驗**：六大學科題庫是標準化 JSON（`quizzes/`），新增題目或學科不用改程式，格式見 [quizzes/README.md](quizzes/README.md)
+
+## 邏輯謎題規則
 
 1. 棋盤切成 N 個連通色塊，**每個色塊恰好 1 隻貓**
 2. **每一列、每一行恰好 1 隻貓**
@@ -43,11 +47,39 @@
 
 因此每一題都同時滿足「唯一解」與「純邏輯可解」，這兩點由程式保證，不是靠運氣。
 
+## 如何新增學院題目
+
+題庫在 `quizzes/`，一個學科一個 JSON 檔，改完不用動程式：
+
+1. **加題目**：在對應學科檔（例如 `quizzes/science.json`）的 `questions` 陣列加一筆
+2. **加學科**：新增 `quizzes/<id>.json`（檔名＝`id`），並把檔名加進 `quizzes/index.json` 的 `subjects`
+3. **驗證**：`node tests/quiz.test.mjs`，全部通過才提交（格式錯誤的題庫在瀏覽器會被略過）
+
+一題的最小格式：
+
+```json
+{
+  "id": "science-015",
+  "type": "choice",
+  "prompt": "貓咪主要透過哪裡流汗？",
+  "options": ["全身皮膚", "肉球", "耳朵", "舌頭"],
+  "answer": 1,
+  "tip": "可省略：作答後顯示的小提示",
+  "explain": "貓的汗腺主要在肉球。"
+}
+```
+
+- `id` 在學科內不可重複；`answer` 是正解在 `options` 的索引（從 0 開始）；`options` 2～4 個
+- 學科檔的其他欄位（名稱、顏色、每次抽幾題 `roundSize` 等）與新增題型的方法，見 [quizzes/README.md](quizzes/README.md)
+
 ## 開發與測試
 
 ```bash
 # 核心驗證（解的合法性、色塊連通、解題器與暴力解交叉比對、生成品質與效能）
 node tests/engine.test.mjs 40
+
+# 學院題庫格式驗證（所有 quizzes/*.json）
+node tests/quiz.test.mjs
 
 # 本機開遊戲（Service Worker 需要 http/https）
 python3 -m http.server 8120
@@ -63,12 +95,24 @@ python3 -m http.server 8120
 ## 檔案結構
 
 ```
-index.html              # UI、遊戲流程、儲存（單頁應用）
-engine.js               # 生成器／解題器（純函式，瀏覽器與 Node 共用）
+index.html              # 畫面骨架：貓咪小屋首頁（#/）、邏輯謎題（#/meowdoku）
+style.css               # 樣式
+audio.js                # 音效與背景音樂
+engine.js               # 謎題生成器／解題器（純函式，瀏覽器與 Node 共用）
+gen-worker.js           # 背景執行緒生成謎題
+js/main.js              # 進入點：畫面切換、全域按鈕、啟動
+js/ui.js                # 共用：DOM、儲存鍵、底部面板、提示音
+js/pet.js               # 貓咪小屋：養成資料、客廳、圖鑑、稱號、紀念日、活動、分頁切換
+js/room.js              # 客廳互動：立繪姿態、逗貓棒、貓砂盆、拍照
+js/academy.js           # 學院測驗、能力象限、日常照護
+js/shop.js              # 商店與扭蛋
+js/meowdoku.js          # 邏輯謎題畫面與操作
+js/quiz.js              # 題庫格式定義、驗證、抽題、結算（純函式）
+quizzes/                # 學科題庫 JSON（index.json 列出要載入的檔案）
+icons/                  # 圖示、貓臉 sprite、客廳素材
 sw.js                   # Service Worker（離線快取）
 manifest.webmanifest    # PWA
-icons/                  # 圖示（含 maskable）
-tests/engine.test.mjs   # 核心驗證
+tests/                  # engine.test.mjs、quiz.test.mjs
 ```
 
 ## 部署
