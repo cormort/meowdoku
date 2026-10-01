@@ -1,10 +1,14 @@
-# 🐾 貓咪邏輯謎題（Meowdoku-like）
+# 🐾 貓咪小屋
 
-純前端的貓咪空間邏輯謎題，零依賴、可離線、手機優先。玩法致敬 Oakever Games 的 **Meowdoku**（本專案為自行實作，未使用其程式或素材）。
+純前端的養貓小屋，零依賴、可離線、手機優先。首頁是貓咪小屋（養成、圖鑑、稱號、紀念日、節日活動、互動屋），
+小屋裡有兩種小遊戲，過關都能拿到食物與好感度：
+
+- **🧩 貓咪邏輯謎題**：玩法致敬 Oakever Games 的 **Meowdoku**（本專案為自行實作，未使用其程式或素材）
+- **📚 問答**：題庫是標準化 JSON（`quizzes/`），新增題庫不用改程式，格式見 [quizzes/README.md](quizzes/README.md)
 
 線上版：<https://cormort.github.io/meowdoku/>
 
-## 規則
+## 邏輯謎題規則
 
 1. 棋盤切成 N 個連通色塊，**每個色塊恰好 1 隻貓**
 2. **每一列、每一行恰好 1 隻貓**
@@ -49,6 +53,9 @@
 # 核心驗證（解的合法性、色塊連通、解題器與暴力解交叉比對、生成品質與效能）
 node tests/engine.test.mjs 40
 
+# 題庫格式驗證（所有 quizzes/*.json）
+node tests/quiz.test.mjs
+
 # 本機開遊戲（Service Worker 需要 http/https）
 python3 -m http.server 8120
 # 開 http://127.0.0.1:8120/
@@ -63,12 +70,22 @@ python3 -m http.server 8120
 ## 檔案結構
 
 ```
-index.html              # UI、遊戲流程、儲存（單頁應用）
-engine.js               # 生成器／解題器（純函式，瀏覽器與 Node 共用）
+index.html              # 畫面骨架：貓咪小屋首頁、謎題、問答（以 #/、#/meowdoku、#/quiz/<id> 切換）
+style.css               # 主要樣式
+cathouse.js/.css        # 互動屋（全身貓、撫摸、逗貓棒、貓砂盆）
+audio.js                # 音效與背景音樂
+engine.js               # 謎題生成器／解題器（純函式，瀏覽器與 Node 共用）
+gen-worker.js           # 背景執行緒生成謎題
+js/main.js              # 進入點：路由、全域按鈕、啟動
+js/ui.js                # 共用：DOM、儲存鍵、底部面板、提示音
+js/pet.js               # 貓咪小屋養成系統＋各小遊戲共用的過關獎勵 awardWin()
+js/meowdoku.js          # 邏輯謎題畫面與操作
+js/quiz.js              # 問答畫面
+js/quiz-format.js       # 題庫格式定義與驗證（純函式）
+quizzes/                # 題庫 JSON（index.json 列出要載入的檔案）
 sw.js                   # Service Worker（離線快取）
 manifest.webmanifest    # PWA
-icons/                  # 圖示（含 maskable）
-tests/engine.test.mjs   # 核心驗證
+tests/                  # engine.test.mjs、quiz.test.mjs
 ```
 
 ## 部署
