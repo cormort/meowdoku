@@ -105,6 +105,11 @@ export function renderRoomLitter() {
   }
 }
 
+// 貓咪自己上廁所（最多 3 坨）
+export function addLitterClump() {
+  roomLitterClumps = Math.min(3, roomLitterClumps + 1);
+  renderRoomLitter();
+}
 export function scoopLitterClump(clumpEl) {
   if (roomLitterClumps <= 0) {
     setRoomCatPose("pet", "貓砂盆已經超級乾淨了喵！✨", "pet-bounce");

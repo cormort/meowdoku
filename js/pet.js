@@ -4,6 +4,7 @@ import { academyPageHtml, handleDailyCare, handleQuizAnswer, startQuizSession, s
 import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
+import { handleLifeEvent, sickInfo } from "./life.js";
 import { $, LS, escapeHtml, hideSheet, localDay, playSkinArrivalSound } from "./ui.js";
 const FOODS = {
   fish: { icon: "🐟", name: "小魚乾", affection: 4, mood: 4 },
@@ -316,6 +317,8 @@ export function petQuickStatusBarHtml(key = activePetKey()) {
       <span class="pet-quick-pill" title="飽食度">🍖 ${st.hunger}%</span>
       <span class="pet-quick-pill" title="體力值">⚡ ${st.energy}%</span>
       <span class="pet-quick-pill" title="疲勞度">💤 ${st.fatigue}%</span>
+      <span class="pet-quick-pill" title="清潔度">🧼 ${st.cleanliness}%</span>
+      ${sickInfo(key) ? `<button class="pet-quick-pill sick" data-life-event="clinic" title="點我看醫生">${sickInfo(key).icon} ${sickInfo(key).name}</button>` : ""}
     </div>
   `;
 }
@@ -1233,6 +1236,11 @@ function onPetClick(e) {
   const roomModeBtn = e.target.closest("[data-room-mode]");
   if (roomModeBtn) {
     setRoomToolMode(roomModeBtn.dataset.roomMode);
+    return;
+  }
+  const lifeEvent = e.target.closest("[data-life-event]");
+  if (lifeEvent) {
+    handleLifeEvent(lifeEvent.dataset.lifeEvent);
     return;
   }
   const stageTouch = e.target.closest("[data-interact-stage], [data-interact-cat]");
