@@ -185,8 +185,11 @@ window.pullGacha = pullGacha;
 window.showPetHome = showPetHome;
 window.equipCostume = equipCostume;
 
+// 學院測驗掉落的扭蛋券殘頁：集滿 SCRAPS_PER_TICKET 張可免費單抽一次
+export const SCRAPS_PER_TICKET = 5;
 export function gachaPageHtml(key = activePetKey()) {
-  const coins = petCoins();
+  const coins = petCoins(),
+    scraps = petData.ticketScraps || 0;
   petData.gachaPity = petData.gachaPity || { total: 0, sinceSR: 0, sinceSSR: 0 };
   const pity = petData.gachaPity;
 
@@ -212,13 +215,20 @@ export function gachaPageHtml(key = activePetKey()) {
           <small>🪙 2,700 金幣 (9折)</small>
         </button>
       </div>
+      <button class="gacha-pull-btn ticket" data-pull-gacha="ticket" ${scraps >= SCRAPS_PER_TICKET ? "" : "disabled"}>
+        <span>🎫 殘頁兌換單抽</span>
+        <small>扭蛋券殘頁 ${scraps}／${SCRAPS_PER_TICKET}（學院測驗滿分有機會掉落）</small>
+      </button>
     </div>
   `;
 }
 
-export function pullGacha(count) {
-  const cost = count === 1 ? 300 : 2700;
-  if (petCoins() < cost) {
+export function pullGacha(count, useScraps = false) {
+  const cost = useScraps ? 0 : count === 1 ? 300 : 2700;
+  if (useScraps) {
+    if ((petData.ticketScraps || 0) < SCRAPS_PER_TICKET) return;
+    petData.ticketScraps -= SCRAPS_PER_TICKET;
+  } else if (petCoins() < cost) {
     showSheet("金幣不足 🪙", `扭蛋需要 ${cost} 金幣喵！請先前往「學院」排課測驗或「數獨打工」賺取金幣！`, "前往學院", () => setPetView("academy"));
     return;
   }

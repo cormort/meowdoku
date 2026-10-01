@@ -286,9 +286,11 @@ function finishQuizSession() {
     fatigue: res.fatigueGain,
   });
 
-  if (res.dropItem) {
-    const itemKey = res.dropItem.type === "premium_snack" ? "premium" : "fish";
-    petData.food[itemKey] = (petData.food[itemKey] || 0) + res.dropItem.qty;
+  const drop = res.dropItem;
+  if (drop?.type === "ticket_scrap") petData.ticketScraps = (petData.ticketScraps || 0) + drop.qty;
+  else if (drop) {
+    const itemKey = drop.type === "premium_snack" ? "premium" : "fish";
+    petData.food[itemKey] = (petData.food[itemKey] || 0) + drop.qty;
   }
 
   savePetData();

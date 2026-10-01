@@ -3853,3 +3853,7 @@ html.low-fx .board.skin-arrive {
     animation: none !important;
   }
 }
+.gacha-pull-btn.ticket {
+  width: 100%;
+  flex: none;
+}

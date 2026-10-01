@@ -1163,7 +1163,8 @@ function onPetClick(e) {
   }
   const pullGachaBtn = e.target.closest("[data-pull-gacha]");
   if (pullGachaBtn) {
-    pullGacha(Number(pullGachaBtn.dataset.pullGacha));
+    const v = pullGachaBtn.dataset.pullGacha;
+    pullGacha(v === "ticket" ? 1 : Number(v), v === "ticket");
     return;
   }
   const cattreeClick = e.target.closest("#roomFurnitureCattree");
