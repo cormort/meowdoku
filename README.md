@@ -47,6 +47,31 @@
 
 因此每一題都同時滿足「唯一解」與「純邏輯可解」，這兩點由程式保證，不是靠運氣。
 
+## 如何新增學院題目
+
+題庫在 `quizzes/`，一個學科一個 JSON 檔，改完不用動程式：
+
+1. **加題目**：在對應學科檔（例如 `quizzes/science.json`）的 `questions` 陣列加一筆
+2. **加學科**：新增 `quizzes/<id>.json`（檔名＝`id`），並把檔名加進 `quizzes/index.json` 的 `subjects`
+3. **驗證**：`node tests/quiz.test.mjs`，全部通過才提交（格式錯誤的題庫在瀏覽器會被略過）
+
+一題的最小格式：
+
+```json
+{
+  "id": "science-015",
+  "type": "choice",
+  "prompt": "貓咪主要透過哪裡流汗？",
+  "options": ["全身皮膚", "肉球", "耳朵", "舌頭"],
+  "answer": 1,
+  "tip": "可省略：作答後顯示的小提示",
+  "explain": "貓的汗腺主要在肉球。"
+}
+```
+
+- `id` 在學科內不可重複；`answer` 是正解在 `options` 的索引（從 0 開始）；`options` 2～4 個
+- 學科檔的其他欄位（名稱、顏色、每次抽幾題 `roundSize` 等）與新增題型的方法，見 [quizzes/README.md](quizzes/README.md)
+
 ## 開發與測試
 
 ```bash
