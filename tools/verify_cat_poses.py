@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
-REPO = Path("/tmp/meowdoku-live")
+REPO = Path(__file__).resolve().parent.parent
 ROOM = REPO / "icons" / "room"
 BREEDS = ["cat", "orange", "black", "calico"]
 POSES = ["idle", "walk", "run", "jump", "lick", "wash", "stretch", "tail", "yawn", "scratch", "eat", "pet", "play", "sleep"]
