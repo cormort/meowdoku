@@ -30,6 +30,37 @@ export function getRoomCatSprite(key, pose = "idle") {
 }
 export let roomCatPose = "idle";
 let roomCatTimer = null;
+// 各姿勢立繪自動回到 idle 的時間（毫秒）。沒有列在這裡的姿勢（例如 sleep）會一直保持。
+const POSE_HOLD_MS = {
+  pet: 3200,
+  play: 3200,
+  walk: 2600,
+  run: 2000,
+  jump: 1600,
+  lick: 2600,
+  wash: 2400,
+  stretch: 2600,
+  tail: 2600,
+  yawn: 2400,
+  scratch: 2600,
+  eat: 3200,
+};
+// 立繪圖鑑用：動作姿勢（不含 idle/sleep，那兩個另外處理）
+export const ACTION_POSES = [
+  { key: "walk", icon: "🚶", label: "走路" },
+  { key: "run", icon: "💨", label: "暴衝" },
+  { key: "jump", icon: "⬆️", label: "跳躍" },
+  { key: "lick", icon: "👅", label: "舔腳掌" },
+  { key: "wash", icon: "✨", label: "洗臉" },
+  { key: "stretch", icon: "💫", label: "伸懶腰" },
+  { key: "tail", icon: "🌀", label: "追尾巴" },
+  { key: "yawn", icon: "🥱", label: "打哈欠" },
+  { key: "scratch", icon: "🙅", label: "磨爪爪" },
+  { key: "eat", icon: "🍽️", label: "吃飯飯" },
+  { key: "pet", icon: "💕", label: "討摸摸" },
+  { key: "play", icon: "🧶", label: "玩逗貓棒" },
+  { key: "sleep", icon: "💤", label: "打盹" },
+];
 export function spawnRoomHeart(x, y, emoji = "❤️") {
   const container = $("roomHearts");
   if (!container) return;
@@ -42,7 +73,7 @@ export function spawnRoomHeart(x, y, emoji = "❤️") {
   container.appendChild(heart);
   setTimeout(() => heart.remove(), 1400);
 }
-export function setRoomCatPose(pose, text, animClass = "pet-bounce") {
+export function setRoomCatPose(pose, text, animClass = "pet-bounce", holdMs) {
   roomCatPose = pose;
   const img = $("roomCatImg");
   const key = activePetKey();
@@ -58,7 +89,8 @@ export function setRoomCatPose(pose, text, animClass = "pet-bounce") {
     speech.classList.add("show");
   }
   clearTimeout(roomCatTimer);
-  if (pose === "pet" || pose === "play") {
+  const hold = holdMs ?? POSE_HOLD_MS[pose];
+  if (hold) {
     roomCatTimer = setTimeout(() => {
       roomCatPose = "idle";
       const curImg = $("roomCatImg");
@@ -66,7 +98,7 @@ export function setRoomCatPose(pose, text, animClass = "pet-bounce") {
         curImg.src = getRoomCatSprite(activePetKey(), "idle");
         curImg.className = "room-cat-img";
       }
-    }, 3200);
+    }, hold);
   }
 }
 export let roomLitterClumps = 2;

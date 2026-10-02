@@ -174,6 +174,18 @@ const BEHAVIORS = [
   { id: "poop", weight: 1 },
 ];
 const ANIM_CLASSES = ["cat-walk", "cat-jump", "cat-lick", "cat-stretch", "cat-spin", "cat-scratch"];
+// 自主行為對應的立繪姿勢（有專門圖的就用，沒有的維持 idle + CSS 動畫）
+const BEHAVIOR_POSES = {
+  walk: "walk",
+  poop: "walk",
+  zoomies: "run",
+  jump: "jump",
+  lick: "lick",
+  wash: "wash",
+  stretch: "stretch",
+  spin: "tail",
+  yawn: "yawn",
+};
 
 function catEl() {
   return document.querySelector(".pet-room-cat-wrap");
@@ -193,12 +205,14 @@ function animate(cls, ms = 900) {
 }
 function walkTo(px, speed = 1) {
   const el = catEl();
-  if (!el) return;
+  if (!el) return 900;
   const from = parseFloat(el.style.getPropertyValue("--cat-x")) || 0;
+  const ms = (Math.abs(px - from) * 14) / speed + 300;
   el.style.setProperty("--cat-flip", px < from ? "-1" : "1");
-  el.style.setProperty("--cat-walk-ms", `${Math.round((Math.abs(px - from) * 14) / speed) + 300}ms`);
+  el.style.setProperty("--cat-walk-ms", `${Math.round(ms)}ms`);
   el.style.setProperty("--cat-x", `${px}px`);
-  animate("cat-walk", (Math.abs(px - from) * 14) / speed + 300);
+  animate("cat-walk", ms);
+  return ms;
 }
 function randomSpot() {
   const w = $("petRoomStage")?.clientWidth || 320,
@@ -231,16 +245,20 @@ function doBehavior() {
   let r = Math.random() * pool.reduce((t, b) => t + b.weight, 0),
     b = pool[0];
   for (b of pool) if ((r -= b.weight) < 0) break;
-  if (b.id !== "nap") setRoomCatPose("idle", null, "");
+  if (b.id !== "nap") setRoomCatPose(BEHAVIOR_POSES[b.id] || "idle", null, "");
   switch (b.id) {
-    case "walk":
-      walkTo(randomSpot());
+    case "walk": {
+      const ms = walkTo(randomSpot());
+      setRoomCatPose("walk", null, "", ms + 400);
       break;
-    case "zoomies":
+    }
+    case "zoomies": {
       say("暴衝時間！💨");
       walkTo(randomSpot(), 3);
+      setRoomCatPose("run", null, "", 1500);
       setTimeout(() => walkTo(randomSpot(), 3), 700);
       break;
+    }
     case "jump":
       animate("cat-jump", 800);
       if (petData.roomFurniture?.cattree) {
@@ -272,7 +290,10 @@ const EVENTS = {
     label: "叼來禮物",
     weight: 2,
     pos: () => [catXPercent() + 12, 18],
-    start: () => say("送你的禮物喵！"),
+    start: () => {
+      setRoomCatPose("walk", null, "", 3200);
+      say("送你的禮物喵！");
+    },
     tap: () => {
       const coins = 10 + Math.floor(Math.random() * 21);
       addCoins(coins);
@@ -303,11 +324,13 @@ const EVENTS = {
     weight: 2,
     pos: () => [catXPercent(), 72],
     start: () => {
+      setRoomCatPose("scratch", null, "");
       animate("cat-scratch", 6000);
       say("磨爪爪～嘿嘿");
     },
     tap: () => {
       catEl()?.classList.remove("cat-scratch");
+      setRoomCatPose("idle", null, "");
       say("好啦不抓了…😿");
       befriend(1, -1);
     },
@@ -356,6 +379,7 @@ const EVENTS = {
       const s = petStatus(activePetKey());
       s.cleanliness = clamp(s.cleanliness - 15);
       savePetData();
+      setRoomCatPose("tail", null, "", 1200);
       animate("cat-spin", 1100);
       say("在盆栽裡打滾～好好玩！（清潔 -15）");
     },
@@ -381,6 +405,7 @@ const EVENTS = {
     start: () => say("咔咔咔咔…（盯）"),
     tap: () => {
       walkTo(randomSpot(), 2);
+      setRoomCatPose("jump", null, "", 1300);
       animate("cat-jump", 800);
       say("飛撲！差一點就抓到了！");
       befriend(1, 5);
@@ -540,6 +565,8 @@ const CARES = {
   },
 };
 const MAX_CARE_LV = 5;
+// 照護完成後要顯示的姿勢立繪
+const CARE_POSES = { brush: "lick", bath: "wash", nails: "lick" };
 const careLevel = (id) => petData.careLevels?.[id] || 1;
 let care = null;
 
@@ -744,6 +771,8 @@ function endCare(done) {
   c.el.classList.add(done ? "done" : "failed");
   setTimeout(() => c.el.remove(), 1100);
   say(msg);
+  // 照護完成後換上對應姿勢：梳毛／剪指甲＝舔毛理毛，洗澡＝洗臉
+  if (done) setRoomCatPose(CARE_POSES[c.id] || "pet", null, "", 2800);
   refreshStatusBar();
 }
 

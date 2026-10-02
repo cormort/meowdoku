@@ -968,18 +968,22 @@ function renderPetView(html) {
   $("petView").innerHTML = html;
 }
 export function animatePet(cls, text) {
+  // cls 可以是 "pose:<key>"，直接指定客廳立繪姿勢（例如 pose:eat）
+  const poseCls = cls.startsWith("pose:") ? cls.slice(5) : null;
+  const cssCls = poseCls ? "pet-bounce" : cls;
   const avatar = document.querySelector(".pet-avatar");
   if (avatar) {
     avatar.classList.remove("pet-bounce", "pet-wiggle", "pet-sleep");
     void avatar.offsetWidth;
-    avatar.classList.add(cls);
+    avatar.classList.add(cssCls);
   }
   let pose = "idle";
-  if (cls === "pet-bounce") pose = "pet";
+  if (poseCls) pose = poseCls;
+  else if (cls === "pet-bounce") pose = "pet";
   else if (cls === "pet-wiggle") pose = "play";
   else if (cls === "pet-sleep") pose = "sleep";
 
-  setRoomCatPose(pose, text, cls);
+  setRoomCatPose(pose, text, cssCls);
 
   if (pose === "pet") {
     for (let i = 0; i < 4; i++) {
@@ -1092,7 +1096,7 @@ function feedPet(type) {
   navigator.vibrate?.(20);
   showPetHome();
   requestAnimationFrame(() =>
-    animatePet("pet-bounce", `${food.name}真好吃！最喜歡你了喵~`),
+    animatePet("pose:eat", `${food.name}真好吃！最喜歡你了喵~`),
   );
 }
 function selectPet(key) {
@@ -1192,6 +1196,16 @@ function onPetClick(e) {
   const careBtn = e.target.closest("[data-care]");
   if (careBtn) {
     handleDailyCare(careBtn.dataset.care);
+    return;
+  }
+  const poseCard = e.target.closest("[data-pose-preview]");
+  if (poseCard) {
+    const stageImg = document.getElementById("poseStageImg"),
+      tag = document.getElementById("poseStageTag");
+    if (stageImg) stageImg.src = getRoomCatSprite(activePetKey(), poseCard.dataset.posePreview);
+    if (tag) tag.textContent = poseCard.dataset.poseLabel || "";
+    document.querySelectorAll(".pose-card.active").forEach((b) => b.classList.remove("active"));
+    poseCard.classList.add("active");
     return;
   }
   const closeToGame = e.target.closest("[data-close-to-game]");

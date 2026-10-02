@@ -6,6 +6,7 @@
 貓咪像電子雞一樣過日子：飽食度、清潔度會隨真實時間下降（離線也會補算，最多 24 小時），
 在客廳會自己走動、跳躍、舔腳、洗臉、伸懶腰、追尾巴、打盹、上廁所，
 也會跑來討摸摸、叼禮物、抓地毯、吐毛球、盯著窗外蝴蝶等你回應。
+每個動作都有自己的全身立繪（見下方「貓咪立繪」），並在「📊 屬性」頁有 **🐾 全身姿勢圖鑑**可以放大查看。
 親手照護是放大貓咪的點擊小遊戲：🪮 梳毛、🛁 洗澡（搓泡泡→沖水→吹乾）、✂️ 剪指甲，
 身上的部位會輪流亮起，要在倒數結束前點到；越點越快，每次成功照護等級 +1、倒數時間變短（最多 Lv.5）。
 照顧不好會生病（感冒、腸胃炎、毛球症；感冒拖過 24 小時會發燒），要帶去診所餵藥或打針，生病時不能上學。
@@ -79,6 +80,29 @@
 - `id` 在學科內不可重複；`answer` 是正解在 `options` 的索引（從 0 開始）；`options` 2～4 個
 - 學科檔的其他欄位（名稱、顏色、每次抽幾題 `roundSize` 等）與新增題型的方法，見 [quizzes/README.md](quizzes/README.md)
 
+## 貓咪立繪（全身姿勢）
+
+客廳立繪是 4 個品種 × 14 種姿勢的透明 PNG／WebP：
+
+| 類別 | 姿勢 | 觸發時機 |
+|---|---|---|
+| 基本 | `idle` 坐著、`pet` 討摸摸、`play` 玩逗貓棒、`sleep` 打盹 | 主畫面互動、逗貓棒、休息、貓跳台、暖被桌 |
+| 動作 | `walk` 走路、`run` 暴衝、`jump` 跳躍、`lick` 舔腳掌、`wash` 洗臉、`stretch` 伸懶腰、`tail` 追尾巴、`yawn` 打哈欠、`scratch` 磨爪爪、`eat` 吃飯飯 | 自主行為、事件（磨爪、蝴蝶、叼禮物）、餵食、照護完成 |
+
+- 品種前綴：`cat`（白貓）、`orange`、`black`、`calico`，檔案為 `icons/room/<品種>_<姿勢>.webp`（PNG 為 `onerror` 後備）。
+- 每個姿勢在 `js/room.js` 的 `POSE_HOLD_MS` 定義顯示時間，時間到會自動回到 `idle`；`sleep` 沒有設限所以會一直躺著。
+- 「📊 屬性」頁最下方是 **🐾 全身姿勢圖鑑**（14 張縮圖，點一下可放大看）。
+
+立繪怎麼來的（可重現）：
+
+1. 在 Google AI Studio 的 Playground 用 **Nano Banana Pro（`gemini-3-pro-image`）**，1:1、2K、關閉 Grounding。
+2. 每個姿勢都**附上該品種的 `idle` 立繪當參考圖**（image-to-image），prompt 明講「保留同一隻貓的外觀與畫風，只換姿勢」，並列出「純白背景、無陰影、無地板、無文字、全身入鏡」等限制。
+3. 生成的 2048×2048 圖用 `tools/cut_cat_poses.py` 去背（邊緣洪水填充＋補封閉洞＋alpha 柔化）、裁切，再依品種 `idle` 立繪高度等比縮放，輸出 PNG 與 WebP：
+
+```bash
+python3 tools/cut_cat_poses.py --source <生圖目錄>   # 加 --check 只報表不寫檔
+```
+
 ## 開發與測試
 
 ```bash
@@ -117,7 +141,8 @@ js/shop.js              # 商店與扭蛋
 js/meowdoku.js          # 邏輯謎題畫面與操作
 js/quiz.js              # 題庫格式定義、驗證、抽題、結算（純函式）
 quizzes/                # 學科題庫 JSON（index.json 列出要載入的檔案）
-icons/                  # 圖示、貓臉 sprite、客廳素材
+icons/                  # 圖示、貓臉 sprite、客廳素材（含 4 品種 × 14 姿勢立繪）
+tools/cut_cat_poses.py  # AI 生圖（Nano Banana Pro）→ 去背／裁切／縮放成遊戲素材
 sw.js                   # Service Worker（離線快取）
 manifest.webmanifest    # PWA
 tests/                  # engine.test.mjs、quiz.test.mjs

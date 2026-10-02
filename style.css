@@ -4100,3 +4100,81 @@ html.low-fx .board.skin-arrive {
 .care-overlay.failed .care-label {
   color: var(--warn);
 }
+
+/* 🐾 全身姿勢圖鑑（屬性頁） */
+.pose-gallery {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+}
+.pose-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 210px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--accent-soft), var(--card));
+  overflow: hidden;
+}
+.pose-stage img {
+  max-width: 100%;
+  height: 190px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(40, 25, 10, 0.14));
+}
+.pose-stage-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.pose-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+.pose-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.pose-card:active {
+  transform: scale(0.96);
+}
+.pose-card img {
+  height: 46px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.pose-card small {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.pose-card.active {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.pose-card.active small {
+  color: var(--accent);
+}

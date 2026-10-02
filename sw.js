@@ -1,7 +1,7 @@
 /* 貓咪邏輯謎題 Service Worker：App Shell + 離線可玩。
  * 同源資源採網路優先、離線退回快取。 */
 const PREFIX='meowdoku';
-const SHELL=`${PREFIX}-shell-v29`;
+const SHELL=`${PREFIX}-shell-v30`;
 const APP_SHELL=[
   './',
   './index.html',
@@ -51,6 +51,46 @@ const APP_SHELL=[
   './icons/room/calico_pet.webp',
   './icons/room/calico_play.webp',
   './icons/room/calico_sleep.webp',
+  './icons/room/cat_walk.webp',
+  './icons/room/cat_run.webp',
+  './icons/room/cat_jump.webp',
+  './icons/room/cat_lick.webp',
+  './icons/room/cat_wash.webp',
+  './icons/room/cat_stretch.webp',
+  './icons/room/cat_tail.webp',
+  './icons/room/cat_yawn.webp',
+  './icons/room/cat_scratch.webp',
+  './icons/room/cat_eat.webp',
+  './icons/room/orange_walk.webp',
+  './icons/room/orange_run.webp',
+  './icons/room/orange_jump.webp',
+  './icons/room/orange_lick.webp',
+  './icons/room/orange_wash.webp',
+  './icons/room/orange_stretch.webp',
+  './icons/room/orange_tail.webp',
+  './icons/room/orange_yawn.webp',
+  './icons/room/orange_scratch.webp',
+  './icons/room/orange_eat.webp',
+  './icons/room/black_walk.webp',
+  './icons/room/black_run.webp',
+  './icons/room/black_jump.webp',
+  './icons/room/black_lick.webp',
+  './icons/room/black_wash.webp',
+  './icons/room/black_stretch.webp',
+  './icons/room/black_tail.webp',
+  './icons/room/black_yawn.webp',
+  './icons/room/black_scratch.webp',
+  './icons/room/black_eat.webp',
+  './icons/room/calico_walk.webp',
+  './icons/room/calico_run.webp',
+  './icons/room/calico_jump.webp',
+  './icons/room/calico_lick.webp',
+  './icons/room/calico_wash.webp',
+  './icons/room/calico_stretch.webp',
+  './icons/room/calico_tail.webp',
+  './icons/room/calico_yawn.webp',
+  './icons/room/calico_scratch.webp',
+  './icons/room/calico_eat.webp',
 ];
 
 self.addEventListener('install',event=>{

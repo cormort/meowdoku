@@ -3,7 +3,10 @@ import { audio } from "../audio.js";
 import { activePetKey, addCoins, addPetStat, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, savePetData, setPetView, showPetHome, updatePetStatus } from "./pet.js";
 import { showClinic, sickInfo, startCare } from "./life.js";
 import { QUIZ_SUBJECTS, calculateQuizResult, isCorrect, pickRound } from "./quiz.js";
+import { ACTION_POSES, getRoomCatSprite } from "./room.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
+// 姿勢圖鑑：坐姿 + 13 種動作立繪
+const POSE_GALLERY = [{ key: "idle", icon: "🐱", label: "坐著發呆" }, ...ACTION_POSES];
 export function academyPageHtml(key = activePetKey()) {
   const stats = petStats(key);
   const name = petName(key);
@@ -152,6 +155,22 @@ export function statsPageHtml(key = activePetKey()) {
           <span>🛁 梳理洗澡</span>
           <small>清潔=100 心情+15</small>
         </button>
+      </div>
+
+      <div class="section-title" style="font-size:0.78rem; font-weight:800; color:var(--muted); margin-top:6px;">🐾 全身姿勢圖鑑（點小圖可放大看）</div>
+      <div class="pose-gallery">
+        <div class="pose-stage">
+          <img id="poseStageImg" src="${getRoomCatSprite(key, "idle")}" alt="${escapeHtml(name)} 的全身立繪" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');">
+          <span class="pose-stage-tag" id="poseStageTag">🐱 坐著發呆</span>
+        </div>
+        <div class="pose-grid">
+          ${POSE_GALLERY.map(
+            (p) => `<button class="pose-card${p.key === "idle" ? " active" : ""}" data-pose-preview="${p.key}" data-pose-label="${p.icon} ${p.label}">
+              <img src="${getRoomCatSprite(key, p.key)}" alt="${p.label}" loading="lazy" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');">
+              <small>${p.icon} ${p.label}</small>
+            </button>`,
+          ).join("")}
+        </div>
       </div>
     </div>
   `;
