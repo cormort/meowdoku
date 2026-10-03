@@ -8,9 +8,10 @@
   配件的參考圖另外戴一頂棕色妹妹頭（有彩度，不會被摳走），耳機、眼鏡才會戴在頭髮外面。
 - 眼睛、線稿也沒彩度：跟參考圖比，和參考圖幾乎一樣的就不算。
 - AI 輸出的大小、位置可能略有不同：比對綠底／皮膚／藍上衣的色塊自動找縮放與平移對回去。
+  帽子的參考圖也戴同一頂棕色妹妹頭，帽子會戴在頭髮上。
 - 背包拆兩層：壓在身體上的（背帶）→ acc_backpack_front（疊在上衣前面），其餘 → acc_backpack（身體後面）。
 
-用法（kind 是 hair 或 acc）：
+用法（kind 是 hair、acc 或 hat）：
   python3 tools/avatar_redraw.py ref <kind>                  # 產生 /tmp/avatar_ref/<kind>.png
   （跑 tools/gen_avatar_redraw.js，輸出 /tmp/avatar_gen/<kind>/<id>.png）
   python3 tools/avatar_redraw.py process <kind> [id ...]     # 摳圖 → icons/avatar/（頭髮另外產生後髮）
@@ -31,15 +32,18 @@ W = H = 512
 SIDE = 1024  # 參考圖邊長
 GREEN = (0, 177, 64)
 SHIRT = (156, 195, 230)  # 淡藍上衣，讓衣服有彩度、不會被當成頭髮／配件
-HAIR_REF = (138, 90, 52)  # 配件參考圖的棕色頭髮
-PANTS = (74, 111, 165)  # 配件參考圖的深藍短褲（不穿褲子 AI 可能自己補畫）
+HAIR_REF = (138, 90, 52)  # 配件、帽子參考圖的棕色頭髮
+PANTS = (74, 111, 165)  # 配件、帽子參考圖的深藍短褲（不穿褲子 AI 可能自己補畫）
 SAT_MAX = 30  # 彩度（RGB 最大減最小）低於這個算「白／灰」＝新畫的東西；AI 畫得偏米色時可以調高
 # 參考圖從 512 畫布（g4 座標）裁哪一塊（正方形 x0, y0, x1, y1）
 KINDS = {
     "hair": {"crop": (106, 20, 406, 320), "prefix": "hair_"},  # 頭＋肩，留空間給長髮
     "acc": {"crop": (56, 20, 456, 420), "prefix": "acc_"},  # 頭到腰，背包、名牌、圍巾都在框內
+    "hat": {"crop": (96, 0, 416, 320), "prefix": "hat_"},  # 頭往上留空間給帽冠、兩側給寬帽簷
 }
+WITH_HAIR = {"acc", "hat"}  # 參考圖戴棕色妹妹頭的類別（配件、帽子要戴在頭髮外面）
 # 和 js/avatar.js 的 ACC_COLOR 一致（預覽用）
+HAT_COLOR = {"cap": (224, 87, 79), "beanie": (127, 176, 216), "straw": (232, 201, 122), "beret": (176, 127, 192), "bow": (239, 127, 168)}  # 和 AVATAR_PARTS.hat 一致
 ACC_COLOR = {"glasses": (51, 51, 51), "scarf": (224, 87, 79), "backpack": (138, 90, 52), "headphone": (58, 58, 58), "badge": (201, 162, 39)}
 NECK_LINE = 200  # 背包：這條線以下、壓在身體上的才算背帶（頭後面的仍在身體後面）
 
@@ -60,13 +64,14 @@ def tinted(file, color):
 
 
 def scene(kind, hair_color=HAIR_REF):
-    """參考場景（512 畫布）：身體 → 上衣 → 頭和脖子（疊在領口前面，跟遊戲一樣）；配件版再加短褲、棕色妹妹頭"""
+    """參考場景（512 畫布）：身體 → 上衣 → 頭和脖子（疊在領口前面，跟遊戲一樣）；配件、帽子版再加短褲、棕色妹妹頭"""
     base = Image.open(AV / "base_g4.png").convert("RGBA")
     canvas = Image.new("RGBA", (W, H), GREEN + (255,))
-    if kind == "acc":
+    hair = kind in WITH_HAIR
+    if hair:
         canvas.alpha_composite(tinted(AV / "hairback_bob.png", hair_color))
     canvas.alpha_composite(base)
-    if kind == "acc":
+    if hair:
         canvas.alpha_composite(tinted(AV / "bottom_shorts.png", PANTS))
     canvas.alpha_composite(tinted(AV / "top_tshirt.png", SHIRT))
     head = base.copy()
@@ -74,7 +79,7 @@ def scene(kind, hair_color=HAIR_REF):
     mask[: 207 + 12] = 255  # 脖子以上
     head.putalpha(Image.fromarray(np.minimum(np.asarray(head.getchannel("A")), mask)))
     canvas.alpha_composite(head)
-    if kind == "acc":
+    if hair:
         canvas.alpha_composite(tinted(AV / "hair_bob.png", hair_color))
     return canvas
 
@@ -228,6 +233,16 @@ def preview(kind, ids, out_dir):
                 c.alpha_composite(base)
                 c.alpha_composite(tinted(out_dir / f"hair_{hid}.png", col))
                 sheet.paste(c.crop(crop).resize((size, size)).convert("RGB"), (i * size, j * size))
+    elif kind == "hat":
+        sheet = Image.new("RGB", (size * len(ids), size))
+        s = scene("hat")
+        green = np.all(np.asarray(s)[..., :3] == GREEN, -1)
+        s.putalpha(Image.fromarray(np.where(green, 0, 255).astype(np.uint8)))
+        for i, hid in enumerate(ids):
+            c = Image.new("RGBA", (W, H), (122, 156, 198, 255))
+            c.alpha_composite(s)
+            c.alpha_composite(tinted(out_dir / f"hat_{hid}.png", HAT_COLOR.get(hid, (224, 87, 79))))
+            sheet.paste(c.crop(crop).resize((size, size)).convert("RGB"), (i * size, 0))
     else:
         # 配件：照遊戲的疊法（背包後層在最底、背帶在上衣前面、其他配件在最上面）
         sheet = Image.new("RGB", (size * len(ids), size))
@@ -266,12 +281,12 @@ def process(kind, args):
         gen = Image.open(f).convert("RGB")
         if gen.size != (SIDE, SIDE):
             gen = gen.resize((SIDE, SIDE), Image.LANCZOS)
-        s, dx, dy = register(gen, ref, brown=kind == "acc")
+        s, dx, dy = register(gen, ref, brown=kind in WITH_HAIR)
         img = extract(warp(gen, s, dx, dy), ref, crop)
-        if kind == "hair":
-            img.save(out_dir / f"hair_{iid}.png")
-        else:
+        if kind == "acc":
             save_acc(iid, img, out_dir)
+        else:
+            img.save(out_dir / f"{KINDS[kind]['prefix']}{iid}.png")
         n = int((np.asarray(img.getchannel("A")) > 128).sum())
         print(f"{KINDS[kind]['prefix']}{iid}: 縮放 {s:.2f} 平移 ({dx:+.0f}, {dy:+.0f})，{n} px")
         done.append(iid)

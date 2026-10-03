@@ -1,12 +1,12 @@
 // gen_avatar_redraw.js — 用網頁版 Gemini（Nano Banana）重畫髮型／配件：直接畫在四年級身體上
-// 先跑 python3 tools/avatar_redraw.py ref hair 和 ref acc 產生參考圖（/tmp/avatar_ref/<kind>.png：
-// base_g4 穿淡藍上衣、純綠底；配件版另外戴棕色妹妹頭、穿深藍短褲）；
+// 先跑 python3 tools/avatar_redraw.py ref hair／ref acc／ref hat 產生參考圖（/tmp/avatar_ref/<kind>.png：
+// base_g4 穿淡藍上衣、純綠底；配件、帽子版另外戴棕色妹妹頭、穿深藍短褲）；
 // 每個項目送一次，輸出 /tmp/avatar_gen/<kind>/<id>.png，
 // 再跑 python3 tools/avatar_redraw.py process <kind> 摳圖、對齊（頭髮另外產生後髮）。
 // 用法：~/.local/bin/ego-browser nodejs < tools/gen_avatar_redraw.js
 // 只想重畫其中一類就改 RUN；已經有輸出的項目會跳過，不滿意哪一張就刪掉那張再跑一次。
 const fs = await import("node:fs");
-const RUN = ["hair", "acc"];
+const RUN = ["hair", "acc", "hat"];
 const LOG = "/tmp/avatar_gen/log_redraw.txt";
 fs.mkdirSync("/tmp/avatar_gen", { recursive: true });
 const log = (m) => fs.appendFileSync(LOG, `[${new Date().toISOString().slice(11, 19)}] ${m}\n`);
@@ -28,6 +28,14 @@ const ACC = [
   { key: "headphone", look: "over-ear headphones: a headband arching over the top of the hair and two big round ear cups covering the ears on both sides of the head, sitting on top of the hair" },
   { key: "badge", look: "a small rectangular blank name badge clipped onto the T-shirt on the upper chest, on the viewer's right side; no text on it" },
 ];
+// 帽子：key 要跟 AVATAR_PARTS.hat 一致
+const HAT = [
+  { key: "cap", look: "a baseball cap worn straight, facing forward, its curved visor pointing toward the viewer above the eyebrows; the round crown sits snugly on top of the hair" },
+  { key: "beanie", look: "a knitted beanie with a folded ribbed cuff and a small pom-pom on top, pulled down to just above the eyebrows; the hair shows beneath it at the sides" },
+  { key: "straw", look: "a wide-brim straw sun hat with a ribbon band around the crown, sitting straight on the head; the round brim is wider than the head but stays above the eyes" },
+  { key: "beret", look: "a soft round beret worn slightly tilted toward one side, with a tiny stalk on top; it sits on top of the hair, above the bangs" },
+  { key: "bow", look: "one big ribbon bow tied on top of the hair, slightly to one side of the head, with two short ribbon tails" },
+];
 
 const STYLE =
   " The new item is drawn PURE WHITE / very light silver-gray with soft gray cel shading and a clean thin dark-gray outline — no other colours in it at all (the game recolours it later)." +
@@ -42,10 +50,15 @@ const RULES = {
     " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, brown hair (keep it brown), light-blue T-shirt, navy shorts, arms, pose, size, position and framing, and the same perfectly flat pure green background. Only add this one item." +
     " The item fits this exact body at the right size and is not tilted. No other accessories, no hat." +
     STYLE,
+  hat:
+    " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, brown hair (keep it brown; the hat sits ON the hair, the hair stays as it is under and around it), light-blue T-shirt, pose, size, position and framing, and the same perfectly flat pure green background. Only add this one hat." +
+    " The hat fits this exact head at the right size and does NOT cover the eyes. No other accessories." +
+    STYLE,
 };
 const ITEMS = [
   ...(RUN.includes("hair") ? HAIR.map((s) => ({ kind: "hair", key: s.key, prompt: `Edit the attached image: give this bald chibi child a new hairstyle — ${s.look}.` })) : []),
   ...(RUN.includes("acc") ? ACC.map((s) => ({ kind: "acc", key: s.key, prompt: `Edit the attached image: add ${s.look}.` })) : []),
+  ...(RUN.includes("hat") ? HAT.map((s) => ({ kind: "hat", key: s.key, prompt: `Edit the attached image: give the child ${s.look}.` })) : []),
 ].map((it) => ({ ...it, ref: `/tmp/avatar_ref/${it.kind}.png`, out: `/tmp/avatar_gen/${it.kind}/${it.key}.png`, prompt: it.prompt + RULES[it.kind] }));
 for (const k of RUN) fs.mkdirSync(`/tmp/avatar_gen/${k}`, { recursive: true });
 
