@@ -5,10 +5,12 @@ import { audio } from "../audio.js";
 import { enterPuzzle, initPuzzle, leavePuzzle, renderBoard } from "./meowdoku.js";
 import { startLife } from "./life.js";
 import { petData, showPetHome, showStarterSetup, syncGrowthStages } from "./pet.js";
-import { loadSubjects } from "./quiz.js";
+import { loadSubjects, loadUnits } from "./quiz.js";
 import { $, LS, hideSheet } from "./ui.js";
 
-const subjectsReady = loadSubjects().catch((err) => console.error("讀取題庫失敗", err));
+const subjectsReady = Promise.all([loadSubjects(), loadUnits()]).catch((err) =>
+  console.error("讀取題庫失敗", err),
+);
 
 let currentScreen = null;
 function route() {

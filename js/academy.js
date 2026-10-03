@@ -2,48 +2,92 @@
 import { audio } from "../audio.js";
 import { activePetKey, addCoins, addPetStat, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, savePetData, setPetView, showPetHome, updatePetStatus } from "./pet.js";
 import { showClinic, sickInfo, startCare } from "./life.js";
-import { GRADES, QUIZ_SUBJECTS, calculateQuizResult, gradeCounts, gradeInfo, gradeRewardMul, isCorrect, pickRound } from "./quiz.js";
+import { GRADES, PUBLISHERS, QUIZ_SUBJECTS, TERMS, TEXTBOOK_UNITS, calculateQuizResult, filterCount, gradeRewardMul, isCorrect, pickRound, termInfo, unitsFor } from "./quiz.js";
 import { ACTION_POSES, getRoomCatSprite } from "./room.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
 // 姿勢圖鑑：坐姿 + 13 種動作立繪
 const POSE_GALLERY = [{ key: "idle", icon: "🐱", label: "坐著發呆" }, ...ACTION_POSES];
 
-// 目前選擇的測驗程度（年級）：存 localStorage，預設小五
-const LS_GRADE = "meowdoku.quizGrade";
-const DEFAULT_GRADE = 5;
-export function quizGrade() {
-  const g = Number(localStorage.getItem(LS_GRADE));
-  return GRADES.some((x) => x.grade === g) ? g : DEFAULT_GRADE;
+// 目前選擇的冊次（年級＋學期）與教科書版本：存 localStorage
+const LS_TERM = "meowdoku.quizTerm";
+const LS_PUBLISHER = "meowdoku.quizPublisher";
+const LS_GRADE_OLD = "meowdoku.quizGrade";
+const DEFAULT_TERM = "5-1";
+export function quizTerm() {
+  const saved = localStorage.getItem(LS_TERM);
+  if (TERMS.some((x) => x.key === saved)) return saved;
+  // 舊版只存年級 → 帶到該年級上學期
+  const oldGrade = Number(localStorage.getItem(LS_GRADE_OLD));
+  const migrated = TERMS.find((x) => x.grade === oldGrade && x.term === 1);
+  return migrated ? migrated.key : DEFAULT_TERM;
 }
-export function setQuizGrade(grade) {
-  const g = Number(grade);
-  if (!GRADES.some((x) => x.grade === g)) return quizGrade();
-  localStorage.setItem(LS_GRADE, String(g));
-  return g;
+export function setQuizTerm(key) {
+  if (!TERMS.some((x) => x.key === key)) return quizTerm();
+  localStorage.setItem(LS_TERM, key);
+  return key;
+}
+export function quizPublisher() {
+  const saved = localStorage.getItem(LS_PUBLISHER);
+  return PUBLISHERS.includes(saved) ? saved : ""; // "" = 全部版本
+}
+export function setQuizPublisher(publisher) {
+  if (publisher && !PUBLISHERS.includes(publisher)) return quizPublisher();
+  localStorage.setItem(LS_PUBLISHER, publisher || "");
+  return quizPublisher();
 }
 export function academyPageHtml(key = activePetKey()) {
   const stats = petStats(key);
   const name = petName(key);
   const subList = Object.values(QUIZ_SUBJECTS);
-  const g = quizGrade();
-  const gInfo = gradeInfo(g);
+  const term = quizTerm();
+  const tInfo = termInfo(term);
+  const pub = quizPublisher();
+  const filter = { term, publisher: pub || null };
 
   const picker = `
     <div class="quiz-grade-picker">
-      <span class="quiz-grade-title">📶 測驗程度</span>
-      ${GRADES.map(
-        ({ grade, label, full }) =>
-          `<button class="quiz-grade-btn${grade === g ? " active" : ""}" data-quiz-grade="${grade}" title="${full}">${label}</button>`,
+      <span class="quiz-grade-title">📶 冊次</span>
+      ${TERMS.map(
+        ({ key: k, label, full }) =>
+          `<button class="quiz-grade-btn${k === term ? " active" : ""}" data-quiz-term="${k}" title="${full}">${label}</button>`,
       ).join("")}
-      <span class="quiz-grade-hint">${gInfo.full}・依課程進度出題</span>
-    </div>`;
+    </div>
+    <div class="quiz-grade-picker">
+      <span class="quiz-grade-title">📚 版本</span>
+      <button class="quiz-grade-btn${pub === "" ? " active" : ""}" data-quiz-pub="" title="不限定版本，所有版本共通的內容都出">全部</button>
+      ${PUBLISHERS.map(
+        (p) => `<button class="quiz-grade-btn${pub === p ? " active" : ""}" data-quiz-pub="${p}" title="${p}版">${p}</button>`,
+      ).join("")}
+      <span class="quiz-grade-hint">${tInfo.full}${pub ? `・${pub}版` : "・不限版本"}</span>
+    </div>
+    <p class="unit-hint">📚 康軒／南一／翰林 適用全部科目；何嘉仁、佳音是英語版本（國小英語＝康軒・翰林・何嘉仁，國中英語＝康軒・南一・佳音）。</p>`;
+
+  const unitBlocks = pub
+    ? subList
+        .map((sub) => {
+          const units = unitsFor(sub.id, pub, term);
+          if (!units.length) return "";
+          return `<div class="unit-block"><b>${sub.icon} ${sub.name}</b><div class="unit-chips">${units
+            .map(
+              (u) =>
+                `<span class="unit-chip">${u.unit_no ? `${u.unit_no}. ` : ""}${escapeHtml(u.unit_name)}</span>`,
+            )
+            .join("")}</div></div>`;
+        })
+        .join("")
+    : "";
+  const unitPanel = pub
+    ? `<details class="unit-panel"><summary>📖 ${pub}版 ${tInfo.label} 對照單元${
+        TEXTBOOK_UNITS.version ? `（${TEXTBOOK_UNITS.version}）` : ""
+      }</summary>${unitBlocks || `<p class="unit-empty">這個版本／冊次目前還沒有可查證的單元對照資料（不憑印象填）。</p>`}</details>`
+    : `<p class="unit-hint">選一個版本（康軒／南一／翰林），就會列出該版本在 ${tInfo.label} 的對照單元。</p>`;
 
   const cards = subList
     .map((sub) => {
       const val = stats[sub.id] || 0;
       const lvl = Math.floor(val / 10) + 1;
       const progressPercent = Math.min(100, Math.round(((val % 10) / 10) * 100));
-      const pool = gradeCounts(sub)[g] || 0;
+      const pool = filterCount(sub, filter);
       const enough = pool >= sub.roundSize;
       return `
         <div class="academy-card">
@@ -56,7 +100,7 @@ export function academyPageHtml(key = activePetKey()) {
             <div class="stat-meter-fill" style="width:${progressPercent}%; background:${sub.color};"></div>
           </div>
           <button class="academy-action-btn" data-start-quiz="${sub.id}"${enough ? "" : " disabled"}>
-            ${enough ? `${gInfo.label} 排課測驗（${pool} 題池・耗 15⚡）` : `${gInfo.label} 此程度尚無題目`}
+            ${enough ? `${tInfo.label}${pub ? `・${pub}` : ""} 排課測驗（${pool} 題池・耗 15⚡）` : `${tInfo.label} 此範圍尚無題目`}
           </button>
         </div>
       `;
@@ -69,7 +113,7 @@ export function academyPageHtml(key = activePetKey()) {
     <div class="academy-panel">
       <div class="academy-hero">
         <b>🎓 貓咪導師學院開課中！</b><br>
-        替 <b>${escapeHtml(name)}</b> 排定五大學科隨堂測驗（每輪 ${subList[0]?.roundSize || 3} 題），合格即可增加學科能力、賺取 <b>高額金幣 🪙</b> 與稀有掉落物！
+        替 <b>${escapeHtml(name)}</b> 排定五大學科隨堂測驗（每輪 ${subList[0]?.roundSize || 3} 題），選好你的冊次與版本，合格即可增加學科能力、賺取 <b>高額金幣 🪙</b> 與稀有掉落物！
       </div>
       ${picker}
       <div class="academy-grid">
@@ -83,6 +127,7 @@ export function academyPageHtml(key = activePetKey()) {
           <button class="academy-action-btn" style="background:#d97706;" data-close-to-game="true">前往數獨打工 🐾</button>
         </div>
       </div>
+      ${unitPanel}
     </div>
   `;
 }
@@ -214,17 +259,23 @@ export function startQuizSession(subjectId) {
   const sub = QUIZ_SUBJECTS[subjectId];
   const key = activePetKey();
   const st = petStatus(key);
-  const grade = quizGrade();
-  const questions = pickRound(sub, grade);
+  const term = quizTerm();
+  const tInfo = termInfo(term);
+  const publisher = quizPublisher();
+  const questions = pickRound(sub, { term, publisher: publisher || null });
   if (sickInfo(key)) {
     showSheet("貓咪生病了 🤒", `${sickInfo(key).icon} ${sickInfo(key).name}中，先帶去看醫生再來上課吧！`, "去看醫生", showClinic, "取消");
     return;
   }
   if (!questions.length) {
-    showSheet("這個程度還沒有題目 📶", `「${sub.name}」目前還沒有 ${gradeInfo(grade).full} 的題目，請切換其他程度試試。`, "知道了");
+    showSheet(
+      "這個範圍還沒有題目 📶",
+      `「${sub.name}」目前還沒有 ${tInfo.full}${publisher ? `・${publisher}版` : ""} 的題目，請換冊次或版本試試。`,
+      "知道了",
+    );
     return;
   }
-  const needEnergy = Math.round(15 * Math.max(0.8, gradeRewardMul(grade)));
+  const needEnergy = Math.round(15 * Math.max(0.8, gradeRewardMul(tInfo.grade)));
   if (st.energy < needEnergy) {
     showSheet("貓咪體力不足 ⚡", `貓咪太累了喵！請先前往「屬性」面板讓貓咪「睡覺休息」恢復體力後再來上課！`, "前往休息", () => setPetView("stats"));
     return;
@@ -236,7 +287,9 @@ export function startQuizSession(subjectId) {
 
   currentQuizState = {
     subjectId,
-    grade,
+    grade: tInfo.grade,
+    term,
+    publisher,
     questions,
     currentIndex: 0,
     correctCount: 0,
@@ -273,7 +326,8 @@ function renderQuizQuestion() {
     <div class="quiz-box">
       <div class="quiz-header">
         <span style="font-weight:800; color:${sub.color};">${sub.icon} ${sub.name}</span>
-        <span class="quiz-grade-tag">📶 ${gradeInfo(currentQuizState.grade).label}</span>
+        <span class="quiz-grade-tag">📶 ${termInfo(currentQuizState.term).label}</span>
+        ${currentQuizState.publisher ? `<span class="quiz-grade-tag">📚 ${currentQuizState.publisher}</span>` : ""}
         <span class="quiz-counter">第 ${currentIndex + 1} / ${questions.length} 題</span>
       </div>
       <div class="quiz-question">${escapeHtml(q.prompt)}</div>
@@ -335,6 +389,8 @@ function finishQuizSession() {
   const { subjectId, correctCount, questions } = currentQuizState;
   const total = questions.length;
   const quizGradeUsed = currentQuizState.grade;
+  const quizTermUsed = currentQuizState.term;
+  const quizPublisherUsed = currentQuizState.publisher;
   const res = calculateQuizResult(subjectId, correctCount, total, quizGradeUsed);
   const sub = QUIZ_SUBJECTS[subjectId];
   const key = activePetKey();
@@ -369,7 +425,9 @@ function finishQuizSession() {
         答對 ${res.correctCount} / ${res.totalCount} 題 · 得分 ${res.score} 分
       </div>
       <div style="font-size:0.78rem; color:var(--muted);">
-        📶 程度：${gradeInfo(quizGradeUsed).full}${res.rewardMul !== 1 ? `（獎勵 ×${res.rewardMul}）` : ""}
+        📶 ${termInfo(quizTermUsed).full}${quizPublisherUsed ? `・${quizPublisherUsed}版` : "・不限版本"}${
+          res.rewardMul !== 1 ? `（獎勵 ×${res.rewardMul}）` : ""
+        }
       </div>
       <div class="quiz-rewards-row">
         <span class="quiz-reward-pill">🪙 +${res.coins} 金幣</span>

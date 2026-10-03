@@ -52,7 +52,8 @@
       ],
       "answer": 3,
       "tip": "當別人道謝時，標準的回應是「不客氣」。",
-      "explain": "當他人表達感謝時，最常用的得體回應是 \"You're welcome.\"（不客氣）或 \"My pleasure.\"。"
+      "explain": "當他人表達感謝時，最常用的得體回應是 \"You're welcome.\"（不客氣）或 \"My pleasure.\"。",
+      "term": "4-1"
     },
     {
       "id": "english-004",
@@ -82,7 +83,8 @@
       ],
       "answer": 2,
       "tip": "單音節短母音形容詞比較級通常重複字尾加上 -er。",
-      "explain": "兩者相比使用比較級，\"big\" 為單音節短母音+單子音結尾，比較級重複字尾加 er 成為 \"bigger\"。"
+      "explain": "兩者相比使用比較級，\"big\" 為單音節短母音+單子音結尾，比較級重複字尾加 er 成為 \"bigger\"。",
+      "term": "5-1"
     },
     {
       "id": "english-006",
@@ -127,7 +129,8 @@
       ],
       "answer": 3,
       "tip": "這是一句著名的英文慣用語（idiom）。",
-      "explain": "\"Raining cats and dogs\" 是英文常見成語，意思是「傾盆大雨、雨下得很大」。"
+      "explain": "\"Raining cats and dogs\" 是英文常見成語，意思是「傾盆大雨、雨下得很大」。",
+      "term": "6-1"
     },
     {
       "id": "english-g4-01",
@@ -142,7 +145,8 @@
       ],
       "answer": 2,
       "tip": "主詞是 I 的時候，be 動詞要用 am。",
-      "explain": "be 動詞有三種現在式：am / is / are。口訣是「I 配 am，he/she/it 配 is，you/we/they 配 are」。主詞是 I，所以選 am，句子是 I am a student.（我是學生。）"
+      "explain": "be 動詞有三種現在式：am / is / are。口訣是「I 配 am，he/she/it 配 is，you/we/they 配 are」。主詞是 I，所以選 am，句子是 I am a student.（我是學生。）",
+      "term": "4-1"
     },
     {
       "id": "english-g4-02",
@@ -157,7 +161,8 @@
       ],
       "answer": 1,
       "tip": "數字 two 後面要接複數名詞，直接加 s。",
-      "explain": "two 表示兩個，後面要用複數名詞，所以用 cats。cat 是單數；cat's 是「貓的」；cats' 是複數所有格（如 cats' food），都不能放在 two 後面。"
+      "explain": "two 表示兩個，後面要用複數名詞，所以用 cats。cat 是單數；cat's 是「貓的」；cats' 是複數所有格（如 cats' food），都不能放在 two 後面。",
+      "term": "4-1"
     },
     {
       "id": "english-g4-03",
@@ -187,7 +192,8 @@
       ],
       "answer": 1,
       "tip": "How are you? 是問「你好嗎？」要回答身體或心情的狀況。",
-      "explain": "How are you? 問的是「你好嗎？」，所以回答 I'm fine, thank you.（我很好，謝謝）。回答「我十歲」是針對 How old are you?；回答名字是針對 What's your name?；Nice to meet you, too. 是回應初次見面的 Nice to meet you.。"
+      "explain": "How are you? 問的是「你好嗎？」，所以回答 I'm fine, thank you.（我很好，謝謝）。回答「我十歲」是針對 How old are you?；回答名字是針對 What's your name?；Nice to meet you, too. 是回應初次見面的 Nice to meet you.。",
+      "term": "4-1"
     },
     {
       "id": "english-g4-05",
@@ -217,7 +223,8 @@
       ],
       "answer": 2,
       "tip": "一星期從星期一到星期日，共有七天。",
-      "explain": "一星期有 seven days（七天）。five 是五、six 是六、eight 是八，都和一星期的天數不符。"
+      "explain": "一星期有 seven days（七天）。five 是五、six 是六、eight 是八，都和一星期的天數不符。",
+      "term": "4-1"
     },
     {
       "id": "english-g5-01",
@@ -232,7 +239,8 @@
       ],
       "answer": 1,
       "tip": "第三人稱單數（he/she/it）的現在式動詞要加 s 或 es。",
-      "explain": "主詞 He 是第三人稱單數，現在式動詞要加 es，所以用 goes。every day 表示「每天」，用現在式而非過去式或進行式。"
+      "explain": "主詞 He 是第三人稱單數，現在式動詞要加 es，所以用 goes。every day 表示「每天」，用現在式而非過去式或進行式。",
+      "term": "5-1"
     },
     {
       "id": "english-g5-02",
@@ -247,7 +255,8 @@
       ],
       "answer": 2,
       "tip": "Can 開頭的問句，簡答要用 can 回答。",
-      "explain": "問句以 Can 開頭（問「能力」），肯定簡答要用 Yes, I can.。用 do 是回答 Do you...? 的問句；am 不能單獨當動詞；was 是過去式，和現在的能力問句不對應。"
+      "explain": "問句以 Can 開頭（問「能力」），肯定簡答要用 Yes, I can.。用 do 是回答 Do you...? 的問句；am 不能單獨當動詞；was 是過去式，和現在的能力問句不對應。",
+      "term": "5-1"
     },
     {
       "id": "english-g5-03",
@@ -277,7 +286,8 @@
       ],
       "answer": 2,
       "tip": "母音開頭的單字（engineer 的 e）前面用 an。",
-      "explain": "不定冠詞 a 用在子音開頭的單字前，an 用在母音發音開頭的單字前。engineer 的第一個音是母音 /e/，所以用 an engineer。the 是「這個／那個」，這裡第一次提到、非特定對象，不用 the。"
+      "explain": "不定冠詞 a 用在子音開頭的單字前，an 用在母音發音開頭的單字前。engineer 的第一個音是母音 /e/，所以用 an engineer。the 是「這個／那個」，這裡第一次提到、非特定對象，不用 the。",
+      "term": "5-1"
     },
     {
       "id": "english-g5-05",
@@ -292,7 +302,8 @@
       ],
       "answer": 3,
       "tip": "half past six 就是「六點過一半」，也就是 6:30。",
-      "explain": "half past six 表示「六點過三十分」，也就是 6:30。整點說 six o'clock（6:00）；half past five 才是 5:30。"
+      "explain": "half past six 表示「六點過三十分」，也就是 6:30。整點說 six o'clock（6:00）；half past five 才是 5:30。",
+      "term": "5-1"
     },
     {
       "id": "english-g5-06",
@@ -337,7 +348,8 @@
       ],
       "answer": 1,
       "tip": "last Sunday 是過去時間，動詞要用過去式；go 的過去式是 went。",
-      "explain": "last Sunday（上星期日）表示過去，動詞要用過去式。go 是不規則動詞，過去式是 went。goes 用於第三人稱單數現在式，going 必須搭配 be 動詞才正確。"
+      "explain": "last Sunday（上星期日）表示過去，動詞要用過去式。go 是不規則動詞，過去式是 went。goes 用於第三人稱單數現在式，going 必須搭配 be 動詞才正確。",
+      "term": "6-2"
     },
     {
       "id": "english-g6-03",
@@ -397,7 +409,8 @@
       ],
       "answer": 0,
       "tip": "下雨天要帶傘。umbrella 是雨傘。",
-      "explain": "外面在下雨（It is raining.），應該帶 an umbrella（一把傘）。sunglasses 是太陽眼鏡（晴天用）；gloves 是手套（保暖或冬天用）；a swimsuit 是泳衣（游泳用），都不符合下雨的情境。"
+      "explain": "外面在下雨（It is raining.），應該帶 an umbrella（一把傘）。sunglasses 是太陽眼鏡（晴天用）；gloves 是手套（保暖或冬天用）；a swimsuit 是泳衣（游泳用），都不符合下雨的情境。",
+      "term": "6-1"
     },
     {
       "id": "english-g7-01",
@@ -412,7 +425,8 @@
       ],
       "answer": 3,
       "tip": "when 子句用過去式表示「突然發生」，主要子句常用過去進行式表示「當時正在做的事」。",
-      "explain": "這裡表示「媽媽回家的那一刻，我當時正在看電視」，主要子句用過去進行式 was watching（主詞 I 搭配 was）。watched 是過去式，會變成兩件事「先後」發生；were 和主詞 I 不搭。"
+      "explain": "這裡表示「媽媽回家的那一刻，我當時正在看電視」，主要子句用過去進行式 was watching（主詞 I 搭配 was）。watched 是過去式，會變成兩件事「先後」發生；were 和主詞 I 不搭。",
+      "term": "7-2"
     },
     {
       "id": "english-g7-02",
@@ -487,7 +501,8 @@
       ],
       "answer": 0,
       "tip": "news 雖然字尾有 s，但是不可數名詞，要當單數看待。",
-      "explain": "news（新聞）是不可數名詞，字形雖有 s 但意義為單數，所以動詞用 is。today 表示現在，不用過去式 were；have 是原形／複數動詞，也不能和單數主詞 news 連用。"
+      "explain": "news（新聞）是不可數名詞，字形雖有 s 但意義為單數，所以動詞用 is。today 表示現在，不用過去式 were；have 是原形／複數動詞，也不能和單數主詞 news 連用。",
+      "term": "7-2"
     }
   ]
 }

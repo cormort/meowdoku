@@ -1,0 +1,5497 @@
+{
+ "format": 1,
+ "version": "113～115 學年度（各校公開課程計畫、出版商目錄、均一教育平台對照）",
+ "note": "台灣國小／國中的教科書都依同一份 108 課綱編寫，各版本的內容範圍相同，差別是同一主題排在幾年級上／下學期的第幾單元，所以這裡是『單元對照表』。每筆資料都來自公開可查證來源（見各科 sources），查不到的一律不填。",
+ "subjects": {
+  "chinese": {
+   "name": "國語文",
+   "sources": [
+    "https://digitalmaster.knsh.com.tw/all/video/e/chinese.html",
+    "https://ictc.mtps.kh.edu.tw/curriculum/plan_115/115%E9%A0%98%E5%9F%9Fok/115%E5%9C%8B%E8%AA%9E/4%E4%B8%8A%E5%9C%8B%E8%AA%9E.pdf",
+    "https://www.learnmode.net/course/591387/content",
+    "https://www.learnmode.net/course/591389/content",
+    "https://www.learnmode.net/course/591390/content",
+    "https://www.learnmode.net/course/591444/content",
+    "https://www.learnmode.net/course/592120/content",
+    "https://www.learnmode.net/course/592607/content",
+    "https://www.learnmode.net/course/592608/content",
+    "https://www.learnmode.net/course/592609/content",
+    "https://www.learnmode.net/course/592648/content",
+    "https://www.learnmode.net/course/638119/content",
+    "https://www.learnmode.net/course/638122/content",
+    "https://www.learnmode.net/course/638124/content",
+    "https://www.learnmode.net/course/638439/content",
+    "https://www.learnmode.net/course/638441/content",
+    "https://www.learnmode.net/course/638443/content",
+    "https://www.learnmode.net/course/638508/content",
+    "https://www.learnmode.net/course/638718/content",
+    "https://www.learnmode.net/course/638780/content"
+   ],
+   "units": [
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "第一課 窗口邊的臺灣欒樹",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "第二課 奶奶的排骨粥",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "第三課 充滿希望的五味屋",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "寫讀練功房 熱荔枝",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "第四課 玉山之歌",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "第五課 高舉臺灣之光",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 7,
+     "unit_name": "第六課 臺灣的驕傲",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 8,
+     "unit_name": "第七課 到此「藝」遊",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 9,
+     "unit_name": "第八課 四季的頭髮",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 10,
+     "unit_name": "第九課 阿白觀察記",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 11,
+     "unit_name": "寫讀練功房 三明治失蹤事件",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 12,
+     "unit_name": "第十課 老鼠嫁女兒",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 13,
+     "unit_name": "第十一課 豆粥婆婆",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 14,
+     "unit_name": "第十二課 戴斗笠的地藏",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "第1課 水陸小高手",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "第2課 放學後",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "第3課 我的籃球夢",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "學習地圖一",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "第4課 永遠的馬偕",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "第5課 假如給我三天光明",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 7,
+     "unit_name": "第6課 攀登生命的高峰",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 8,
+     "unit_name": "學習地圖二",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 9,
+     "unit_name": "閱讀階梯一 種樹的人",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 10,
+     "unit_name": "第7課 美味的一堂課",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 11,
+     "unit_name": "第8課 建築界的長頸鹿",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 12,
+     "unit_name": "第9課 請到我的家鄉來",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 13,
+     "unit_name": "學習地圖三",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 14,
+     "unit_name": "第10課 奇幻旋律",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 15,
+     "unit_name": "第11課 兔子先生等等我",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 16,
+     "unit_name": "第12課 老鞋匠和小精靈",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 17,
+     "unit_name": "學習地圖四",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 18,
+     "unit_name": "閱讀階梯二 國王的噴泉",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "第一課 美麗島",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "第二課 請到我的家鄉來",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "第三課 鏡頭下的家鄉",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "統整活動一",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "第四課 飛行夢",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "第五課 月光下",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 7,
+     "unit_name": "第六課 又遠又近的月亮",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 8,
+     "unit_name": "統整活動二",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 9,
+     "unit_name": "愛閱讀一 通信方式大不同",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 10,
+     "unit_name": "第七課 松鼠先生的麵包",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 11,
+     "unit_name": "第八課 平凡的大俠",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 12,
+     "unit_name": "第九課 王子折箭",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 13,
+     "unit_name": "統整活動三",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 14,
+     "unit_name": "第十課 海中的熱帶雨林",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 15,
+     "unit_name": "第十一課 美食島",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 16,
+     "unit_name": "第十二課 寧靜的音樂會",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 17,
+     "unit_name": "統整活動四",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 18,
+     "unit_name": "愛閱讀二 一起去看海",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 19,
+     "unit_name": "自學一、落山風",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 20,
+     "unit_name": "自學二、神奇魔法衣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 21,
+     "unit_name": "自學三、風雨交加的夜晚",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 22,
+     "unit_name": "自學四、藍色的海洋大軍",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "第一課 𪹚龍慶元宵",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "第二課 看戲",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "第三課 舞吧！小飛魚",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "第四課 蝶之生",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "第五課 活出生命奇蹟",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "第六課 走過就知道",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 7,
+     "unit_name": "第七課 不一樣的母親花",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 8,
+     "unit_name": "第八課 屋頂上的野貓",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 9,
+     "unit_name": "第九課 用一公斤愛嘉明湖",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 10,
+     "unit_name": "第十課 想像與發明",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 11,
+     "unit_name": "第十一課 小事物 大驚奇",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 12,
+     "unit_name": "第十二課 九蛙傳奇",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "第1課 一束鮮花",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "第2課 心動不如行動",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "第3課 選拔動物之星",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "第4課 米食飄香",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "第5課 讀書報告──藍色小洋裝",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "第6課 我愛鹿港",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 7,
+     "unit_name": "閱讀階梯一 她是我姐姐",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 8,
+     "unit_name": "第7課 未來的模樣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 9,
+     "unit_name": "第8課 動物老師的智慧",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 10,
+     "unit_name": "第9課 向太空出發",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 11,
+     "unit_name": "第10課 小青蛙想看海",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 12,
+     "unit_name": "第11課 窗前的月光",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 13,
+     "unit_name": "第12課 如來佛的手掌心",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 14,
+     "unit_name": "閱讀階梯二 南安小熊回家",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "第一課 稻間鴨",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "第二課 會呼吸的房子",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "第三課 石虎兄妹",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "第四課 阿里棒棒",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "第五課 快樂兒童日",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "第六課 阿公的秘密",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 7,
+     "unit_name": "第七課 棒球英雄夢",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 8,
+     "unit_name": "第八課 夢幻全壘打",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 9,
+     "unit_name": "第九課 單車遊日月潭",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 10,
+     "unit_name": "第十課 孫悟空三借芭蕉扇",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 11,
+     "unit_name": "第十一課 最後一片葉子",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 12,
+     "unit_name": "第十二課 閱讀課",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "第一課 幸福筆記本",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "第二課 做人做事做長久",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "第三課 孔雀錯了",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "單元統整一",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "第四課 特別的海",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 6,
+     "unit_name": "第五課 漫遊花東",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 7,
+     "unit_name": "第六課 護送螃蟹過馬路",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 8,
+     "unit_name": "單元統整二",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 9,
+     "unit_name": "第七課 高第的魔法建築",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 10,
+     "unit_name": "第八課 嘗嘗我的家鄉味",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 11,
+     "unit_name": "第九課 小小力量將世界照亮",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 12,
+     "unit_name": "單元統整三",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 13,
+     "unit_name": "第十課 男生說，女生說",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 14,
+     "unit_name": "第十一課 耶誕禮物",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 15,
+     "unit_name": "第十二課 漫遊詩情",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 16,
+     "unit_name": "單元統整四",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "第1課 蚊帳大使",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "第2課 從空中看臺灣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "第3課 攀岩高手",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "第4課 恆久的美",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "第5課 它抓得住你－商標的故事",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 6,
+     "unit_name": "第6課 故事「動」起來",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 7,
+     "unit_name": "閱讀階梯一 畫家的天空",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 8,
+     "unit_name": "第7課 為生命找出口",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 9,
+     "unit_name": "第8課 最勇敢的女孩",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 10,
+     "unit_name": "第9課 在挫折中成長",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 11,
+     "unit_name": "第10課 山中寄情",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 12,
+     "unit_name": "第11課 與達駭黑熊走入山林",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 13,
+     "unit_name": "第12課 荒島上的國王",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 14,
+     "unit_name": "閱讀階梯二 分享的金牌",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "第一課 你我之間",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "第二課 風起，大家都在",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "第三課 廉頗與藺相如",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "統整活動一",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "第四課 來場快樂的桌遊",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 6,
+     "unit_name": "第五課 超級英雄",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 7,
+     "unit_name": "第六課 世足賽的贏家",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 8,
+     "unit_name": "統整活動二",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 9,
+     "unit_name": "享閱讀一 煙會說話",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 10,
+     "unit_name": "第七課 美景閒情──詩兩首",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 11,
+     "unit_name": "第八課 與山為鄰",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 12,
+     "unit_name": "第九課 窗邊的鳴聲",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 13,
+     "unit_name": "統整活動三",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 14,
+     "unit_name": "第十課 敏銳觀察",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 15,
+     "unit_name": "第十一課 你一定會聽見的",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 16,
+     "unit_name": "第十二課 藍色連身裙",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 17,
+     "unit_name": "統整活動四",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 18,
+     "unit_name": "享閱讀二 馬祖蘭眼淚",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "第一課 穿越時空的味道",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "第二課 在黑暗中乘著音樂飛翔",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "第三課 色香味的陽光",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "第四課 縣官審石頭",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "第五課 高明說話術",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "第六課 讀書報告—佐賀的超級阿嬤",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 7,
+     "unit_name": "第七課 魔術師爸爸",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 8,
+     "unit_name": "第八課 八歲，一個人去旅行",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 9,
+     "unit_name": "第九課 紅鼻子醫生",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 10,
+     "unit_name": "第十課 沉默的動物園",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 11,
+     "unit_name": "第十一課 地下護衛軍",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 12,
+     "unit_name": "第十二課 金字塔之謎",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "第1課 你會怎麼回答？",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "第2課 智救養馬人",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "第3課 真正的「聰明」",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "第4課 小記者，出動！",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "第5課 奇幻光芒的祕密",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "第6課 人「聲」就是戲",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 7,
+     "unit_name": "閱讀階梯一 「溜」出不一樣的人生──楊元慶",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 8,
+     "unit_name": "第7課 題西林壁",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 9,
+     "unit_name": "第8課 海洋的殺手",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 10,
+     "unit_name": "第9課 你想做人魚嗎？",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 11,
+     "unit_name": "第10課 玉米人的奇蹟",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 12,
+     "unit_name": "第11課 幸福的火苗",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 13,
+     "unit_name": "第12課 神農嘗百草",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 14,
+     "unit_name": "閱讀階梯二 旗魚王",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "第一課 鵝鑾鼻詩",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "第二課 山與海的交響樂—東海岸鐵道",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "第三課 我眼中的東方之最",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "第四課 滿修女採訪記",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "第五課 誰該被派去非洲",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "第六課 幸福的味道",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 7,
+     "unit_name": "第七課 生活有感—詩兩首",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 8,
+     "unit_name": "第八課 別把重點當全部",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 9,
+     "unit_name": "第九課 良言一句三冬暖",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 10,
+     "unit_name": "第十課 擅長推理的人",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 11,
+     "unit_name": "第十一課 草船借箭",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 12,
+     "unit_name": "第十二課 三個問題",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "第一課 在天晴了的時候",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "第二課 珍珠鳥",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "第三課 客至",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "第四課 贏得喝采的輸家",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "第五課 哇！原來如此",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 6,
+     "unit_name": "第六課 登月先鋒",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 7,
+     "unit_name": "第七課 明智的抉擇",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 8,
+     "unit_name": "閱讀列車 黃蓉智退霍都",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 9,
+     "unit_name": "第八課 飢渴好「火」伴",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 10,
+     "unit_name": "第九課 火燒連環船",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 11,
+     "unit_name": "第十課 戲術",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 12,
+     "unit_name": "第十一課 紀念照",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 13,
+     "unit_name": "第十二課 少年筆耕",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "第1課 跑道",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "第2課 朱子治家格言選",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "第3課 談遇見更好的自己",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "第4課 臺灣美食詩選",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "第5課 最好的味覺禮物",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 6,
+     "unit_name": "第6課 珍珠奶茶",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 7,
+     "unit_name": "閱讀階梯一 野菜，部落不可缺的味",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 8,
+     "unit_name": "第7課 大小剛好的鞋子",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 9,
+     "unit_name": "第8課 狐假虎威",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 10,
+     "unit_name": "第9課 空城計",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 11,
+     "unit_name": "第10課 耶誕節",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 12,
+     "unit_name": "第11課 下午茶風波",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 13,
+     "unit_name": "第12課 橘子",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "第一課 遇見自己",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "第二課 為甚麼大家不理我？",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "第三課 孔子的話",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "統整活動一",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "第四課 向大自然學習",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 6,
+     "unit_name": "第五課 樹",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 7,
+     "unit_name": "第六課 善用自嘲，展現幽默",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 8,
+     "unit_name": "統整活動二",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 9,
+     "unit_name": "第七課 跟著公共藝術去旅行",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 10,
+     "unit_name": "第八課 街頭藝術家",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 11,
+     "unit_name": "第九課 孫翠鳳和歌仔戲",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 12,
+     "unit_name": "統整活動三",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 13,
+     "unit_name": "第十課 過故人莊",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 14,
+     "unit_name": "第十一課 走一段海岸",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 15,
+     "unit_name": "第十二課 存根",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 16,
+     "unit_name": "統整活動四",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 17,
+     "unit_name": "閱讀樂園二 煮酒論英雄",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "第一課 清平樂 村居",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "第二課 春",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "第三課 大自然的規則",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "第四課 那人在看畫",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 5,
+     "unit_name": "第五課 小時了了",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 6,
+     "unit_name": "第六課 愛搗亂的動物",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 7,
+     "unit_name": "第七課 科學怪人",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 8,
+     "unit_name": "第八課 火燒連環船",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 9,
+     "unit_name": "第九課 未走之路",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 10,
+     "unit_name": "第十課 打開心中的窗",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 11,
+     "unit_name": "第十一課 努力愛春華",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "第1課 馬達加斯加，出發！",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "第2課 沉睡的天空之城",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "第3課 走進太陽之城",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "第4課 送友人",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 5,
+     "unit_name": "第5課 蚵鄉風情",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 6,
+     "unit_name": "第6課 童年‧夏日‧棉花糖",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 7,
+     "unit_name": "第7課 我的少年夢",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 8,
+     "unit_name": "第8課 如何張開追夢的翅膀",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 9,
+     "unit_name": "第9課 成為人生的開拓者",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "第一課 不可以翻魚",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "第二課 橘化為枳",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "第三課 自嘲是最高明的幽默",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "第四課 我不和你談論",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 5,
+     "unit_name": "第五課 留得枇杷聽鳥鳴",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 6,
+     "unit_name": "第六課 樹的語言",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 7,
+     "unit_name": "第七課 享受過程",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 8,
+     "unit_name": "第八課 為什麼大家不理我？",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 9,
+     "unit_name": "第九課 用愛心說實話",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 10,
+     "unit_name": "第十課 撐開你的傘",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 11,
+     "unit_name": "第十一課 迎風",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "第一課 夏夜",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "第二課 絕句選（登觀雀樓、黃鶴樓送孟浩然之廣陵、楓橋夜泊）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "第三課 紙船印象",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 4,
+     "unit_name": "語文常識一 標點符號使用法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 5,
+     "unit_name": "第四課 老師的十二樣見面禮",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 6,
+     "unit_name": "第五課 吃冰的滋味",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 7,
+     "unit_name": "第六課 牛背上的呀喝",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 8,
+     "unit_name": "語文常識二 工具書使用法語資料檢索",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 9,
+     "unit_name": "第七課 鮭魚產卵，力爭上游",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 10,
+     "unit_name": "第八課 論語選（學而時習之、譬如為山、三人行必有我師）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 11,
+     "unit_name": "第九課 飛翔的舞者",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 12,
+     "unit_name": "第十課 值得記憶的小事：日記",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 13,
+     "unit_name": "自學一 故鄉的桂花雨",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 14,
+     "unit_name": "自學二 暑假作業",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 15,
+     "unit_name": "自學三 茶葉的分類",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "第一課 夏夜",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "第二課 吃冰的滋味",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "第三課 善用時間的方法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 4,
+     "unit_name": "語文天地一 標點符號使用方法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 5,
+     "unit_name": "第四課 差不多先生傳",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 6,
+     "unit_name": "第五課 論語選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 7,
+     "unit_name": "第六課 那默默的一群",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 8,
+     "unit_name": "語文天地二 閱讀策略與資料檢索",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 9,
+     "unit_name": "第七課 下雨天，真好",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 10,
+     "unit_name": "第八課 紙船印象",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 11,
+     "unit_name": "第九課 兒時記趣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 12,
+     "unit_name": "第十課 鬧元宵",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 13,
+     "unit_name": "自學一 生之歌選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 14,
+     "unit_name": "自學二 拄拐杖的小男孩",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 15,
+     "unit_name": "自學三 曹操掉下去了",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "第一課 夏夜",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "第二課 無心的錯誤",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "第三課 母親的教誨",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 4,
+     "unit_name": "語文常識(一) 標點符號的使用",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 5,
+     "unit_name": "第四課 論語選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 6,
+     "unit_name": "第五課 背影",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 7,
+     "unit_name": "第六課 心囚",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 8,
+     "unit_name": "語文常識(二) 閱讀導航與資訊檢索",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 9,
+     "unit_name": "第七課 兒時記趣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 10,
+     "unit_name": "第八課 朋友相交",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 11,
+     "unit_name": "第九課 音樂家與職籃巨星",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 12,
+     "unit_name": "第十課 藍色串珠項鍊",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 13,
+     "unit_name": "自學選文一 穿越時空讀故事",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 14,
+     "unit_name": "自學選文二 貪睡的長頸鹿",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 15,
+     "unit_name": "自學選文三 行動的水滴才能匯流大河",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "第一課 負荷",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "第二課 律詩選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "第三課 背影",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "語文常識(一) 認識漢字的造字法則",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "第四課 土芭樂的生存之道",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 6,
+     "unit_name": "第五課 兒時記趣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 7,
+     "unit_name": "第六課 溪頭的竹子",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 8,
+     "unit_name": "語文常識(二) 書法欣賞",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 9,
+     "unit_name": "第七課 謝天",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 10,
+     "unit_name": "第八課 視力與偏見",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 11,
+     "unit_name": "第九課 劉墉寓言作品選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 12,
+     "unit_name": "第十課 跨時空的對望：淺談文言文翻譯",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 13,
+     "unit_name": "自學一 示愛",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 14,
+     "unit_name": "自學二 食蔥有時",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 15,
+     "unit_name": "自學三 賣油翁",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "第一課 傘",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "第二課 近體詩選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "第三課 另一個春天",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "語文天地(一) 文字構造介紹",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "第四課 背影",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 6,
+     "unit_name": "第五課 聲音鐘",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 7,
+     "unit_name": "第六課 今夜看螢去",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 8,
+     "unit_name": "語文天地(二) 字體演變與書法欣賞",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 9,
+     "unit_name": "第七課 記承天夜遊",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 10,
+     "unit_name": "第八課 謝天",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 11,
+     "unit_name": "第九課 音樂家與職籃巨星",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 12,
+     "unit_name": "第十課 玉山—迎接臺灣第一道曙光",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 13,
+     "unit_name": "自學一 賣油翁",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 14,
+     "unit_name": "自學二 再見，西莎",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 15,
+     "unit_name": "自學三 東風吹馬耳",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "第一課 聲音鐘",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "第二課 孩子的鐘塔",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "第三課 紙船印象",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "語文常識(一) 漢字的結構",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "第四課 小詩選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 6,
+     "unit_name": "第五課 近體詩選",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 7,
+     "unit_name": "第六課 石虎是我們的龍貓",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 8,
+     "unit_name": "語文常識(二) 漢字的流變與書法欣賞",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 9,
+     "unit_name": "第七課 五柳先生傳",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 10,
+     "unit_name": "第八課 牡蠣有容，珍珠乃大",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 11,
+     "unit_name": "第九課 謝天",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 12,
+     "unit_name": "第十課 貓的天堂",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 13,
+     "unit_name": "自學選文一 搜神抓鬼趣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 14,
+     "unit_name": "自學選文二 放天燈是傳統，還是為山林製造更多垃圾？",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 15,
+     "unit_name": "自學選文三 陳凰鳳：越南女兒，臺灣母親",
+     "confidence": "medium"
+    }
+   ]
+  },
+  "math": {
+   "name": "數學",
+   "sources": [
+    "https://www.junyiacademy.org/topics/n-m4a",
+    "https://www.hpu.kh.edu.tw/upload/102/104_91452/%E8%A1%A83-115%E8%AA%B2%E7%A8%8B%E8%A8%88%E7%95%AB-5%E5%B9%B4%E7%B4%9A-%E6%95%B8%E5%AD%B8-%E4%B8%8A.pdf",
+    "https://www.junyiacademy.org/topics/n-m5a",
+    "https://www.junyiacademy.org/topics/n-m6a",
+    "https://www.junyiacademy.org/topics/n-m7a",
+    "https://www.cp.ptc.edu.tw/storage/134699/134699_115_B-04_4A.pdf",
+    "https://www.junyiacademy.org/topics/k-m4a",
+    "https://course.tn.edu.tw/course/114E%E7%B4%85%E7%93%A6%E5%8E%9D%E5%9C%8B%E5%B0%8FC5-1%E9%A0%98%E5%9F%9F%E5%AD%B8%E7%BF%92%E8%AA%B2%E7%A8%8B(%E8%AA%BF%E6%95%B4)%E8%A8%88%E7%95%AB%E6%99%AE%E9%80%9A%E7%8F%AD%E4%BA%94%E5%B9%B4%E7%B4%9A%E6%95%B8%E5%AD%B80703121954.pdf",
+    "https://www.junyiacademy.org/topics/tainan-di-k-m5",
+    "https://course.tn.edu.tw/course/114E%E6%B0%B8%E4%BF%A1%E5%9C%8B%E5%B0%8FC5-1%E9%A0%98%E5%9F%9F%E5%AD%B8%E7%BF%92%E8%AA%B2%E7%A8%8B(%E8%AA%BF%E6%95%B4)%E8%A8%88%E7%95%AB%E6%99%AE%E9%80%9A%E7%8F%AD%E5%85%AD%E5%B9%B4%E7%B4%9A%E6%95%B8%E5%AD%B80713230245.pdf",
+    "https://www.junyiacademy.org/topics/k-m6a",
+    "https://drive.google.com/file/d/1EVC77eDMnJHQHVmWSI7ds8KOurGzi9Lo",
+    "https://drive.google.com/file/d/1VjtF1LJxdCw7yiqFGQrUTpLJYhfuX6Mv",
+    "https://www.cp.ptc.edu.tw/storage/134621/134621_113_B-04_4A.pdf",
+    "https://www.junyiacademy.org/topics/h-m4a",
+    "https://www.ssps.ntpc.edu.tw/p/406-1000-5977,r38.php",
+    "https://www.junyiacademy.org/topics/h-m5a",
+    "https://www.ccyes.ntpc.edu.tw/p/406-1000-7371,r157.php",
+    "https://www.junyiacademy.org/topics/h-m6a",
+    "http://school.chwjh.tp.edu.tw/plan_new/uploads/math/seven/%E4%B8%83%E5%B9%B4%E7%B4%9A%E6%95%B8%E5%AD%B8.pdf"
+   ],
+   "units": [
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "一億以內的數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "乘法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "角度",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "除法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "三角形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "分數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 7,
+     "unit_name": "數量關係",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 8,
+     "unit_name": "整數四則",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 9,
+     "unit_name": "小數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 10,
+     "unit_name": "長度",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "一億以內的數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "整數的乘法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "角度",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "整數的除法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "公里",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "三角形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 7,
+     "unit_name": "小數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 8,
+     "unit_name": "整數四則計算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 9,
+     "unit_name": "分數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 10,
+     "unit_name": "統計圖",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "一億以內的數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "乘法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "角度",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "假分數與帶分數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "公里",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "除法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 7,
+     "unit_name": "三角形與全等",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 8,
+     "unit_name": "兩步驟問題與併式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 9,
+     "unit_name": "二位小數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 10,
+     "unit_name": "統計圖表",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "多位數的乘與除",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "四邊形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "分數的加減和整數倍",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "概數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "統計圖表",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "小數乘以整數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 7,
+     "unit_name": "周長與面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 8,
+     "unit_name": "等值分數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 9,
+     "unit_name": "時間的加減",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 10,
+     "unit_name": "立方公分",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "多位數的乘與除",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "四邊形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "概數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "數量規律",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "小數乘法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "周長與面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 7,
+     "unit_name": "等值分數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 8,
+     "unit_name": "簡化計算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 9,
+     "unit_name": "時間的計算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 10,
+     "unit_name": "立方公分",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "概數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "四則運算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "垂直、平行與四邊形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "分數（一）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "形體的大小",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "小數乘法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 7,
+     "unit_name": "周長與面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 8,
+     "unit_name": "分數（二）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 9,
+     "unit_name": "時間的計算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 10,
+     "unit_name": "規律",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "折線圖",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "因數和倍數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "多邊形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "擴分、約分和通分",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "線對稱圖形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 6,
+     "unit_name": "異分母分數的加減",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 7,
+     "unit_name": "整數四則計算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 8,
+     "unit_name": "平行四邊形、三角形和梯形的面積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 9,
+     "unit_name": "時間的乘除",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 10,
+     "unit_name": "正方體和長方體",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "多位小數與加減",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "因數與公因數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "倍數與公倍數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "擴分、約分和通分",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "多邊形與扇形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 6,
+     "unit_name": "異分母分數的加減",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 7,
+     "unit_name": "線對稱圖形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 8,
+     "unit_name": "整數四則運算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 9,
+     "unit_name": "面積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 10,
+     "unit_name": "柱體、錐體和球",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "折線圖",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "倍數與因數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "平面圖形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "公倍數與公因數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "立體形體",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 6,
+     "unit_name": "四則運算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 7,
+     "unit_name": "擴、約分與加減",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 8,
+     "unit_name": "面積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 9,
+     "unit_name": "乘以幾分之一",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 10,
+     "unit_name": "扇形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "分數的計算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "數的十進位結構",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "小數的乘法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "扇形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "體積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "整數、小數除以整數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 7,
+     "unit_name": "生活中的大單位",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 8,
+     "unit_name": "比率和百分率",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 9,
+     "unit_name": "容積和容量",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 10,
+     "unit_name": "柱體、錐體和球體",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "體積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "分數的計算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "容積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "小數的乘法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "大數與折線圖",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "整數、小數除以整數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 7,
+     "unit_name": "表面積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 8,
+     "unit_name": "比率與百分率",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 9,
+     "unit_name": "時間的乘除",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 10,
+     "unit_name": "生活中的大單位",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "數的十進位結構",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "分數的計算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "長方體與正方體的體積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "小數",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "生活中的大單位",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "時間的乘除",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 7,
+     "unit_name": "容積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 8,
+     "unit_name": "比率與百分率",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 9,
+     "unit_name": "表面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 10,
+     "unit_name": "線對稱圖形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "質因數分解和短除法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "分數的除法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "小數的除法",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "圓周長和圓面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "比和比值",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 6,
+     "unit_name": "扇形的弧長和面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 7,
+     "unit_name": "速率",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 8,
+     "unit_name": "數量關係",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "最大公因數與最小公倍數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "分數除法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "數量關係",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "小數除法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "比與比值",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 6,
+     "unit_name": "圓周長與扇形周長",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 7,
+     "unit_name": "圓面積與扇形面積",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 8,
+     "unit_name": "認識速率",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 9,
+     "unit_name": "放大圖、縮圖與比例尺",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "最大公因數與最小公倍數",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "分數除法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "規律問題",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "比與比值",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "小數除法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 6,
+     "unit_name": "兩量關係與比",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 7,
+     "unit_name": "圓周長與扇形周長",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 8,
+     "unit_name": "放大、縮小與比例尺",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 9,
+     "unit_name": "怎樣解題",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "四則混合運算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "圓形圖",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "基準量和比較量",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "放大圖、縮圖和比例尺",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 5,
+     "unit_name": "怎樣解題",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 6,
+     "unit_name": "柱體的體積和表面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "小數與分數的計算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "速率的應用",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "柱體體積與表面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "基準量與比較量",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 5,
+     "unit_name": "怎樣解題",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 6,
+     "unit_name": "圓形圖",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "分數與小數的四則運算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "圓面積與扇形面積",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "速率",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "統計圖表",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 5,
+     "unit_name": "怎樣解題",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 6,
+     "unit_name": "角柱與圓柱",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "整數運算與科學記號",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "因數分解與分數運算",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "一元一次方程式",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "整數的運算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "分數的運算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "一元一次方程式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "數與數線",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "標準分解式與分數運算",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "一元一次方程式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "二元一次聯立方程式",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "平面直角坐標系",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "比例",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "一元一次不等式",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "統計圖表與資料分析",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 6,
+     "unit_name": "生活中的幾何圖形",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "二元一次聯立方程式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "直角坐標與二元一次方程式的圖形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "比與比例式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "一元一次不等式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "統計",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 6,
+     "unit_name": "生活中的幾何",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "二元一次聯立方程式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "直角坐標與二元一次方程式的圖形",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "比例",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "一元一次不等式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "統計圖表與統計數據",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 6,
+     "unit_name": "線對稱與三視圖",
+     "confidence": "high"
+    }
+   ]
+  },
+  "science": {
+   "name": "自然科學",
+   "sources": [
+    "https://www.learnmode.net/course_library/2468/fifth-grade",
+    "https://www.learnmode.net/course_library/2448/fifth-grade",
+    "https://www.learnmode.net/course_library/2488/fifth-grade",
+    "https://www.learnmode.net/course_library/3694/seventh-grade",
+    "https://www.learnmode.net/course_library/3706/seventh-grade",
+    "https://www.learnmode.net/course_library/3718/seventh-grade",
+    "https://www.learnmode.net/course/592078/content",
+    "https://www.learnmode.net/course/638375/content",
+    "https://www.learnmode.net/course/592079/content",
+    "https://www.learnmode.net/course/638376/content",
+    "https://www.learnmode.net/course/592080/content",
+    "https://www.learnmode.net/course/638377/content",
+    "https://www.learnmode.net/course/591424/content",
+    "https://www.learnmode.net/course/638176/content",
+    "https://www.learnmode.net/course/591425/content",
+    "https://www.learnmode.net/course/638177/content",
+    "https://www.learnmode.net/course/591426/content",
+    "https://www.learnmode.net/course/638303/content",
+    "https://www.learnmode.net/course/592637/content",
+    "https://www.learnmode.net/course/638472/content"
+   ],
+   "units": [
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "地球的夥伴-日月星辰",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "水中世界",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "光和能源",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "電路好好玩",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "地表的靜與動",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "水生生物與環境",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "有趣的聲光現象",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "好玩的電路",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "閃亮的天空",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "水域環境",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "物質變變變",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "聲光世界真有趣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "生活中有趣的力",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "昆蟲家族",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "水的移動",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "了解臺灣的環境",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "白天和夜晚的天空",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "水的移動",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "昆蟲大解密",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "自然資源與利用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "生活中的力",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "水的奇妙現象",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "變動的大地",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "能源與電路",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "太陽與光",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "植物世界",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "水溶液",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "力與運動",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "動物世界",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "探索聲光世界",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "神祕的天空",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "燃燒與生鏽",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "太陽的秘密",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "千變萬化的植物",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "神奇的水溶液",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "力與運動",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "星星的世界",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "認識空氣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "動物的生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "聲音與樂器",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "力與運動",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "大地的奧祕",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "植物世界面面觀",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "熱的作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "探索星空的奧秘",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "空氣與燃燒",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "防止生鏽與保存食物",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "揭密動物的世界",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "多樣的天氣變化",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "熱對物質的影響",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "變動的大地",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "奇妙的電磁世界",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "探索天氣的變化",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "水溶液",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "動物大解密",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "電磁作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "熱的影響與傳播",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "多變的天氣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "發現大地的奧秘",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "電磁與生活",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "巧妙的施力工具",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "防鏽與防腐",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "珍愛家園",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "簡單機械",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "能量與生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "地球的生態",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "力與運動",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "簡單機械",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "生物、環境與自然資源",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "生命的發現",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "組成生物體的層次和尺度",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "生物體的營養",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 4,
+     "unit_name": "生物體內的運輸",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 5,
+     "unit_name": "生物體的協調作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 6,
+     "unit_name": "生物體內的恆定",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "生命的特性",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "養分",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "生物的運輸與防禦",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 4,
+     "unit_name": "生物的協調作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 5,
+     "unit_name": "生物的恆定性",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "生命世界與科學方法",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "生物體的組成",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "生物體的營養",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 4,
+     "unit_name": "生物體的運輸作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 5,
+     "unit_name": "生物體的協調作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 6,
+     "unit_name": "生物體的恆定",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "新生命的誕生",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "遺傳",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "形形色色的生物",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "生物與環境的交互作用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "人類與環境",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "生殖",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "遺傳",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "地球上的生物",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "生態系",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "人類與環境",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "生殖",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "遺傳",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "生物的演化與分類",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 4,
+     "unit_name": "生物與環境",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 5,
+     "unit_name": "生物多樣性與保育",
+     "confidence": "high"
+    }
+   ]
+  },
+  "social": {
+   "name": "社會",
+   "sources": [
+    "https://www.knsh.com.tw/service/plan",
+    "https://www.cp.ptc.edu.tw/storage/134697/134697_115_B-05_4A.pdf",
+    "https://tten.tp.edu.tw/Login/Downment?grade=4&spid=75a6970a-9c6f-460f-b60b-49e6e9831bd2&subject=Society",
+    "https://tten.tp.edu.tw/Login/Downment?grade=5&spid=7349b91b-c5d9-446a-9ab0-fe5586d968c7&subject=Society",
+    "https://tten.tp.edu.tw/Login/Downment?grade=4&spid=a44bcedc-aded-4952-92dd-c94d848f7cf5&subject=AddSociety",
+    "http://course.tn.edu.tw/course/114E%E8%A5%BF%E5%8B%A2%E5%9C%8B%E5%B0%8FC5-1%E9%A0%98%E5%9F%9F%E5%AD%B8%E7%BF%92%E8%AA%B2%E7%A8%8B(%E8%AA%BF%E6%95%B4)%E8%A8%88%E7%95%AB%E6%99%AE%E9%80%9A%E7%8F%AD%E5%85%AD%E5%B9%B4%E7%B4%9A%E7%A4%BE%E6%9C%830702161018.pdf",
+    "https://ictc.mtps.kh.edu.tw/curriculum/plan_115/115%E9%A0%98%E5%9F%9Fok/115%E7%A4%BE%E6%9C%83/4%E4%B8%8A%E7%A4%BE%E6%9C%83.pdf",
+    "http://mzq6.wnn8.com/BCX/BCX1522.htm",
+    "https://xyz566.com/BCX/BCX1513.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1675.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1880.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1617.htm",
+    "http://mzq6.wnn8.com/BCX/BCX0873.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1523.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1524.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1838.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1927.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1156.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1388.htm",
+    "http://mzq6.wnn8.com/BCX/BCX1387.htm"
+   ],
+   "units": [
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "交通與訊息",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "地圖上的家鄉",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "認識家鄉景觀",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "家鄉的節慶",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "家鄉的自然環境",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "家鄉的傳統住屋與器物",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "家鄉的傳統信仰與老街",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "家鄉的作息、節慶與節日",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "家鄉的地圖與運用",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "家鄉的地形與氣候",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "家鄉的人口與生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "家鄉的多元文化",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 5,
+     "unit_name": "家鄉的節慶與禮俗",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 6,
+     "unit_name": "家鄉故事導覽員（探究單元）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "家鄉的地形與氣候",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "家鄉的產業與創新",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "家鄉的人口",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "家鄉的產業",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "家鄉的人口",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "家鄉的交通",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "家鄉風情畫",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "家鄉的水資源",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "家鄉的山與海",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 5,
+     "unit_name": "家鄉的新風貌",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 6,
+     "unit_name": "歡迎來到我的家鄉（探究／跨領域單元）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "臺灣！我來了",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "島嶼上的生活樣貌",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "臺灣的物產資源",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "看見福爾摩沙",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "臺灣我的家",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "臺灣的自然環境與生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "尋根探源話臺灣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "大航海時代的臺灣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "主題探究與實作",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "臺灣的位置與先民足跡",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "臺灣登上國際舞臺",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "成為清帝國的領土",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "土地的利用與變遷",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 5,
+     "unit_name": "探究與實作",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "唐山到臺灣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "開港通商後的臺灣",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "經濟與生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "打造永續的家園",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "我們的經濟活動",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "清帝國時期臺灣的發展與改變",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "日治時期人民與政府的關係",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "日治時期的社會變遷",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "日本統治下的臺灣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "走向自由民主之路",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "多元文化共存共榮",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "各地的發展與特色",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 5,
+     "unit_name": "經濟的變遷與展望",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 6,
+     "unit_name": "探究與實作",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "臺灣的民主之路",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "時光留下的紀錄與變遷",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "農業之鄉到科技之島",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "臺灣進行式",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "探究實作",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "民主政治的發展",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "社會變遷下的個人發展與族群文化",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "經濟發展、轉型與生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "都市、鄉村的互動發展",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "現代科技新生活",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "聰明消費與理財",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "生活中的各種規範",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "共創地方新風貌",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 5,
+     "unit_name": "世界文化在臺灣",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "攜手愛地球",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "全球議題面面觀",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "愛與關懷的世界",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "公民責任與全球永續",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "世界多元文化與科技發展對臺灣的影響",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "臺灣走向世界",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "主題探究與實作",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "永續的經濟發展",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "促進社會永續發展",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "環境永續的地球村",
+     "confidence": "high"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "地理：臺灣的環境（上）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "歷史：臺灣的歷史（上）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "公民：公民身分及社群",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "地理：臺灣的環境（上）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "歷史：臺灣的歷史（上）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "公民：公民身分及社群",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "地理：臺灣的環境（上）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 2,
+     "unit_name": "歷史：臺灣的歷史（上）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 3,
+     "unit_name": "公民：公民身分及社群",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "地理：臺灣的環境（下）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "歷史：臺灣的歷史（下）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "南一",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "公民：公民的社會參與",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "地理：臺灣的環境（下）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "歷史：臺灣的歷史（下）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "公民：公民的社會參與",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "地理：臺灣的環境（下）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 2,
+     "unit_name": "歷史：臺灣的歷史（下）",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 3,
+     "unit_name": "公民：公民的社會參與",
+     "confidence": "medium"
+    }
+   ]
+  },
+  "english": {
+   "name": "英語",
+   "sources": [
+    "https://www.ftps.kh.edu.tw/upload/19/104_57459/114%E5%B9%B4%E7%A6%8F%E6%9D%B1%E8%8B%B1%E8%AA%9E%E5%96%AE%E5%AD%97%E7%8E%8B%E5%96%AE%E5%AD%97%E9%A1%8C%E5%BA%AB.pdf",
+    "https://www.learnmode.net/course/591406/content",
+    "https://www.learnmode.net/course_library/2448/fourth-grade",
+    "https://www.maiyajiaoan.com/wiki/8092.html",
+    "https://kbfg.78.to/BCX/BCX1548.htm",
+    "https://xyz566.com/BCX/BCX1560.htm",
+    "http://www1.hmgps.kh.edu.tw/teach/115/%E8%8B%B1%E8%AA%9E/pdf/115%E8%8B%B1%E8%AA%9E%E8%AA%B2%E7%A8%8B%E8%A8%88%E7%95%ABG5-2.pdf",
+    "http://www1.hmgps.kh.edu.tw/teach/115/%E8%8B%B1%E8%AA%9E/pdf/115%E8%8B%B1%E8%AA%9E%E8%AA%B2%E7%A8%8B%E8%A8%88%E7%95%ABG6-2.pdf",
+    "https://studio.sbes.tn.edu.tw/modules/tadnews/index.php?ncsn=7&nsn=27",
+    "https://tten.tp.edu.tw/Login/Downment?grade=5&spid=a7a25e1a-795b-4118-b64f-58fafedcef60&subject=English",
+    "https://www.learnmode.net/course/129927/content",
+    "https://www.learnmode.net/course/69805/content",
+    "https://www.youtube.com/watch?v=32t0Z2dEoSg",
+    "https://www.youtube.com/playlist?list=PLyuRet9p8Mmy-_S127R_GN73vpi-rUP98",
+    "https://www.learnmode.net/course_library/2503/third-grade",
+    "https://classic-blog.udn.com/hd5ryghhdhf/180063398",
+    "https://www.knsh.com.tw/service/plan",
+    "https://wfps.ntct.edu.tw/var/file/161/1161/img/4723/501222353.pdf",
+    "https://www.mleps.hlc.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=1408&cat_sn=177&fn=%E4%BA%94%E5%B9%B4%E7%B4%9A%E9%A0%98%E5%9F%9F%E8%AA%B2%E7%A8%8B%E8%A8%88%E7%95%AB(%E8%8B%B1%E8%AA%9E).pdf",
+    "https://web.ddp.kh.edu.tw/plan/113/G%E8%AA%B2%E7%A8%8B%E8%A8%88%E7%95%AB%E5%85%A7%E5%AE%B9/G-1%E9%A0%98%E5%9F%9F%E5%AD%B8%E7%BF%92%E8%AA%B2%E7%A8%8B%E8%A8%88%E7%95%AB(%E5%90%AB%E9%80%B2%E5%BA%A6%E8%A1%A8)/6B%E8%8B%B1%E8%AA%9E.pdf"
+   ],
+   "units": [
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 1,
+     "unit_name": "Unit 1: How's the Weather?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 2,
+     "unit_name": "Unit 2: Are You Thirsty?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 3,
+     "unit_name": "Unit 3: What Are These?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-1",
+     "unit_no": 4,
+     "unit_name": "Unit 4: Do You Want Some Pizza?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "Unit 1: A Dollhouse for Jello",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "Unit 2: A Video Call from Boka",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 3,
+     "unit_name": "Unit 3: Let's Have Lunch!",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "4-2",
+     "unit_no": 4,
+     "unit_name": "Unit 4: At the Zoo",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 1,
+     "unit_name": "Unit 1: What Time Is It?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "4-2",
+     "unit_no": 2,
+     "unit_name": "Unit 2: What Are You Doing?",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "Unit 1: The Best Drink",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "Unit 2: Let's Make Fruit Salad",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "Unit 3: A Fun Day",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "Unit 4: My Favorite Subject",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 1,
+     "unit_name": "Unit 1: What Day Is Today?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 2,
+     "unit_name": "Unit 2: Do You Have PE Class on Monday?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 3,
+     "unit_name": "Unit 3: Where Are You Going?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-1",
+     "unit_no": 4,
+     "unit_name": "Unit 4: How Many Koalas Are There?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "Unit 1: A Surprise for Jello",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "Unit 2: City Adventure",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "Unit 3: Clothes Shopping for a Wedding",
+     "confidence": "high"
+    },
+    {
+     "publisher": "康軒",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "Unit 4: Whose Backpack Is It?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 1,
+     "unit_name": "Unit 1: What's Wrong?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 2,
+     "unit_name": "Unit 2: Do You Have a Headache?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 3,
+     "unit_name": "Unit 3: What Would You Like for Dinner?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "5-2",
+     "unit_no": 4,
+     "unit_name": "Unit 4: Whose Backpack Is That?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 1,
+     "unit_name": "Unit 1: Where Are You From?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 2,
+     "unit_name": "Unit 2: How Do You Go to School?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 3,
+     "unit_name": "Unit 3: What Do You Do on Weekends?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-1",
+     "unit_no": 4,
+     "unit_name": "Unit 4: What Time Do You Get Up?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 1,
+     "unit_name": "Unit 1: Where Were You Yesterday?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 2,
+     "unit_name": "Unit 2: What Did You Do Last Night?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 3,
+     "unit_name": "Unit 3: How Much Is the T-shirt?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "6-2",
+     "unit_no": 4,
+     "unit_name": "Unit 4: What's Your Favorite Season?",
+     "confidence": "high"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-1",
+     "unit_no": 1,
+     "unit_name": "Lesson 1: Who's That Handsome Boy?",
+     "confidence": "medium"
+    },
+    {
+     "publisher": "翰林",
+     "term": "7-2",
+     "unit_no": 1,
+     "unit_name": "Lesson 1: What Do You Do in Your Free Time?",
+     "confidence": "medium"
+    }
+   ]
+  }
+ }
+}

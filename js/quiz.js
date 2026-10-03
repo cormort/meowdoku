@@ -48,6 +48,92 @@ export function gradeCounts(subject) {
   return counts;
 }
 
+// ===== 冊次（年級＋學期）與教科書版本 =====
+// 台灣國小/國中教科書都依同一份 108 課綱編寫，各版本（康軒/南一/翰林）內容範圍相同，
+// 差別是同一主題排在幾年級上/下學期的第幾單元。題目的 term／versions 就是在記錄這件事。
+export const TERMS = [
+  { key: "4-1", label: "四上", grade: 4, term: 1, full: "國小四年級上學期" },
+  { key: "4-2", label: "四下", grade: 4, term: 2, full: "國小四年級下學期" },
+  { key: "5-1", label: "五上", grade: 5, term: 1, full: "國小五年級上學期" },
+  { key: "5-2", label: "五下", grade: 5, term: 2, full: "國小五年級下學期" },
+  { key: "6-1", label: "六上", grade: 6, term: 1, full: "國小六年級上學期" },
+  { key: "6-2", label: "六下", grade: 6, term: 2, full: "國小六年級下學期" },
+  { key: "7-1", label: "七上", grade: 7, term: 1, full: "國中七年級上學期" },
+  { key: "7-2", label: "七下", grade: 7, term: 2, full: "國中七年級下學期" },
+];
+export const PUBLISHERS = ["康軒", "南一", "翰林", "何嘉仁", "佳音"];
+// 各科實際流通的版本（依教育部「教科用書審查通過清單」）：
+// 國小英語＝康軒 Wonder World／翰林 Here We Go／何嘉仁 Super Fun（南一沒有國小英語）；
+// 國中英語＝康軒／南一／佳音；其餘科目（國語、數學、自然、社會）＝康軒／南一／翰林。
+export const SUBJECT_PUBLISHERS = {
+  chinese: ["康軒", "南一", "翰林"],
+  math: ["康軒", "南一", "翰林"],
+  science: ["康軒", "南一", "翰林"],
+  social: ["康軒", "南一", "翰林"],
+  english: ["康軒", "翰林", "何嘉仁", "南一", "佳音"],
+};
+export const ALL_VERSIONS = "共通"; // 所有版本都有此內容
+export function termInfo(key) {
+  return TERMS.find((t) => t.key === key) || null;
+}
+export function termsOfGrade(grade) {
+  return TERMS.filter((t) => t.grade === Number(grade));
+}
+// 題目是否符合指定的冊次／版本。
+// - 沒標 term／terms 的舊題視為該年級兩學期皆可；沒標 versions／terms 或標「共通」＝所有版本都有。
+// - terms = { 版本: 冊次 }：同一題在不同版本屬於不同冊次時使用（例：水溶液在康軒是六上、翰林是五上）。
+export function questionTerm(q, publisher) {
+  if (q && q.terms && typeof q.terms === "object") {
+    if (publisher) return q.terms[publisher] || null;
+    return null; // 沒指定版本時要看任一版本是否落在該冊次
+  }
+  return q?.term || null;
+}
+export function matchesFilter(q, { grade = null, term = null, publisher = null } = {}) {
+  if (grade !== null && grade !== undefined && Number(q.grade) !== Number(grade)) return false;
+  if (term) {
+    const t = termInfo(term);
+    if (!t) return false;
+    if (q.terms && typeof q.terms === "object") {
+      const values = Object.values(q.terms);
+      if (publisher) {
+        if (q.terms[publisher] !== term) return false;
+      } else if (!values.includes(term)) return false;
+    } else if (q.term) {
+      if (q.term !== term) return false;
+    } else if (Number(q.grade) !== t.grade) return false;
+  }
+  if (publisher) {
+    const list = q.terms && typeof q.terms === "object" ? Object.keys(q.terms) : Array.isArray(q.versions) ? q.versions : null;
+    if (list && list.length && !list.includes(ALL_VERSIONS) && !list.includes(publisher)) return false;
+  }
+  return true;
+}
+// 各冊次的題數（可再依版本過濾）
+export function termCounts(subject, { publisher = null } = {}) {
+  const counts = {};
+  for (const { key } of TERMS) counts[key] = 0;
+  for (const q of subject?.questions || []) {
+    for (const { key } of TERMS) {
+      if (matchesFilter(q, { term: key, publisher })) counts[key]++;
+    }
+  }
+  return counts;
+}
+// 各版本的題數（可再依冊次過濾）
+export function publisherCounts(subject, { term = null } = {}) {
+  const counts = {};
+  for (const p of PUBLISHERS) counts[p] = 0;
+  for (const q of subject?.questions || []) {
+    for (const p of PUBLISHERS) if (matchesFilter(q, { term, publisher: p })) counts[p]++;
+  }
+  return counts;
+}
+// 符合指定條件的題數
+export function filterCount(subject, filter = {}) {
+  return (subject?.questions || []).filter((q) => matchesFilter(q, filter)).length;
+}
+
 // 回傳錯誤訊息陣列；空陣列代表題庫合法
 export function validateSubject(subject) {
   const errors = [];
@@ -73,6 +159,27 @@ export function validateSubject(subject) {
     if (q?.tip !== undefined && !nonEmpty(q.tip)) errors.push(`${at} tip 若有填就不能空白`);
     if (!Number.isInteger(q?.grade) || q.grade < GRADE_MIN || q.grade > GRADE_MAX)
       errors.push(`${at} grade 必須是 ${GRADE_MIN}～${GRADE_MAX} 的整數（程度）`);
+    // term／terms 記的是「教科書實際放在哪一冊」，可能與題庫的程度標籤不同年級
+    // （例：三角形內角和編在五上，但題庫把它標成小四），所以只檢查是不是合法冊次。
+    if (q?.term !== undefined && !termInfo(q.term))
+      errors.push(`${at} term 必須是合法冊次（例如 5-1、5-2）`);
+    if (q?.terms !== undefined) {
+      const okTerms =
+        q.terms &&
+        typeof q.terms === "object" &&
+        !Array.isArray(q.terms) &&
+        Object.keys(q.terms).length > 0 &&
+        Object.entries(q.terms).every(([p, v]) => PUBLISHERS.includes(p) && termInfo(v));
+      if (!okTerms) errors.push(`${at} terms 必須是 { 版本: 冊次 } 的對照表（例：{"康軒":"6-1","翰林":"5-1"}）`);
+      if (q?.term !== undefined) errors.push(`${at} term 與 terms 只能擇一`);
+    }
+    if (q?.versions !== undefined) {
+      const okVersions =
+        Array.isArray(q.versions) &&
+        q.versions.length > 0 &&
+        q.versions.every((v) => v === ALL_VERSIONS || PUBLISHERS.includes(v));
+      if (!okVersions) errors.push(`${at} versions 必須是 ${PUBLISHERS.join("/")} 或 ${ALL_VERSIONS} 的陣列`);
+    }
     const type = QUESTION_TYPES[q?.type];
     if (!type) errors.push(`${at} 未知題型 ${q?.type}`);
     else if (!type.validate(q)) errors.push(`${at} ${q.type} 欄位不合法`);
@@ -105,18 +212,43 @@ export async function loadSubjects(base = "./quizzes/") {
   return QUIZ_SUBJECTS;
 }
 
-// 從題庫隨機抽一輪（Fisher–Yates，不重複）。
-// grade 有給就只從該程度的題目抽；該程度題數不足時退回全部題目，避免抽不到題。
-export function pickRound(subject, grade = null, rng = Math.random) {
-  const all = subject.questions || [];
-  const byGrade = grade ? all.filter((q) => q.grade === grade) : [];
-  const src = byGrade.length ? byGrade : all;
-  const pool = [...src];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+// 教科書單元對照表：quizzes/units.json
+// 結構：{ version: "114學年度", subjects: { math: { name, sources: [...], units: [{publisher, term:"5-1", unit_no, unit_name, sub_units}] } } }
+export const TEXTBOOK_UNITS = { version: null, subjects: {} };
+export async function loadUnits(base = "./quizzes/") {
+  try {
+    const data = await fetch(`${base}units.json`).then((r) => r.json());
+    TEXTBOOK_UNITS.version = data.version || null;
+    TEXTBOOK_UNITS.subjects = data.subjects || {};
+  } catch {
+    /* 沒有對照表也能玩：只是不顯示單元清單 */
   }
-  return pool.slice(0, Math.min(subject.roundSize, pool.length));
+  return TEXTBOOK_UNITS;
+}
+export function unitsFor(subjectId, publisher, term) {
+  const units = TEXTBOOK_UNITS.subjects[subjectId]?.units || [];
+  if (!publisher || !term) return [];
+  return units.filter((u) => u.publisher === publisher && u.term === term);
+}
+
+// 從題庫隨機抽一輪（Fisher–Yates，不重複）。
+// filter 可帶 { grade, term, publisher }；第二個參數也接受單純的年級數字（舊用法）。
+// 依條件篩選後題數不足時，依序退回「同年級」→「整冊」，避免抽不到題。
+export function pickRound(subject, filter = {}, rng = Math.random) {
+  const f = typeof filter === "number" ? { grade: filter } : filter || {};
+  const all = subject.questions || [];
+  let pool = all.filter((q) => matchesFilter(q, f));
+  if (!pool.length && (f.grade ?? f.term)) {
+    const grade = f.grade ?? termInfo(f.term)?.grade;
+    pool = all.filter((q) => Number(q.grade) === Number(grade));
+  }
+  if (!pool.length) pool = [...all];
+  const shuffled = [...pool];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, Math.min(subject.roundSize, shuffled.length));
 }
 
 // 測驗結算與獎勵計算（grade 為程度，影響金幣與能力值倍率）

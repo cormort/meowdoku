@@ -4942,3 +4942,49 @@ label {
     flex-basis: 100%;
   }
 }
+/* 學院：教科書版本／冊次的對照單元面板 */
+.unit-panel {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: linear-gradient(var(--pm-black-2), var(--pm-black));
+  border: 2px solid var(--pm-frame);
+  border-radius: 4px;
+}
+.unit-panel summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--pm-gold);
+  font-family: var(--pm-serif);
+}
+.unit-block {
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: var(--pm-cream);
+}
+.unit-block b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--pm-salmon);
+}
+.unit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.unit-chip {
+  padding: 2px 7px;
+  background: #241a16;
+  border: 1px solid var(--pm-frame);
+  border-radius: 3px;
+  color: var(--pm-cream);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.unit-empty,
+.unit-hint {
+  margin: 8px 0 0;
+  font-size: 0.74rem;
+  color: var(--pm-salmon);
+  line-height: 1.5;
+}

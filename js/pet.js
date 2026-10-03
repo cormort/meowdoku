@@ -1,6 +1,6 @@
 // pet.js — 貓咪小屋（首頁）：養成資料、客廳、圖鑑、稱號、紀念日、節日活動，以及各分頁的切換與點擊委派
 import { audio } from "../audio.js";
-import { academyPageHtml, handleDailyCare, handleQuizAnswer, setQuizGrade, startQuizSession, statsPageHtml } from "./academy.js";
+import { academyPageHtml, handleDailyCare, handleQuizAnswer, setQuizPublisher, setQuizTerm, startQuizSession, statsPageHtml } from "./academy.js";
 import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
@@ -1276,10 +1276,16 @@ function onPetClick(e) {
     spawnRoomHeart(30, 70, "💤");
     return;
   }
-  const gradeBtn = e.target.closest("[data-quiz-grade]");
-  if (gradeBtn) {
-    setQuizGrade(gradeBtn.dataset.quizGrade);
-    setPetView("academy"); // 重畫學院頁：題池數與按鈕文字跟著換程度
+  const termBtn = e.target.closest("[data-quiz-term]");
+  if (termBtn) {
+    setQuizTerm(termBtn.dataset.quizTerm);
+    setPetView("academy"); // 重畫學院頁：題池數、對照單元跟著換冊次
+    return;
+  }
+  const pubBtn = e.target.closest("[data-quiz-pub]");
+  if (pubBtn) {
+    setQuizPublisher(pubBtn.dataset.quizPub);
+    setPetView("academy"); // 換教科書版本
     return;
   }
   const startQuiz = e.target.closest("[data-start-quiz]");

@@ -1,7 +1,21 @@
 // tests/quiz.test.mjs — 驗證 quizzes/ 下所有學科題庫符合標準格式
 // 用法：node tests/quiz.test.mjs
 import { readFileSync } from "node:fs";
-import { GRADES, calculateQuizResult, gradeCounts, isCorrect, pickRound, validateSubject } from "../js/quiz.js";
+import {
+  GRADES,
+  PUBLISHERS,
+  SUBJECT_PUBLISHERS,
+  filterCount,
+  TERMS,
+  calculateQuizResult,
+  gradeCounts,
+  isCorrect,
+  matchesFilter,
+  pickRound,
+  publisherCounts,
+  termCounts,
+  validateSubject,
+} from "../js/quiz.js";
 
 const dir = new URL("../quizzes/", import.meta.url);
 const read = (f) => JSON.parse(readFileSync(new URL(f, dir), "utf8"));
@@ -43,6 +57,46 @@ for (const file of read("index.json").subjects) {
     calculateQuizResult(subject.id, 3, 3, gradeNums[gradeNums.length - 1]).statGain >
       calculateQuizResult(subject.id, 3, 3, gradeNums[0]).statGain,
     `${file} 程度越高獎勵越多`,
+  );
+}
+
+console.log("=== 冊次與版本 ===");
+for (const file of read("index.json").subjects) {
+  const subject = read(file);
+  const pubs = SUBJECT_PUBLISHERS[subject.id] || PUBLISHERS;
+  // 不限冊次、不限版本時，每個科目都要出得了題（沒選範圍時的保底）
+  check(
+    filterCount(subject, {}) >= subject.roundSize,
+    `${file} 不限範圍時可出題（${filterCount(subject, {})} 題 ≥ roundSize ${subject.roundSize}）`,
+  );
+  let full = 0;
+  const gaps = [];
+  for (const { key } of TERMS) {
+    for (const p of pubs) {
+      const n = filterCount(subject, { term: key, publisher: p });
+      if (n >= subject.roundSize) {
+        full++;
+        const round = pickRound(subject, { term: key, publisher: p });
+        check(
+          round.length === subject.roundSize &&
+            round.every((q) => matchesFilter(q, { term: key, publisher: p })),
+          `${file} ${key}・${p} 抽題只抽該範圍且不重複`,
+        );
+      } else {
+        gaps.push(`${key}・${p}(${n})`);
+      }
+    }
+  }
+  check(full >= 1, `${file} 至少有一個（冊次,版本）組合能直接排課測驗`);
+  console.log(`     ↳ 可直接排課的組合 ${full} 個／${TERMS.length * pubs.length}；題目不足的：${gaps.slice(0, 8).join(" ")}${gaps.length > 8 ? " …" : ""}`);
+  // 版本過濾：標了 versions 的題目要被其他版本排除（terms 的題目由上面的組合測試涵蓋）
+  const sample = { ...subject, questions: [{ ...subject.questions[0], versions: ["康軒"] }] };
+  delete sample.questions[0].terms;
+  delete sample.questions[0].term;
+  check(
+    matchesFilter(sample.questions[0], { publisher: "康軒" }) &&
+      !matchesFilter(sample.questions[0], { publisher: "翰林" }),
+    `${file} versions 標記會排除其他版本`,
   );
 }
 
