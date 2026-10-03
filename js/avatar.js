@@ -146,6 +146,16 @@ export function stageTransform(part, gradeOrTerm) {
   }
   return { scale: 1, dy: 0 };
 }
+// 各圖層縮放的基準線（Y，佔畫布百分比）：stageTransform 的 dy 假設圖層是繞著自己的錨點縮放
+// （頭＝頭頂、上衣＝肩、褲裙＝腰、鞋＝腳底），所以 transform-origin 必須設在同一條線上
+export function stageOriginY(part) {
+  const ref = STAGE_METRICS[REF_STAGE];
+  if (part.startsWith("top")) return ref.shoulder * 100;
+  if (part.startsWith("bottom")) return ref.hip * 100;
+  if (part.startsWith("shoes")) return ref.feet * 100;
+  if (part.startsWith("hat") || part.startsWith("acc_") || part.startsWith("hair")) return ref.headTop * 100;
+  return 0;
+}
 
 // ── 角色繪製（PNG 分層）──
 // 素材在 icons/avatar/：Nano Banana 重繪的彩色 PNG（512x512 對齊，白色／灰階底稿），
@@ -196,9 +206,8 @@ export function renderAvatar(input, { size = 150, grade = 4 } = {}) {
       // 依年級把衣服縮放／平移（頭髮、配件跟著頭；上衣跟肩；褲裙跟腰；鞋子跟腳）
       let tf = "";
       if (!isBase) {
-        const part = l.file.replace(/^(base_|hair_|top_|bottom_|shoes_|hat_|acc_)/, (m) => m);
         const t = stageTransform(l.file, grade);
-        const origin = l.file.startsWith("shoes") ? "50% 100%" : "50% 0%";
+        const origin = `50% ${stageOriginY(l.file).toFixed(2)}%`;
         if (t.scale !== 1 || t.dy !== 0) {
           const dyPct = (t.dy / 512) * 100;
           tf = ` style="transform-origin:${origin};transform:translateY(${dyPct.toFixed(2)}%) scale(${t.scale.toFixed(3)})"`;

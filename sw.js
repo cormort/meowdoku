@@ -1,7 +1,7 @@
 /* 貓咪邏輯謎題 Service Worker：App Shell + 離線可玩。
  * 同源資源採網路優先、離線退回快取。 */
 const PREFIX='meowdoku';
-const SHELL=`${PREFIX}-shell-v51`;
+const SHELL=`${PREFIX}-shell-v52`;
 const APP_SHELL=[
   './',
   './index.html',
@@ -23,7 +23,6 @@ const APP_SHELL=[
   './icons/avatar/acc_glasses.png',
   './icons/avatar/acc_headphone.png',
   './icons/avatar/acc_scarf.png',
-  './icons/avatar/base.png',
   './icons/avatar/base_g4.png',
   './icons/avatar/base_g5.png',
   './icons/avatar/base_g6.png',
@@ -143,7 +142,8 @@ const APP_SHELL=[
 self.addEventListener('install',event=>{
   event.waitUntil(
     caches.open(SHELL)
-      .then(cache=>cache.addAll(APP_SHELL))
+      // 逐檔快取：單一檔案 404 不會讓整個 install 失敗（addAll 為全有或全無）
+      .then(cache=>Promise.allSettled(APP_SHELL.map(url=>cache.add(url))))
       .then(()=>self.skipWaiting())
   );
 });
@@ -167,8 +167,8 @@ self.addEventListener('fetch',event=>{
     try{
       const fresh=await fetch(request);
       if(fresh.ok){
-        const cache=await caches.open(SHELL);
-        cache.put(request,fresh.clone());
+        const copy=fresh.clone();
+        event.waitUntil(caches.open(SHELL).then(cache=>cache.put(request,copy)).catch(()=>{}));
       }
       return fresh;
     }catch{
