@@ -193,6 +193,20 @@ console.log("=== 考試（期中考／期末考）===");
   const finals = buildExamQuestions("5-1", 6, () => 0.9);
   check(finals.length === 6, "期末考抽 6 題");
   check(buildExamQuestions("9-9", 5).length === 0, "沒有這個冊次時回傳空陣列");
+  check(matchesFilter(QUIZ_SUBJECTS.science.questions[0], { term: "8-1" }) === false, "題庫沒有直接標八上");
+  const jh = buildExamQuestions("8-1", 12, () => 0.3);
+  check(jh.length === 12, "八上期中考可以抽到 12 題（退到國中題庫）");
+  check(jh.every((q) => q.examSubject), "退到國中題庫的題目仍帶科目");
+  check(buildExamQuestions("9-2", 12, () => 0.7).length === 12, "九下期末考可以抽到 12 題");
+  check(buildExamQuestions("4-1", 6).length === 6, "四上期中考抽得到 6 題");
+  {
+    const sci = QUIZ_SUBJECTS.science;
+    const shown = filterCount(sci, { term: "8-1", publisher: "翰林" });
+    const shown82 = filterCount(sci, { term: "8-2", publisher: "翰林" });
+    check(shown > 0 && shown === shown82, `八上與八下顯示同樣的國中題池題數（各 ${shown} 題）`);
+    check(filterCount(sci, { term: "7-1", publisher: "翰林" }) > 0, "七上自然科有專屬題目");
+    check(filterCount(sci, { term: "9-9" }) === 0, "不存在的冊次顯示 0 題");
+  }
 }
 
 console.log(failures ? `\n${failures} 項失敗` : "\n全部通過");

@@ -52,14 +52,19 @@ export function gradeCounts(subject) {
 // 台灣國小/國中教科書都依同一份 108 課綱編寫，各版本（康軒/南一/翰林）內容範圍相同，
 // 差別是同一主題排在幾年級上/下學期的第幾單元。題目的 term／versions 就是在記錄這件事。
 export const TERMS = [
-  { key: "4-1", label: "四上", grade: 4, term: 1, full: "國小四年級上學期" },
-  { key: "4-2", label: "四下", grade: 4, term: 2, full: "國小四年級下學期" },
-  { key: "5-1", label: "五上", grade: 5, term: 1, full: "國小五年級上學期" },
-  { key: "5-2", label: "五下", grade: 5, term: 2, full: "國小五年級下學期" },
-  { key: "6-1", label: "六上", grade: 6, term: 1, full: "國小六年級上學期" },
-  { key: "6-2", label: "六下", grade: 6, term: 2, full: "國小六年級下學期" },
-  { key: "7-1", label: "七上", grade: 7, term: 1, full: "國中七年級上學期" },
-  { key: "7-2", label: "七下", grade: 7, term: 2, full: "國中七年級下學期" },
+  { key: "4-1", label: "四上", grade: 4, term: 1, year: 4, full: "國小四年級上學期" },
+  { key: "4-2", label: "四下", grade: 4, term: 2, year: 4, full: "國小四年級下學期" },
+  { key: "5-1", label: "五上", grade: 5, term: 1, year: 5, full: "國小五年級上學期" },
+  { key: "5-2", label: "五下", grade: 5, term: 2, year: 5, full: "國小五年級下學期" },
+  { key: "6-1", label: "六上", grade: 6, term: 1, year: 6, full: "國小六年級上學期" },
+  { key: "6-2", label: "六下", grade: 6, term: 2, year: 6, full: "國小六年級下學期" },
+  { key: "7-1", label: "七上", grade: 7, term: 1, year: 7, full: "國中七年級上學期" },
+  { key: "7-2", label: "七下", grade: 7, term: 2, year: 7, full: "國中七年級下學期" },
+  // 八、九年級共用國中題庫（grade 7＝國中題池），因此 exam 抽題會退到國中題庫
+  { key: "8-1", label: "八上", grade: 7, term: 1, year: 8, full: "國中八年級上學期" },
+  { key: "8-2", label: "八下", grade: 7, term: 2, year: 8, full: "國中八年級下學期" },
+  { key: "9-1", label: "九上", grade: 7, term: 1, year: 9, full: "國中九年級上學期" },
+  { key: "9-2", label: "九下", grade: 7, term: 2, year: 9, full: "國中九年級下學期" },
 ];
 export const PUBLISHERS = ["康軒", "南一", "翰林", "何嘉仁", "佳音"];
 // 各科實際流通的版本（依教育部「教科用書審查通過清單」）：
@@ -131,7 +136,13 @@ export function publisherCounts(subject, { term = null } = {}) {
 }
 // 符合指定條件的題數
 export function filterCount(subject, filter = {}) {
-  return (subject?.questions || []).filter((q) => matchesFilter(q, filter)).length;
+  const all = subject?.questions || [];
+  const exact = all.filter((q) => matchesFilter(q, filter)).length;
+  if (exact || !filter?.term) return exact;
+  // 該冊次沒有專屬題目時，與 pickRound／buildExamQuestions 一致地退到同年級題庫
+  const info = termInfo(filter.term);
+  if (!info) return 0;
+  return all.filter((q) => matchesFilter(q, { ...filter, term: undefined, grade: info.grade })).length;
 }
 
 // 回傳錯誤訊息陣列；空陣列代表題庫合法
@@ -228,7 +239,14 @@ export async function loadUnits(base = "./quizzes/") {
 export function unitsFor(subjectId, publisher, term) {
   const units = TEXTBOOK_UNITS.subjects[subjectId]?.units || [];
   if (!publisher || !term) return [];
-  return units.filter((u) => u.publisher === publisher && u.term === term);
+  const hit = units.filter((u) => u.publisher === publisher && u.term === term);
+  if (hit.length) return hit;
+  // 八、九年級共用國中單元表：退回同學級（grade）的第一個冊次，例如八上→七上
+  const info = termInfo(term);
+  if (!info) return [];
+  const fallback = TERMS.find((t) => t.grade === info.grade);
+  if (!fallback || fallback.key === term) return [];
+  return units.filter((u) => u.publisher === publisher && u.term === fallback.key);
 }
 
 // ===== 錯題本 =====
@@ -320,12 +338,30 @@ export function importMistakes(text, existing = []) {
 
 // 考試（期中考／期末考）：從某個冊次跨科目抽題
 export function buildExamQuestions(term, count, rng = Math.random) {
-  const pool = [];
-  for (const subject of Object.values(QUIZ_SUBJECTS)) {
-    for (const q of subject.questions || []) {
-      if (matchesFilter(q, { term })) pool.push({ ...q, examSubject: subject.id });
+  const collect = (filter) => {
+    const pool = [];
+    for (const subject of Object.values(QUIZ_SUBJECTS)) {
+      for (const q of subject.questions || []) {
+        if (matchesFilter(q, filter)) pool.push({ ...q, examSubject: subject.id });
+      }
     }
-  }
+    return pool;
+  };
+  const dedupe = (list) => {
+    const seen = new Set();
+    return list.filter((q) => {
+      const k = `${q.examSubject}:${q.id}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  };
+  // 先抽該冊次專屬題目；不足時退到同年級題庫（國中七～九年級共用）；再不足就全題庫
+  const info = termInfo(term);
+  let pool = dedupe(collect({ term }));
+  if (pool.length < count && info) pool = dedupe([...pool, ...collect({ grade: info.grade })]);
+  // 完全未知的冊次不回傳題目（避免考試出到不相關的範圍）
+  if (pool.length < count && info) pool = dedupe([...pool, ...collect({})]);
   const shuffled = [...pool];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));

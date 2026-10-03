@@ -24,14 +24,31 @@ function check(ok, label) {
 console.log("=== 劇情與考試章節 ===");
 let s = newStoryState();
 check(currentChapter(s).id === STORY.chapters[0].id, "一開始是第一章");
-check(STORY.chapters.length >= 5, `劇本至少 5 章（目前 ${STORY.chapters.length} 章）`);
+check(STORY.chapters.length === 24, `主線共 24 章＝四～九年級 × 上下學期 × 期中／期末（目前 ${STORY.chapters.length} 章）`);
+check(
+  STORY.chapters[0].exam.term === "4-1" && STORY.chapters[23].exam.term === "9-2" && STORY.chapters[23].reward.title,
+  "主線從四上期中考到九下期末考，最後一章有畢業稱號",
+);
+check(
+  STORY.chapters.every((c, i) => c.id === `ch${i + 1}` && c.title.includes(`第 ${i + 1} 章`)),
+  "章節編號連續",
+);
+check(
+  STORY.chapters.every((c) => c.lines.length >= 2 && c.lines.every((l) => l.trim().length > 6)),
+  "每一章都有至少兩句貓咪台詞",
+);
+check(
+  STORY.chapters.filter((c) => c.exam.kind === "mid").length === 12 && STORY.chapters.filter((c) => c.exam.kind === "final").length === 12,
+  "期中考與期末考各 12 場",
+);
+check(new Set(STORY.chapters.map((c) => c.exam.term)).size === 12, "12 個冊次都出現在主線裡");
 check(
   STORY.chapters.every((c) => c.lines?.length && c.task?.type && c.task?.target > 0 && c.reward?.coins > 0),
   "每一章都有台詞、任務目標與獎勵",
 );
 check(!!currentChapter(s).exam, "每一章都是一場考試（期中考或期末考）");
 check(
-  STORY.chapters.every((c) => c.exam && /^[4-7]-[12]$/.test(c.exam.term) && c.exam.count >= c.exam.pass),
+  STORY.chapters.every((c) => c.exam && /^[4-9]-[12]$/.test(c.exam.term) && c.exam.count >= c.exam.pass),
   "考試都有冊次、題數與及格門檻",
 );
 check(
