@@ -7,8 +7,8 @@
 // 只想重畫其中一類就改 RUN；已經有輸出的項目會跳過，不滿意哪一張就刪掉那張再跑一次。
 const fs = await import("node:fs");
 // 要跑哪些類別。ego-browser 不繼承自訂環境變數，所以直接改這一行：
-// 平常三類都要 ["hair", "acc", "hat"]；只重畫配件那一次是暫時改成 ["acc"]。
-const RUN = ["hair", "acc", "hat"];
+// 平常全部 ["hair", "acc", "hat", "shoes"]；只重畫某一類時暫時改成例如 ["shoes"]。
+const RUN = ["hair", "acc", "hat", "shoes"];
 const LOG = "/tmp/avatar_gen/log_redraw.txt";
 fs.mkdirSync("/tmp/avatar_gen", { recursive: true });
 const log = (m) => fs.appendFileSync(LOG, `[${new Date().toISOString().slice(11, 19)}] ${m}\n`);
@@ -39,6 +39,17 @@ const HAT = [
   { key: "bow", look: "one big ribbon bow tied on top of the hair, slightly to one side of the head, with two short ribbon tails" },
 ];
 
+// 鞋子：key 要跟 AVATAR_PARTS.shoes 一致。
+// 鞋子以前是用「物件圖板」畫好一雙鞋再猜位置貼上去，結果是 3/4 視角的鞋貼在正面站姿的腳上
+// （腳趾露在外面、鞋歪一邊）→ 改成跟頭髮／配件一樣直接畫在腳上。
+const SHOES = [
+  { key: "sneaker", look: "a pair of chunky lace-up sneakers with a thick rubber sole" },
+  { key: "boots", look: "a pair of short lace-up ankle boots with a low heel" },
+  { key: "loafer", look: "a pair of plain slip-on loafers with a low heel" },
+  { key: "sandal", look: "a pair of flat sandals with two thin straps across the top of each foot, the toes visible under the straps" },
+  { key: "rainboot", look: "a pair of tall rubber rain boots reaching just below the knee" },
+];
+
 const STYLE =
   " The new item is drawn PURE WHITE / very light silver-gray with soft gray cel shading and a clean thin dark-gray outline — no other colours in it at all (the game recolours it later)." +
   " Cute Japanese mobile-game art, the same lineart style as the character. No text, no watermark, no extra objects, no shadow on the background.";
@@ -56,11 +67,18 @@ const RULES = {
     " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, brown hair (keep it brown; the hat sits ON the hair, the hair stays as it is under and around it), light-blue T-shirt, pose, size, position and framing, and the same perfectly flat pure green background. Only add this one hat." +
     " The hat fits this exact head at the right size and does NOT cover the eyes. No other accessories." +
     STYLE,
+  shoes:
+    " Keep EVERYTHING else exactly the same as the attached image: the same legs, knees, skin, pose, size, position and framing, and the same perfectly flat pure green background. Only add these shoes." +
+    " Both shoes are actually WORN ON the child's feet and cover the feet completely — no bare toes, no bare heel, no skin showing between the shoe and the leg, and no shoes floating beside or in front of the feet." +
+    " The shoes point the same way as the feet (toward the viewer) and are drawn from the same straight-on front view as the legs — not a three-quarter or side view, not a pair of shoes lying on the ground." +
+    " No socks, no other accessories." +
+    STYLE,
 };
 const ITEMS = [
   ...(RUN.includes("hair") ? HAIR.map((s) => ({ kind: "hair", key: s.key, prompt: `Edit the attached image: give this bald chibi child a new hairstyle — ${s.look}.` })) : []),
   ...(RUN.includes("acc") ? ACC.map((s) => ({ kind: "acc", key: s.key, prompt: `Edit the attached image: add ${s.look}.` })) : []),
   ...(RUN.includes("hat") ? HAT.map((s) => ({ kind: "hat", key: s.key, prompt: `Edit the attached image: give the child ${s.look}.` })) : []),
+  ...(RUN.includes("shoes") ? SHOES.map((s) => ({ kind: "shoes", key: s.key, prompt: `Edit the attached image: put ${s.look} on the child's feet.` })) : []),
 ].map((it) => ({ ...it, ref: `/tmp/avatar_ref/${it.kind}.png`, out: `/tmp/avatar_gen/${it.kind}/${it.key}.png`, prompt: it.prompt + RULES[it.kind] }));
 for (const k of RUN) fs.mkdirSync(`/tmp/avatar_gen/${k}`, { recursive: true });
 

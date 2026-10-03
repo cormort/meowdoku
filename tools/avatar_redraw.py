@@ -40,11 +40,14 @@ KINDS = {
     "hair": {"crop": (106, 20, 406, 320), "prefix": "hair_"},  # 頭＋肩，留空間給長髮
     "acc": {"crop": (56, 20, 456, 420), "prefix": "acc_"},  # 頭到腰，背包、名牌、圍巾都在框內
     "hat": {"crop": (96, 0, 416, 320), "prefix": "hat_"},  # 頭往上留空間給帽冠、兩側給寬帽簷
+    "shoes": {"crop": (156, 292, 376, 512), "prefix": "shoes_"},  # 膝下到腳底（鞋子要穿在腳上，不能用「物件圖」猜位置）
 }
 WITH_HAIR = {"acc", "hat"}  # 參考圖戴棕色妹妹頭的類別（配件、帽子要戴在頭髮外面）
 # 和 js/avatar.js 的 ACC_COLOR 一致（預覽用）
 HAT_COLOR = {"cap": (224, 87, 79), "beanie": (127, 176, 216), "straw": (232, 201, 122), "beret": (176, 127, 192), "bow": (239, 127, 168)}  # 和 AVATAR_PARTS.hat 一致
 ACC_COLOR = {"glasses": (51, 51, 51), "scarf": (224, 87, 79), "backpack": (138, 90, 52), "headphone": (58, 58, 58), "badge": (201, 162, 39)}
+# 和 js/avatar.js 的 AVATAR_PARTS.shoes 一致（預覽用）
+SHOES_COLOR = {"sneaker": (240, 240, 240), "boots": (107, 74, 53), "loafer": (63, 58, 54), "sandal": (201, 138, 91), "rainboot": (242, 199, 68)}
 NECK_LINE = 200  # 背包：這條線以下、壓在身體上的才算背帶（頭後面的仍在身體後面）
 
 
@@ -294,6 +297,16 @@ def preview(kind, ids, out_dir):
             c = Image.new("RGBA", (W, H), (122, 156, 198, 255))
             c.alpha_composite(s)
             c.alpha_composite(tinted(out_dir / f"hat_{hid}.png", HAT_COLOR.get(hid, (224, 87, 79))))
+            sheet.paste(c.crop(crop).resize((size, size)).convert("RGB"), (i * size, 0))
+    elif kind == "shoes":
+        sheet = Image.new("RGB", (size * len(ids), size))
+        s = scene("shoes")
+        green = np.all(np.asarray(s)[..., :3] == GREEN, -1)
+        s.putalpha(Image.fromarray(np.where(green, 0, 255).astype(np.uint8)))
+        for i, sid in enumerate(ids):
+            c = Image.new("RGBA", (W, H), (122, 156, 198, 255))
+            c.alpha_composite(s)
+            c.alpha_composite(tinted(out_dir / f"shoes_{sid}.png", SHOES_COLOR.get(sid, (240, 240, 240))))
             sheet.paste(c.crop(crop).resize((size, size)).convert("RGB"), (i * size, 0))
     else:
         # 配件：照遊戲的疊法（背包後層在最底、背帶在上衣前面、其他配件在最上面）
