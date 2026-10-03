@@ -5,7 +5,7 @@
 // - 前髮 hair_<id>.png：補上頭頂沒蓋到的光頭（馬尾頭頂比頭髮大一圈），
 //   短髮、西瓜皮清掉下緣垂到臉頰的細雜線，短髮剪掉捲到右臉頰的髮尾。
 // 用法：node tools/split_avatar_hair.mjs [--fresh] [--dir 資料夾] [id ...]（需要 ImageMagick）
-//   --fresh：前髮是 avatar_hair.py 剛摳出來的新圖，跳過只針對舊圖的修補（清雜線、剪髮尾）
+//   --fresh：前髮是 avatar_redraw.py 剛摳出來的新圖，跳過只針對舊圖的修補（清雜線、剪髮尾）
 //   --dir：讀寫別的資料夾（預覽用；身體圖仍讀 icons/avatar/）
 //   沒有 --fresh 時請對原始前髮跑一次，髮尾漸淡那步重跑會再淡一次
 import { execFileSync } from "node:child_process";

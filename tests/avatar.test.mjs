@@ -45,6 +45,8 @@ check(files.indexOf("top_sailor") > files.indexOf("bottom_jeans"), "上衣蓋在
 check(files.indexOf("hair_bob") > files.indexOf("top_sailor"), "頭髮疊在上衣之上");
 const withPack = avatarLayers({ ...defaultAvatar(), accessory: "backpack" }).map((l) => l.file);
 check(withPack[0] === "acc_backpack" && withPack[1] === "hairback_bob" && withPack[2] === "base_g4", "背包畫在後髮和身體後面");
+check(withPack.indexOf("acc_backpack_front") === withPack.indexOf("top_tshirt") + 1, "背包背帶疊在上衣前面");
+check(stageTransform("acc_backpack_front", 9).sx === stageTransform("acc_backpack", 9).sx, "背帶和背包一起跟軀幹變形");
 check(!avatarLayers(defaultAvatar()).some((l) => l.file.startsWith("hat_")), "沒戴帽子時不會有帽子圖層");
 
 console.log("=== 上色 ===");
@@ -103,9 +105,10 @@ for (const b of AVATAR_PARTS.bottom) needed.add(`bottom_${b.id}`);
 for (const sh of AVATAR_PARTS.shoes) needed.add(`shoes_${sh.id}`);
 for (const h of AVATAR_PARTS.hat) if (h.id !== "none") needed.add(`hat_${h.id}`);
 for (const ac of AVATAR_PARTS.accessory) if (ac.id !== "none") needed.add(`acc_${ac.id}`);
+needed.add("acc_backpack_front");
 const missing = [...needed].filter((f) => !existsSync(join(ROOT, avatarLayerUrl(f))));
 check(missing.length === 0, `每個可選項目都有對應的 PNG（缺 ${missing.length} 張${missing.length ? ": " + missing.join(", ") : ""}）`);
-check(needed.size === 44, `需要的圖層共 ${needed.size} 張（六個年級身體 + 前後髮 + 衣服配件）`);
+check(needed.size === 45, `需要的圖層共 ${needed.size} 張（六個年級身體 + 前後髮 + 衣服配件 + 背帶）`);
 
 console.log("=== 角色輸出 ===");
 const html = renderAvatar({ ...defaultAvatar(), top: "sailor", hat: "straw" }, { size: 200 });

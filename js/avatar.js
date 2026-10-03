@@ -129,7 +129,7 @@ export function stageLabel(gradeOrTerm) {
 // 每種圖層跟著哪一段身體走：回傳 [左, 右, 上, 下]（上＝錨點，縮放時固定在這條線上）
 // 頭髮／帽子／眼鏡／耳機跟頭；上衣／圍巾／名牌／背包跟軀幹；褲裙從胯下到腳踝；鞋子以腳底為準
 function regionBox(part, m) {
-  if (part.startsWith("top") || part === "acc_scarf" || part === "acc_badge" || part === "acc_backpack") return [m.armL, m.armR, m.collar, m.crotch];
+  if (part.startsWith("top") || part === "acc_scarf" || part === "acc_badge" || part.startsWith("acc_backpack")) return [m.armL, m.armR, m.collar, m.crotch];
   if (part.startsWith("bottom")) return [m.hipL, m.hipR, m.crotch, m.ankle];
   if (part.startsWith("shoes")) return [m.feetL, m.feetR, m.feet, m.feet];
   if (part.startsWith("hat") || part.startsWith("acc_") || part.startsWith("hair")) return [m.headL, m.headR, m.headTop, m.neck];
@@ -214,6 +214,7 @@ export function avatarLayers(input, gradeOrTerm = 4) {
   push(`bottom_${a.bottom}`, partValue("bottom", a.bottom, "#4a6fa5"));
   push(`shoes_${a.shoes}`, partValue("shoes", a.shoes, "#eeeeee"));
   push(`top_${a.top}`, partValue("top", a.top, "#ffffff"));
+  if (a.accessory === "backpack") push("acc_backpack_front", ACC_COLOR.backpack, 0.94); // 背帶壓在上衣前面
   push(`base_${stage}`, "#ffffff", 1, false, headClip(gradeOrTerm)); // 頭和脖子蓋在領口前面，頭髮再疊上去
   push(`hair_${a.hair}`, partValue("hairColor", a.hairColor, "#3a2f2a"));
   if (a.hat !== "none") push(`hat_${a.hat}`, partValue("hat", a.hat, "#e0574f"));
