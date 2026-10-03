@@ -503,6 +503,390 @@
       "tip": "news 雖然字尾有 s，但是不可數名詞，要當單數看待。",
       "explain": "news（新聞）是不可數名詞，字形雖有 s 但意義為單數，所以動詞用 is。today 表示現在，不用過去式 were；have 是原形／複數動詞，也不能和單數主詞 news 連用。",
       "term": "7-2"
+    },
+    {
+      "id": "english-g4-t2-01",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"What time is it? ___ eight thirty.\"",
+      "options": [
+        "They're",
+        "It's",
+        "It",
+        "Is"
+      ],
+      "answer": 1,
+      "tip": "問時間時，回答用 It's（= It is）開頭。",
+      "explain": "問句 What time is it?（現在幾點？）的主詞是 it（代替時間），回答時用 It's 加上時間。It's 是 It is 的縮寫，例如 It's eight thirty.（現在八點半。）",
+      "term": "4-2"
+    },
+    {
+      "id": "english-g4-t2-02",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"What are you doing? I ___ reading a book.\"",
+      "options": [
+        "is",
+        "are",
+        "am",
+        "be"
+      ],
+      "answer": 2,
+      "tip": "現在進行式 be 動詞要和主詞配合：I 用 am。",
+      "explain": "現在進行式的句型是「主詞 + be 動詞 + 動詞-ing」。be 動詞要隨主詞變化：I 用 am，he/she/it 用 is，you/we/they 用 are。主詞是 I，所以要填 am：I am reading a book.（我正在看書。）",
+      "term": "4-2"
+    },
+    {
+      "id": "english-g4-t2-03",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"___ would you like to drink? I'd like some water.\"",
+      "options": [
+        "Where",
+        "Who",
+        "How",
+        "What"
+      ],
+      "answer": 3,
+      "tip": "問「要喝什麼」要用 What 開頭。",
+      "explain": "問「你想要什麼」用 What would you like...?。Where 問地點，Who 問人，How 問方式或程度。這裡回答是 some water（飲料），所以要用 What 問「什麼」：What would you like to drink?（你想要喝什麼？）",
+      "term": "4-2"
+    },
+    {
+      "id": "english-g4-t2-04",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Where is the cat? The cat is ___ the table. (貓在桌子下面)\"",
+      "options": [
+        "on",
+        "under",
+        "in",
+        "at"
+      ],
+      "answer": 1,
+      "tip": "(在桌子下面) 對應的介系詞是 under。",
+      "explain": "介系詞表示位置：on 是在……上面，under 是在……下面，in 是在……裡面，at 常用於特定地點。題目中中文提示「在桌子下面」，所以要用 under：The cat is under the table.",
+      "term": "4-2"
+    },
+    {
+      "id": "english-g4-t2-05",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"___ you like dogs? Yes, I do.\"",
+      "options": [
+        "Do",
+        "Does",
+        "Is",
+        "Are"
+      ],
+      "answer": 0,
+      "tip": "主詞是 you，一般動詞的疑問句用助動詞 Do。",
+      "explain": "一般動詞（如 like）造疑問句要用助動詞 do 或 does：主詞是 I/you/we/they 時用 Do；主詞是第三人稱單數（he/she/it）時用 Does。本題主詞是 you，所以用 Do：Do you like dogs?（你喜歡狗嗎？）",
+      "term": "4-2"
+    },
+    {
+      "id": "english-g4-t2-06",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Look! The dog ___ running.\"",
+      "options": [
+        "am",
+        "are",
+        "be",
+        "is"
+      ],
+      "answer": 3,
+      "tip": "主詞 The dog 是單數，be 動詞用 is。",
+      "explain": "現在進行式「主詞 + be 動詞 + 動詞-ing」中，be 動詞要配合主詞。The dog 是單數主詞（可用 it 代替），所以用 is：The dog is running.（那隻狗正在跑。）Look! 表示動作正在發生，常用現在進行式。",
+      "term": "4-2"
+    },
+    {
+      "id": "english-g5-t2-01",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"What's wrong? My head ___.\"",
+      "options": [
+        "hurt",
+        "hurts",
+        "hurting",
+        "is hurt"
+      ],
+      "answer": 1,
+      "tip": "主詞 My head 是單數，動詞要加 -s。",
+      "explain": "在現在簡單式中，主詞是第三人稱單數（he/she/it 或單數名詞）時，動詞要加 -s 或 -es。My head（我的頭）是單數，所以用 hurts：My head hurts.（我頭痛。）",
+      "term": "5-2"
+    },
+    {
+      "id": "english-g5-t2-02",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"___ you have a headache? Yes, I do.\"",
+      "options": [
+        "Are",
+        "Does",
+        "Do",
+        "Is"
+      ],
+      "answer": 2,
+      "tip": "have 是一般動詞，主詞 you 的疑問句用 Do。",
+      "explain": "have（有）是一般動詞，造疑問句要用助動詞 do/does。主詞是 you，所以用 Do：Do you have a headache?（你頭痛嗎？）回答 Yes, I do. 也要用 do。",
+      "term": "5-2"
+    },
+    {
+      "id": "english-g5-t2-03",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"He ___ a fever.\"",
+      "options": [
+        "have",
+        "having",
+        "is have",
+        "has"
+      ],
+      "answer": 3,
+      "tip": "主詞 He 是第三人稱單數，have 要改成 has。",
+      "explain": "動詞 have 的第三人稱單數變化是不規則的，不是加 -s，而是變成 has。主詞 He（他）是第三人稱單數，所以用 has：He has a fever.（他發燒了。）",
+      "term": "5-2"
+    },
+    {
+      "id": "english-g5-t2-04",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"What would you like ___ dinner? I'd like some noodles.\"",
+      "options": [
+        "of",
+        "at",
+        "for",
+        "in"
+      ],
+      "answer": 2,
+      "tip": "「晚餐吃什麼」用 for dinner。",
+      "explain": "表達「某一餐要吃什麼」時，用介系詞 for 加上那餐的名稱，例如 for breakfast（早餐）、for lunch（午餐）、for dinner（晚餐）：What would you like for dinner?（你晚餐想吃什麼？）",
+      "term": "5-2"
+    },
+    {
+      "id": "english-g5-t2-05",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Whose backpack is that? It's ___ backpack.\"",
+      "options": [
+        "I",
+        "my",
+        "me",
+        "mine"
+      ],
+      "answer": 1,
+      "tip": "名詞 backpack 前面要用所有格形容詞 my。",
+      "explain": "所有格形容詞放在名詞前面，表示「……的」，如 my backpack（我的背包）。I 是主格，me 是受格，mine 是代名詞（後面不加名詞）。因為後面還有名詞 backpack，所以要用 my：It's my backpack.",
+      "term": "5-2"
+    },
+    {
+      "id": "english-g5-t2-06",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Whose jacket is this? It's ___.\"",
+      "options": [
+        "she",
+        "her's",
+        "her",
+        "hers"
+      ],
+      "answer": 3,
+      "tip": "句尾獨立使用「她的（東西）」要用 hers。",
+      "explain": "所有格代名詞可以單獨代替「所有格形容詞 + 名詞」，如 hers = her jacket。注意 her 是「所有格形容詞」，後面一定要接名詞；hers 才能單獨放句尾。句中空格後面沒有名詞，所以用 hers：It's hers.（那是她的。）",
+      "term": "5-2"
+    },
+    {
+      "id": "english-g6-t2-01",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Where ___ you yesterday? I was at home.\"",
+      "options": [
+        "was",
+        "are",
+        "were",
+        "did"
+      ],
+      "answer": 2,
+      "tip": "過去式中 be 動詞要和主詞配合：you 用 were。",
+      "explain": "過去式的 be 動詞有 was 和 were：主詞是 I/he/she/it 或單數名詞時用 was；主詞是 you/we/they 或複數名詞時用 were。本題主詞是 you，所以用 were：Where were you yesterday?（你昨天在哪裡？）回答 I was at home. 主詞是 I，故用 was。",
+      "term": "6-2"
+    },
+    {
+      "id": "english-g6-t2-02",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"What did you do last night? I ___ videos.\"",
+      "options": [
+        "watch",
+        "watching",
+        "watches",
+        "watched"
+      ],
+      "answer": 3,
+      "tip": "last night 是過去時間，動詞用過去式 watched。",
+      "explain": "last night（昨晚）是過去時間，句子要用過去式。一般動詞的過去式規則變化是加 -ed，所以 watch 變成 watched；不規則動詞（如 go → went、see → saw）則需另外記。肯定句中動詞直接用過去式，不再加助動詞：I watched videos.（我看了影片。）",
+      "term": "6-2"
+    },
+    {
+      "id": "english-g6-t2-03",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"How much ___ the T-shirt? It's ten dollars.\"",
+      "options": [
+        "is",
+        "are",
+        "do",
+        "does"
+      ],
+      "answer": 0,
+      "tip": "主詞 the T-shirt 是單數，be 動詞用 is。",
+      "explain": "問價錢的句型是 How much is/are + 物品?。be 動詞要配合後面主詞的單複數：the T-shirt（單數）用 is；例如 these shoes（複數）才用 are。本題主詞是單數 the T-shirt，所以用 is：How much is the T-shirt?（這件 T 恤多少錢？）",
+      "term": "6-1"
+    },
+    {
+      "id": "english-g6-t2-04",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"How much is the T-shirt? It's ten ___.\"",
+      "options": [
+        "dollar",
+        "dollars",
+        "dollar's",
+        "dollares"
+      ],
+      "answer": 1,
+      "tip": "十元（多於一元）時 dollar 要加 -s。",
+      "explain": "可數名詞在數字後面，若數量是二以上要使用複數形。ten 後面代表「十元」，所以要加 -s 變成 dollars：It's ten dollars.（十美元。）一元才是 one dollar。注意正確拼字是 dollars，不是 dollares（那是錯誤拼法）。",
+      "term": "6-1"
+    },
+    {
+      "id": "english-g6-t2-05",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"What's your favorite ___? Winter.\"",
+      "options": [
+        "day",
+        "time",
+        "season",
+        "weather"
+      ],
+      "answer": 2,
+      "tip": "回答 Winter（冬天）是在問最喜歡的「季節」。",
+      "explain": "season 是「季節」，一年有 spring、summer、fall/autumn、winter 四季。題目的回答是 Winter（冬天），所以問句要用 season：What's your favorite season?（你最喜歡哪個季節？）weather 是「天氣」，並不含冬夏四季的概念。",
+      "term": "6-2"
+    },
+    {
+      "id": "english-g6-t2-06",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I ___ at the park last Sunday.\"",
+      "options": [
+        "am",
+        "be",
+        "were",
+        "was"
+      ],
+      "answer": 3,
+      "tip": "主詞 I 的過去式 be 動詞是 was。",
+      "explain": "last Sunday（上星期日）是過去時間，要用過去式 be 動詞。主詞 I 的過去式 be 動詞是 was：I was at the park last Sunday.（我上星期日在公園。）am 是現在式，were 用於 you/we/they。",
+      "term": "6-2"
+    },
+    {
+      "id": "english-g7-t2-01",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"He ___ play basketball every day.\"",
+      "options": [
+        "don't",
+        "doesn't",
+        "isn't",
+        "aren't"
+      ],
+      "answer": 1,
+      "tip": "主詞 He 是第三人稱單數，否定用 doesn't。",
+      "explain": "現在簡單式的否定句用 do not (don't) 或 does not (doesn't) 加原形動詞。主詞是第三人稱單數（he/she/it）時用 doesn't；主詞是 I/you/we/they 時用 don't。本題主詞是 He，所以用 doesn't，後面動詞保持原形 play：He doesn't play basketball every day.（他每天不打籃球。）",
+      "term": "7-2"
+    },
+    {
+      "id": "english-g7-t2-02",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"She is ___ late for class. (她從不遲到)\"",
+      "options": [
+        "never",
+        "not never",
+        "never is",
+        "no"
+      ],
+      "answer": 0,
+      "tip": "頻率副詞 never 放在 be 動詞後面。",
+      "explain": "頻率副詞（always、usually、often、sometimes、never）在句中的位置：be 動詞後面、一般動詞前面。never 本身已表示「從不」的否定意思，不能再加 not。所以是 She is never late for class.（她上課從不遲到。）",
+      "term": "7-2"
+    },
+    {
+      "id": "english-g7-t2-03",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I ___ to the museum yesterday.\"",
+      "options": [
+        "go",
+        "goed",
+        "went",
+        "going"
+      ],
+      "answer": 2,
+      "tip": "go 是不規則動詞，過去式是 went。",
+      "explain": "yesterday（昨天）是過去時間，動詞要用過去式。go 是不規則動詞，過去式是 went，不是 goed。going 是現在分詞，需搭配 be 動詞；go 是原形。所以答案是 went：I went to the museum yesterday.（我昨天去了博物館。）",
+      "term": "7-2"
+    },
+    {
+      "id": "english-g7-t2-04",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I think it ___ rain tomorrow.\"",
+      "options": [
+        "was",
+        "will",
+        "does",
+        "did"
+      ],
+      "answer": 1,
+      "tip": "tomorrow 是未來時間，用未來式 will。",
+      "explain": "未來式的句型是 will + 原形動詞。tomorrow（明天）是未來時間，所以用 will：I think it will rain tomorrow.（我想明天會下雨。）was 是過去式，does 是現在式的助動詞，did 是過去式的助動詞，都不合。",
+      "term": "7-2"
+    },
+    {
+      "id": "english-g7-t2-05",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"You look sick. You ___ see a doctor.\"",
+      "options": [
+        "should",
+        "are",
+        "did",
+        "will be"
+      ],
+      "answer": 0,
+      "tip": "給建議時用情態助動詞 should（應該）。",
+      "explain": "should 是情態助動詞，表示「應該」，用於給建議或表達義務，後面接原形動詞：You should see a doctor.（你應該去看醫生。）情態助動詞後面不加 to，也不隨主詞變化。",
+      "term": "7-2"
+    },
+    {
+      "id": "english-g7-t2-06",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Please ___ your shoes before you come in. (進屋前把鞋子脫掉)\"",
+      "options": [
+        "take on",
+        "take up",
+        "take off",
+        "take after"
+      ],
+      "answer": 2,
+      "tip": "take off 是「脫掉（衣物、鞋子）」的片語動詞。",
+      "explain": "片語動詞 take 加上不同介系詞意思不同：take off 脫掉（衣物、鞋子），take on 承擔，take up 開始從事（嗜好），take after（外貌或性格）像（某位長輩）。題目中文提示「把鞋子脫掉」，所以用 take off：Please take off your shoes before you come in.",
+      "term": "7-2"
     }
   ]
 }
