@@ -31,6 +31,10 @@ MAX_W = 430        # 輸出最大寬度：再寬在客廳裡會縮得太小（�
 PAD = 2
 TOL = 46           # 與底色距離 < TOL 視為背景
 HOLE_MAX_RATIO = 0.015   # 封閉同色塊最大面積比例（避免吃掉碗內食物等大面積淺色）
+# 個別貼圖的特例：black_tail 的尾巴繞成一圈，圈內的背景色佔 2.52%，
+# 被上面的上限擋掉，暗色房間底上會看到一個白塊。黑貓身上沒有大片白毛，
+# 所以只針對這張放寬（不要整個品種放寬：白貓／三花的白毛、*_eat 的碗內食物都是大面積淺色）。
+HOLE_RATIO_OVERRIDE = {"black_tail": 0.04}
 
 
 def background_mask(a, tol=TOL):
@@ -116,7 +120,7 @@ def cut(src, out_h, max_w=MAX_W):
     if mask.all():
         raise SystemExit(f"{src}: 整張都被判定成背景（底色 {bg_color}）")
     mask = drop_small_blobs(mask)
-    mask = fill_enclosed_holes(mask, a, bg_color)
+    mask = fill_enclosed_holes(mask, a, bg_color, max_ratio=HOLE_RATIO_OVERRIDE.get(Path(src).stem, HOLE_MAX_RATIO))
     rgba = np.dstack([np.asarray(im).astype(np.uint8), np.where(mask, 0, 255).astype(np.uint8)])
     out = Image.fromarray(rgba, "RGBA")
     out.putalpha(out.getchannel("A").filter(ImageFilter.GaussianBlur(0.8)))
