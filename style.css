@@ -5278,3 +5278,136 @@ label {
   border: 2px solid var(--pm-frame);
   border-radius: 4px;
 }
+
+/* ============================================================
+   大螢幕（平板／電腦）版面優化
+   手機＝單欄直式；平板＝加寬並展開卡片；電腦＝雙欄（客廳固定在右側）
+   ============================================================ */
+@media (min-width: 700px) {
+  body > header {
+    width: min(780px, 100%);
+  }
+  #petView {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 14px 16px 40px;
+  }
+  .pm-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .pm-tile {
+    min-height: 108px;
+  }
+  .pm-tile b {
+    font-size: 1.9rem;
+  }
+  .pm-tile small {
+    font-size: 0.95rem;
+  }
+  .academy-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .shop-grid,
+  .gacha-results-grid,
+  .food-grid,
+  .pose-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .stats-bars-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sheet {
+    width: min(560px, 100%);
+    padding: 24px;
+  }
+  .quiz-box {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .quiz-option-btn {
+    font-size: 1.05rem;
+    padding: 14px 16px;
+  }
+  .board {
+    width: min(560px, 100%);
+    margin: 0 auto;
+  }
+  .avatar-items {
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .mistake-list {
+    columns: 2;
+    column-gap: 18px;
+  }
+  .unit-chips {
+    gap: 6px;
+  }
+}
+@media (min-width: 1100px) {
+  body > header {
+    width: min(1120px, 100%);
+  }
+  #petView {
+    width: 100%;
+    max-width: 1120px;
+  }
+  /* 首頁雙欄：左邊磚塊／任務／數值，右邊客廳（捲動時固定） */
+  .pet-home {
+    display: grid;
+    grid-template-columns: minmax(420px, 1fr) minmax(400px, 480px);
+    gap: 16px;
+    align-items: start;
+  }
+  .pet-home > .pet-subnav,
+  .pet-home > .pm-top {
+    grid-column: 1 / -1;
+  }
+  .pet-home > .pm-stage-tile {
+    grid-column: 2;
+    grid-row: 2 / span 8;
+    position: sticky;
+    top: 14px;
+  }
+  .pet-home > .pm-tiles,
+  .pet-home > .story-panel,
+  .pet-home > .pm-detail {
+    grid-column: 1;
+  }
+  .pet-home > *:not(.pet-subnav):not(.pm-top):not(.pm-tiles):not(.story-panel):not(.pm-stage-tile):not(.pm-detail) {
+    grid-column: 1 / -1;
+  }
+  .pm-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .academy-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .shop-grid,
+  .gacha-results-grid,
+  .food-grid,
+  .pose-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .sheet {
+    width: min(640px, 100%);
+  }
+  .quiz-box {
+    max-width: 860px;
+  }
+  .pm-stage-tile .pet-room-stage {
+    min-height: 460px;
+  }
+  .room-me {
+    width: 92px;
+  }
+}
+/* 觸控裝置／窄螢幕：維持原本手機樣式（這裡只是確保大螢幕專用規則不會外洩） */
+@media (hover: none) and (pointer: coarse) and (max-width: 699px) {
+  .pet-home {
+    display: block;
+  }
+}
