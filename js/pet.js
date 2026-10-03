@@ -5,6 +5,7 @@ import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
 import { handleLifeEvent, sickInfo } from "./life.js";
+import { handleTripClick, tripPageHtml } from "./trip.js";
 import { $, LS, escapeHtml, hideSheet, localDay, playSkinArrivalSound } from "./ui.js";
 const FOODS = {
   fish: { icon: "🐟", name: "小魚乾", affection: 4, mood: 4 },
@@ -237,6 +238,8 @@ function defaultPetData() {
     stats: {},
     status: {},
     inventory: {},
+    trips: {},
+    album: [],
   };
 }
 function loadPetData() {
@@ -269,6 +272,8 @@ function loadPetData() {
       d.stats = { ...(raw.stats || {}) };
       d.status = { ...(raw.status || {}) };
       d.inventory = { ...(raw.inventory || {}) };
+      d.trips = { ...(raw.trips || {}) };
+      d.album = [...(raw.album || [])];
     }
     return d;
   } catch {
@@ -738,8 +743,57 @@ function specialDayHtml(key) {
     messages.push(`🎉 今天是相遇紀念日！已陪伴 ${daysSince(anniversary)} 天`);
   return messages.length ? `<div class="special-day">${messages.join("<br>")}</div>` : "";
 }
+/* ---------- 美少女夢工廠風格：頂部資訊面板與磚塊儀表板 ---------- */
+const PM_GAUGES = [
+  ["好感", (k) => Math.min(100, Math.round((petAffection(k) / (PET_LEVELS[PET_LEVELS.length - 1] || 1)) * 100))],
+  ["心情", (k) => Math.round(petMoodValue(k))],
+  ["體力", (k) => Math.round(petStatus(k).energy ?? 100)],
+  ["飽食", (k) => Math.round(petStatus(k).hunger ?? 80)],
+  ["清潔", (k) => Math.round(petStatus(k).cleanliness ?? 90)],
+];
+export function pmTopHtml(key = activePetKey()) {
+  const st = petStatus(key),
+    level = petLevel(petAffection(key)),
+    stage = growthStage(petAffection(key)),
+    mood = moodInfo(),
+    face = facePos(Number(key) || 0);
+  const gauges = PM_GAUGES.map(
+    ([label, fn]) =>
+      `<div class="pm-gauge"><span>${label}</span><i style="--pm-pct:${Math.max(0, Math.min(100, fn(key)))}%"></i><b>${fn(key)}</b></div>`,
+  ).join("");
+  return `<div class="pm-panel pm-top">
+    <div class="pm-strip"><span>🐾 ${escapeHtml(petName(key))}</span><span>${stage.icon} ${stage.name}・Lv.${level}</span></div>
+    <div class="pm-faceline">
+      <i class="face" style="background-position:${face}"></i>
+      <div class="pm-bubble">${mood.icon} ${mood.label}・合作 ${petRecord(key).total} 場${st.sick ? "・😿 生病中" : ""}</div>
+    </div>
+    <div class="pm-goldrow">
+      <span class="pm-label">GOLD</span><span class="pm-vals">${petCoins()} G</span>
+      <span class="pm-label">EXP</span><span class="pm-vals">${petAffection(key)}</span>
+    </div>
+    <div class="pm-gauges">${gauges}</div>
+  </div>`;
+}
+const PM_TILES = [
+  ["academy", "📚", "學院"],
+  ["stats", "📊", "屬性"],
+  ["shop", "🛍️", "商店"],
+  ["gacha", "🎰", "扭蛋"],
+  ["titles", "🏅", "稱號"],
+  ["dates", "🎂", "紀念"],
+  ["events", "🎊", "活動"],
+  ["trip", "📸", "相簿"],
+];
+export function pmTilesHtml() {
+  return `<div class="pm-tiles">${PM_TILES.map(
+    ([view, icon, label]) => `<button class="pm-tile" data-pet-view="${view}"><b>${icon}</b><small>${label}</small></button>`,
+  ).join("")}
+    <button class="pm-bigbtn" data-pet-view="trip">📅 帶貓咪出門</button>
+    <button class="pm-bigbtn" data-goto-puzzle="1">🧩 數獨打工</button>
+  </div>`;
+}
 export function petSubnavHtml(view) {
-  return `<div class="pet-subnav"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 小屋</button><button data-pet-view="academy" class="${view === "academy" ? "active" : ""}">📚 學院</button><button data-pet-view="stats" class="${view === "stats" ? "active" : ""}">📊 屬性</button><button data-pet-view="shop" class="${view === "shop" ? "active" : ""}">🛍️ 商店</button><button data-pet-view="gacha" class="${view === "gacha" ? "active" : ""}">🎰 扭蛋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button></div>`;
+  return `<div class="pet-subnav"><button data-pet-view="home" class="${view === "home" ? "active" : ""}">🏠 小屋</button><button data-pet-view="trip" class="${view === "trip" ? "active" : ""}">🎒 出門</button><button data-pet-view="academy" class="${view === "academy" ? "active" : ""}">📚 學院</button><button data-pet-view="stats" class="${view === "stats" ? "active" : ""}">📊 屬性</button><button data-pet-view="shop" class="${view === "shop" ? "active" : ""}">🛍️ 商店</button><button data-pet-view="gacha" class="${view === "gacha" ? "active" : ""}">🎰 扭蛋</button><button data-pet-view="titles" class="${view === "titles" ? "active" : ""}">🏅 稱號</button><button data-pet-view="dates" class="${view === "dates" ? "active" : ""}">🎂 紀念</button><button data-pet-view="events" class="${view === "events" ? "active" : ""}">🎊 活動</button></div>`;
 }
 function eventKey() {
   const f = activeFestival();
@@ -911,6 +965,7 @@ export function showPetHome() {
     stats: statsPageHtml,
     shop: shopPageHtml,
     gacha: gachaPageHtml,
+    trip: tripPageHtml,
   };
   if (pages[view]) return renderPetView(pages[view](key));
   const aff = petAffection(key),
@@ -948,7 +1003,7 @@ export function showPetHome() {
   const kotatsuHtml = petData.roomFurniture?.kotatsu
     ? '<img class="room-furniture-kotatsu" id="roomFurnitureKotatsu" src="./icons/room/furniture_kotatsu.webp" alt="暖被桌" title="點擊在暖被桌旁打盹">'
     : "";
-  const body = `<div class="pet-home">${petSubnavHtml("home")}${petQuickStatusBarHtml(key)}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="interaction-row room-care"><button data-life-event="care:brush">🪮 梳毛</button><button data-life-event="care:bath">🛁 洗澡</button><button data-life-event="care:nails">✂️ 剪指甲</button></div><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
+  const body = `<div class="pet-home">${petSubnavHtml("home")}${pmTopHtml(key)}${pmTilesHtml()}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pm-stage-tile"><div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="interaction-row room-care"><button data-life-event="care:brush">🪮 梳毛</button><button data-life-event="care:bath">🛁 洗澡</button><button data-life-event="care:nails">✂️ 剪指甲</button></div></div><div class="pm-panel pm-detail"><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
     .slice(-4)
     .map((t) => `<span class="mini-title">${t}</span>`)
     .join(
@@ -962,7 +1017,7 @@ export function showPetHome() {
     )
     .join(
       "",
-    )}</div><div class="pet-collection-title"><span>📖 貓咪圖鑑 ${petData.unlocked.length}/${INTERACTIVE_CATS.length}</span><small>合作過關可認識新貓咪</small></div><div class="collection-tools"><label>篩選<select data-collection-filter><option value="all" ${collectionFilter === "all" ? "selected" : ""}>全部貓咪</option><option value="unlocked" ${collectionFilter === "unlocked" ? "selected" : ""}>已解鎖</option><option value="locked" ${collectionFilter === "locked" ? "selected" : ""}>未解鎖</option><option value="raised" ${collectionFilter === "raised" ? "selected" : ""}>培養中</option>${GROWTH_STAGES.map((g, i) => `<option value="stage-${i}" ${collectionFilter === `stage-${i}` ? "selected" : ""}>${g.icon} ${g.name}</option>`).join("")}</select></label><label>排序<select data-collection-sort><option value="index" ${collectionSort === "index" ? "selected" : ""}>圖鑑編號</option><option value="name" ${collectionSort === "name" ? "selected" : ""}>名稱</option><option value="stage" ${collectionSort === "stage" ? "selected" : ""}>成長階段</option><option value="level" ${collectionSort === "level" ? "selected" : ""}>等級高到低</option><option value="affection" ${collectionSort === "affection" ? "selected" : ""}>好感度高到低</option><option value="cooperation" ${collectionSort === "cooperation" ? "selected" : ""}>合作關卡多到少</option></select></label><div class="collection-saved-note">✓ 篩選與排序會自動保存</div></div><div class="pet-collection">${
+    )}</div></div><div class="pm-panel pm-detail"><div class="pet-collection-title"><span>📖 貓咪圖鑑 ${petData.unlocked.length}/${INTERACTIVE_CATS.length}</span><small>合作過關可認識新貓咪</small></div><div class="collection-tools"><label>篩選<select data-collection-filter><option value="all" ${collectionFilter === "all" ? "selected" : ""}>全部貓咪</option><option value="unlocked" ${collectionFilter === "unlocked" ? "selected" : ""}>已解鎖</option><option value="locked" ${collectionFilter === "locked" ? "selected" : ""}>未解鎖</option><option value="raised" ${collectionFilter === "raised" ? "selected" : ""}>培養中</option>${GROWTH_STAGES.map((g, i) => `<option value="stage-${i}" ${collectionFilter === `stage-${i}` ? "selected" : ""}>${g.icon} ${g.name}</option>`).join("")}</select></label><label>排序<select data-collection-sort><option value="index" ${collectionSort === "index" ? "selected" : ""}>圖鑑編號</option><option value="name" ${collectionSort === "name" ? "selected" : ""}>名稱</option><option value="stage" ${collectionSort === "stage" ? "selected" : ""}>成長階段</option><option value="level" ${collectionSort === "level" ? "selected" : ""}>等級高到低</option><option value="affection" ${collectionSort === "affection" ? "selected" : ""}>好感度高到低</option><option value="cooperation" ${collectionSort === "cooperation" ? "selected" : ""}>合作關卡多到少</option></select></label><div class="collection-saved-note">✓ 篩選與排序會自動保存</div></div><div class="pet-collection">${
     cats.length
       ? cats
           .map((k) => {
@@ -972,7 +1027,7 @@ export function showPetHome() {
           })
           .join("")
       : '<div class="collection-empty">目前沒有符合條件的貓咪</div>'
-  }</div></div>`;
+  }</div></div></div>`;
   renderPetView(body);
   requestAnimationFrame(() => {
     renderRoomLitter();
@@ -1172,6 +1227,12 @@ function onPetClick(e) {
     setPetView(view.dataset.petView);
     return;
   }
+  const puzzleGo = e.target.closest("[data-goto-puzzle]");
+  if (puzzleGo) {
+    location.hash = "#/meowdoku";
+    return;
+  }
+  if (handleTripClick(e)) return;
   const shopTab = e.target.closest("[data-shop-tab]");
   if (shopTab) {
     setShopTab(shopTab.dataset.shopTab);

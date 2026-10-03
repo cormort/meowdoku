@@ -72,14 +72,11 @@ document.addEventListener(
 window.addEventListener("hashchange", route);
 
 (async function boot() {
-  const theme = localStorage.getItem(LS.theme);
-  if (theme) {
-    document.documentElement.dataset.theme = theme;
-    $("themeBtn").textContent = theme === "dark" ? "☀️" : "🌙";
-  } else if (matchMedia("(prefers-color-scheme:dark)").matches) {
-    document.documentElement.dataset.theme = "dark";
-    $("themeBtn").textContent = "☀️";
-  }
+  // 介面採美少女夢工廠風格：整體是暗色的和室／木框，固定使用 dark 主題
+  // （dark 主題同時決定數獨色塊的暗色盤，淺色盤在這個介面上會太亮）
+  document.documentElement.dataset.theme = "dark";
+  const themeBtnEl = $("themeBtn");
+  if (themeBtnEl) themeBtnEl.hidden = true;
   initPuzzle(
     petData.initialized ? localStorage.getItem(LS.skin) || petData.selected || "0" : "emoji",
   );
