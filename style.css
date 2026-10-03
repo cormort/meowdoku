@@ -5132,3 +5132,149 @@ label {
 }
 .talk-reply { font-size: 0.9rem; line-height: 1.55; }
 .story-congrats { font-size: 0.92rem; line-height: 1.55; }
+
+/* 主角（我的角色）與換裝 */
+.room-me {
+  position: absolute;
+  left: 6px;
+  bottom: 42px;
+  width: 76px;
+  text-align: center;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.18));
+}
+.room-me-label {
+  display: inline-block;
+  margin-bottom: 2px;
+  padding: 1px 7px;
+  font-size: 0.72rem;
+  color: #fff;
+  background: var(--pm-red);
+  border-radius: 8px;
+}
+.avatar-svg { display: block; margin: 0 auto; }
+.avatar-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 2px;
+  background: linear-gradient(#fff8ea, #fdeedd);
+  border: 2px solid var(--pm-frame);
+  border-radius: 6px;
+}
+.avatar-tabs,
+.avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.avatar-actions .academy-action-btn { flex: 1 1 40%; }
+.avatar-tab {
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  color: var(--pm-cream);
+  background: #fff4e0;
+  border: 2px solid var(--pm-frame);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.avatar-tab.active {
+  color: #fff;
+  background: linear-gradient(#ff9d5c, #f2712c);
+  border-color: var(--pm-frame-dark);
+  font-weight: 800;
+}
+.avatar-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.avatar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  color: var(--pm-cream);
+  background: #fffdf7;
+  border: 2px solid var(--pm-gold-dim);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.avatar-item.active {
+  border-color: var(--pm-red);
+  background: #fff1e2;
+  font-weight: 800;
+}
+.avatar-swatch {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+}
+/* 貓咪變髒 */
+.cat-dirt-layer { position: absolute; inset: 0; pointer-events: none; }
+.pet-room-cat-wrap.dirty-1 .cat-dirt-layer {
+  background: radial-gradient(circle at 30% 62%, rgba(120, 90, 50, 0.55) 0 6%, transparent 7%),
+    radial-gradient(circle at 68% 74%, rgba(110, 85, 45, 0.5) 0 5%, transparent 6%);
+}
+.pet-room-cat-wrap.dirty-2 .cat-dirt-layer {
+  background: radial-gradient(circle at 28% 60%, rgba(105, 78, 40, 0.65) 0 8%, transparent 9%),
+    radial-gradient(circle at 70% 74%, rgba(100, 75, 38, 0.6) 0 7%, transparent 8%),
+    radial-gradient(circle at 50% 86%, rgba(95, 70, 35, 0.5) 0 6%, transparent 7%);
+}
+.pet-room-cat-wrap.dirty-3 .cat-dirt-layer {
+  background: radial-gradient(circle at 26% 58%, rgba(92, 66, 32, 0.75) 0 10%, transparent 11%),
+    radial-gradient(circle at 72% 72%, rgba(88, 64, 30, 0.7) 0 9%, transparent 10%),
+    radial-gradient(circle at 48% 84%, rgba(84, 60, 28, 0.65) 0 8%, transparent 9%),
+    radial-gradient(circle at 62% 46%, rgba(80, 58, 26, 0.5) 0 6%, transparent 7%);
+}
+.pet-room-cat-wrap.dirty-3 .room-cat-img { filter: sepia(0.35) brightness(0.94) saturate(0.9); }
+.pet-room-cat-wrap.dirty-2 .room-cat-img { filter: sepia(0.2) brightness(0.97); }
+.room-dirt-badge {
+  position: absolute;
+  right: 8px;
+  top: 40px;
+  z-index: 5;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  color: #fff;
+  background: rgba(120, 90, 50, 0.92);
+  border-radius: 10px;
+}
+/* 考試橫幅與按鈕 */
+.story-btn-row { display: flex; gap: 6px; margin-top: 8px; }
+.story-btn-row .story-btn { flex: 1; margin-top: 0; }
+.exam-btn { background: linear-gradient(#ffb066, #ef6a1f) !important; }
+.story-exam {
+  font-size: 0.76rem;
+  padding: 1px 6px;
+  color: #fff;
+  background: var(--pm-red);
+  border-radius: 8px;
+}
+.exam-banner {
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  border-radius: 4px;
+}
+.exam-banner.pass { color: #1c6b3a; background: #e4f6e9; border: 2px solid #7fc79a; }
+.exam-banner.fail { color: #8a2b22; background: #fdeae6; border: 2px solid #e5a49a; }
+/* 錯題本匯入匯出 */
+.mistake-io-row { display: flex; gap: 6px; margin-top: 10px; }
+.mistake-io-row .mistake-io-btn { flex: 1; font-size: 0.86rem !important; padding: 8px !important; }
+.mistake-io {
+  width: 100%;
+  min-height: 130px;
+  margin-top: 6px;
+  padding: 8px;
+  font-size: 0.78rem;
+  font-family: ui-monospace, Menlo, monospace;
+  color: var(--pm-cream);
+  background: #fffdf7;
+  border: 2px solid var(--pm-frame);
+  border-radius: 4px;
+}

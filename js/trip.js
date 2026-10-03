@@ -2,6 +2,7 @@
 // 每次出門拍一張相片（場景底圖 + 該品種立繪合成）收進相簿；相簿是這裡的主要收藏。
 import { audio } from "../audio.js";
 import { activePetKey, celebrateChapter, checkGrowthUpgrade, growthStage, petAffection, petCoins, petData, petMoodValue, petName, petStatus, petSubnavHtml, recordStoryEvent, savePetData, updatePetHeroStats, updatePetStatus } from "./pet.js";
+import { dirtLevel } from "./story.js";
 import { getRoomCatSprite, setRoomCatPose } from "./room.js";
 import { $, escapeHtml, localDay, showSheet } from "./ui.js";
 const HOUR = 3600e3;
@@ -172,6 +173,8 @@ export function startTrip(id, key = activePetKey()) {
     cd = tripCooldown(id, key),
     name = petName(key);
   if (st.sick) return showSheet("😿 先休息", `${name}現在生病中，看完醫生再出門吧。`, "知道了");
+  if (dirtLevel(st.cleanliness) >= 2)
+    return showSheet("🛁 先洗個澡吧", `${name}身上髒兮兮的喵…先幫牠洗澡再出門，才不會被別人笑。`, "知道了");
   if (st.energy < TRIP_MIN_ENERGY) return showSheet("⚡ 沒電了", `體力不足（需 ${TRIP_MIN_ENERGY}），先餵點東西或讓${name}休息一下。`, "知道了");
   if (cd > 0) return showSheet("⏳ 才剛回來", `${fmtLeft(cd)}之後再帶${name}去${t.name}吧。`, "知道了");
   if (petCoins() < t.cost) return showSheet("🪙 金幣不足", `去${t.name}需要 ${t.cost} 金幣喵。`, "知道了");

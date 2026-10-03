@@ -1,6 +1,7 @@
 // life.js — 電子雞式的貓咪生活：隨時間變化的需求、生病與看醫生、在客廳自己走動，以及需要玩家回應的隨機事件
 import { audio } from "../audio.js";
 import { handleDailyCare } from "./academy.js";
+import { dirtLevel } from "./story.js";
 import {
   activePetKey,
   addCoins,
@@ -46,6 +47,9 @@ function lifeStep(key, rng) {
   s.cleanliness = clamp(s.cleanliness - 1);
   if (!s.sick) s.energy = clamp(s.energy + 2);
   if (s.hunger < 20 || s.sick) petData.mood[key] = clamp(petMoodValue(key) - 1);
+  // 沒洗澡變髒：越髒心情掉越快，也比較容易生病
+  const dirt = dirtLevel(s.cleanliness);
+  if (dirt >= 2) petData.mood[key] = clamp(petMoodValue(key) - (dirt - 1));
   if (s.sick) {
     if (s.sick.id === "cold" && Date.now() - s.sick.since > 24 * 3600 * 1000)
       s.sick = { id: "fever", since: Date.now() };

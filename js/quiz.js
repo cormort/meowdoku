@@ -267,6 +267,73 @@ export function mistakesToQuestions(list, subject, limit = 3) {
   return out;
 }
 
+// ── 錯題本匯出／匯入（備份、換裝置或跟同學交換）──
+export function exportMistakes(list, now = new Date()) {
+  return JSON.stringify(
+    {
+      app: "meowdoku",
+      kind: "mistakes",
+      version: 1,
+      exportedAt: now.toISOString(),
+      mistakes: Array.isArray(list) ? list : [],
+    },
+    null,
+    2,
+  );
+}
+export function importMistakes(text, existing = []) {
+  let data;
+  try {
+    data = JSON.parse(String(text ?? "").trim());
+  } catch {
+    return { error: "這不是有效的 JSON 檔，請確認貼上／選擇的是匯出的錯題本檔案。" };
+  }
+  const incoming = Array.isArray(data) ? data : data?.mistakes;
+  if (!Array.isArray(incoming)) return { error: "檔案裡找不到錯題清單（mistakes）。" };
+  let list = Array.isArray(existing) ? [...existing] : [];
+  const keys = new Set(list.map((e) => mistakeKey(e.subjectId, e.questionId)));
+  let added = 0;
+  let updated = 0;
+  let skipped = 0;
+  for (const e of incoming) {
+    if (!e || typeof e !== "object" || !e.subjectId || !e.questionId) {
+      skipped++;
+      continue;
+    }
+    const key = mistakeKey(e.subjectId, e.questionId);
+    list = recordMistake(list, {
+      subjectId: String(e.subjectId),
+      questionId: String(e.questionId),
+      term: typeof e.term === "string" ? e.term : "",
+      publisher: typeof e.publisher === "string" ? e.publisher : "",
+      chosen: Number.isInteger(e.chosen) ? e.chosen : -1,
+      at: Number.isFinite(e.at) ? e.at : Date.now(),
+    });
+    if (keys.has(key)) updated++;
+    else {
+      keys.add(key);
+      added++;
+    }
+  }
+  return { list, added, updated, skipped };
+}
+
+// 考試（期中考／期末考）：從某個冊次跨科目抽題
+export function buildExamQuestions(term, count, rng = Math.random) {
+  const pool = [];
+  for (const subject of Object.values(QUIZ_SUBJECTS)) {
+    for (const q of subject.questions || []) {
+      if (matchesFilter(q, { term })) pool.push({ ...q, examSubject: subject.id });
+    }
+  }
+  const shuffled = [...pool];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
 // 從題庫隨機抽一輪（Fisher–Yates，不重複）。
 // filter 可帶 { grade, term, publisher }；第二個參數也接受單純的年級數字（舊用法）。
 // 依條件篩選後題數不足時，依序退回「同年級」→「整冊」，避免抽不到題。

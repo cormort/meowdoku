@@ -4,7 +4,11 @@ import { readFileSync } from "node:fs";
 import {
   GRADES,
   MISTAKE_LIMIT,
+  buildExamQuestions,
+  exportMistakes,
+  importMistakes,
   PUBLISHERS,
+  QUIZ_SUBJECTS,
   SUBJECT_PUBLISHERS,
   filterCount,
   TERMS,
@@ -148,6 +152,47 @@ console.log("=== 錯題本 ===");
   const subject = read("math.json");
   const again = mistakesToQuestions([mk("math-001"), mk("不存在"), mk("math-001"), mk("math-002")], subject, 2);
   check(again.length === 2 && again[0].id === "math-001" && again[1].id === "math-002", "錯題重練只取存在的題目且不重複");
+}
+
+console.log("=== 錯題本匯出／匯入 ===");
+{
+  const book = [
+    { subjectId: "math", questionId: "math-001", term: "6-1", publisher: "康軒", chosen: 1, at: 1000 },
+    { subjectId: "chinese", questionId: "chinese-002", term: "4-1", publisher: "", chosen: 3, at: 2000 },
+  ];
+  const json = exportMistakes(book, new Date("2026-10-03T00:00:00Z"));
+  const parsed = JSON.parse(json);
+  check(parsed.app === "meowdoku" && parsed.kind === "mistakes" && parsed.mistakes.length === 2, "匯出檔含 app/kind 與 2 筆錯題");
+  check(parsed.exportedAt === "2026-10-03T00:00:00.000Z", "匯出檔記錄時間");
+  const empty = importMistakes(json, []);
+  check(empty.added === 2 && empty.updated === 0 && empty.list.length === 2, "匯入到空的錯題本：新增 2 筆");
+  const again = importMistakes(json, empty.list);
+  check(again.added === 0 && again.updated === 2, "重複匯入同一份：只更新不重複");
+  const merged = importMistakes(json, [{ subjectId: "math", questionId: "math-999", at: 1 }]);
+  check(merged.list.length === 3, "匯入會與現有錯題合併");
+  check(!!importMistakes("這不是 JSON", []).error, "不是 JSON 會回報錯誤");
+  check(!!importMistakes('{"foo":1}', []).error, "找不到 mistakes 會回報錯誤");
+  const messy = importMistakes('{"mistakes":[{"subjectId":"math","questionId":"math-001"},null,{"x":1}]}', []);
+  check(messy.added === 1 && messy.skipped === 2, "無效的資料會被略過並計數");
+  check(importMistakes(JSON.stringify([{ subjectId: "s", questionId: "q" }]), []).added === 1, "也接受單純的陣列格式");
+}
+
+console.log("=== 考試（期中考／期末考）===");
+{
+  // 測試環境沒有 fetch，直接把題庫塞進 QUIZ_SUBJECTS
+  for (const f of read("index.json").subjects) {
+    const sub = read(f);
+    QUIZ_SUBJECTS[sub.id] = sub;
+  }
+  const exam = buildExamQuestions("4-1", 5, () => 0.42);
+  check(exam.length === 5, "期中考抽 5 題");
+  check(exam.every((q) => matchesFilter(q, { term: "4-1" })), "考試題目都屬於該冊次");
+  check(new Set(exam.map((q) => q.id)).size === exam.length, "考試題目不重複");
+  const subjects = new Set(exam.map((q) => q.examSubject));
+  check(subjects.size >= 1 && [...subjects].every((s) => QUIZ_SUBJECTS[s]), "每題都標了科目且科目存在");
+  const finals = buildExamQuestions("5-1", 6, () => 0.9);
+  check(finals.length === 6, "期末考抽 6 題");
+  check(buildExamQuestions("9-9", 5).length === 0, "沒有這個冊次時回傳空陣列");
 }
 
 console.log(failures ? `\n${failures} 項失敗` : "\n全部通過");

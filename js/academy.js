@@ -2,7 +2,8 @@
 import { audio } from "../audio.js";
 import { activePetKey, addCoins, addPetStat, celebrateChapter, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, recordStoryEvent, savePetData, setPetView, showPetHome, studyBuff, updatePetStatus } from "./pet.js";
 import { showClinic, sickInfo, startCare } from "./life.js";
-import { GRADES, PUBLISHERS, QUIZ_SUBJECTS, TERMS, TEXTBOOK_UNITS, calculateQuizResult, filterCount, gradeRewardMul, isCorrect, mistakeCounts, mistakesFor, mistakesToQuestions, pickRound, recordMistake, termInfo, unitsFor } from "./quiz.js";
+import { GRADES, PUBLISHERS, QUIZ_SUBJECTS, TERMS, TEXTBOOK_UNITS, buildExamQuestions, calculateQuizResult, exportMistakes, filterCount, gradeRewardMul, importMistakes, isCorrect, mistakeCounts, mistakesFor, mistakesToQuestions, pickRound, recordMistake, termInfo, unitsFor } from "./quiz.js";
+import { STORY, currentChapter, examPassed, normalizeStory } from "./story.js";
 import { ACTION_POSES, getRoomCatSprite } from "./room.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
 // 姿勢圖鑑：坐姿 + 13 種動作立繪
@@ -61,8 +62,13 @@ export function mistakeBookHtml() {
   const counts = mistakeCounts(list);
   const total = list.length;
   if (!total) {
-    return `<details class="mistake-panel"><summary>📝 錯題本（目前是空的）</summary>
-      <p class="unit-hint">答錯的題目會自動收進這裡，隨時可以按「練這科錯題」重新練習。</p></details>`;
+    return `<details class="mistake-panel"${total ? " open" : ""}><summary>📝 錯題本（目前是空的）</summary>
+      <p class="unit-hint">答錯的題目會自動收進這裡，隨時可以按「練這科錯題」重新練習；也可以匯入別人分享的錯題本。</p>
+      <div class="mistake-io-row">
+        <button class="academy-action-btn mistake-io-btn" data-mistake-export="1">📤 匯出</button>
+        <button class="academy-action-btn mistake-io-btn" data-mistake-import="1">📥 匯入</button>
+      </div>
+    </details>`;
   }
   const blocks = Object.values(QUIZ_SUBJECTS)
     .filter((s) => counts[s.id])
@@ -88,10 +94,116 @@ export function mistakeBookHtml() {
     .join("");
   return `<details class="mistake-panel" open><summary>📝 錯題本（${total} 題待複習）</summary>
     ${blocks}
-    <button class="academy-action-btn mistake-clear" data-mistake-clear="1">🗑 清空錯題本</button>
+    <div class="mistake-io-row">
+      <button class="academy-action-btn mistake-io-btn" data-mistake-export="1">📤 匯出</button>
+      <button class="academy-action-btn mistake-io-btn" data-mistake-import="1">📥 匯入</button>
+      <button class="academy-action-btn mistake-clear" data-mistake-clear="1">🗑 清空</button>
+    </div>
   </details>`;
 }
-// 用錯題本的題目開一輪複習（不耗體力，答對照樣有獎勵）
+// 考試（期中考／期末考）：跨科目抽題，通過才推進主線
+export function startExamSession() {
+  const story = normalizeStory(petData.story);
+  const ch = currentChapter(story);
+  const exam = ch?.exam;
+  if (!exam) {
+    showSheet("🎓 考試", "主線章節都考完了喵！接下來想練哪一科都可以。", "好耶");
+    return;
+  }
+  const key = activePetKey();
+  const st = petStatus(key);
+  if (sickInfo(key)) {
+    showSheet("貓咪生病了 🤒", `${sickInfo(key).icon} ${sickInfo(key).name}中，先帶去看醫生再考試吧！`, "去看醫生", showClinic, "取消");
+    return;
+  }
+  if (st.energy < 15) {
+    showSheet("貓咪體力不足 ⚡", "貓咪太累了喵！先去「屬性」面板讓貓咪睡覺休息，再來考試。", "前往休息", () => setPetView("stats"));
+    return;
+  }
+  const questions = buildExamQuestions(exam.term, exam.count);
+  if (questions.length < exam.count) {
+    showSheet("題庫不足 📚", `${exam.name}需要 ${exam.count} 題，這個冊次目前只有 ${questions.length} 題。`, "知道了");
+    return;
+  }
+  currentQuizState = {
+    subjectId: questions[0].examSubject,
+    grade: Number(String(exam.term).split("-")[0]),
+    term: exam.term,
+    publisher: "",
+    questions,
+    currentIndex: 0,
+    correctCount: 0,
+    answered: false,
+    exam,
+  };
+  renderQuizQuestion();
+}
+export function openMistakeExport() {
+  const json = exportMistakes(loadMistakes());
+  showSheet(
+    "📤 匯出錯題本",
+    `<p class="unit-hint">複製下面文字並存成 .json 檔，就能備份或傳給其他裝置匯入。</p>
+     <textarea class="mistake-io" id="mistakeExportText" readonly>${escapeHtml(json)}</textarea>
+     <button class="academy-action-btn" id="btnCopyMistakes" style="width:100%; margin-top:8px;">📋 複製到剪貼簿</button>`,
+    "下載檔案",
+    () => {
+      const blob = new Blob([json], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `meowdoku-mistakes-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    },
+    "關閉",
+  );
+  document.getElementById("btnCopyMistakes")?.addEventListener("click", async () => {
+    const ta = document.getElementById("mistakeExportText");
+    try {
+      await navigator.clipboard.writeText(ta.value);
+      showSheet("📋 已複製", "錯題本內容已複製到剪貼簿喵！", "好耶");
+    } catch {
+      ta?.select();
+    }
+  });
+}
+export function openMistakeImport() {
+  showSheet(
+    "📥 匯入錯題本",
+    `<p class="unit-hint">貼上之前匯出的內容（或是選擇 .json 檔），匯入的題目會和現有錯題合併。</p>
+     <textarea class="mistake-io" id="mistakeImportText" placeholder='{"app":"meowdoku","kind":"mistakes","mistakes":[...]}'></textarea>
+     <input type="file" id="mistakeImportFile" accept=".json,application/json" style="margin-top:8px; width:100%;">
+     <p class="unit-hint" id="mistakeImportMsg"></p>`,
+    "匯入並合併",
+    () => {
+      const text = document.getElementById("mistakeImportText")?.value || "";
+      const res = importMistakes(text, loadMistakes());
+      const msg = document.getElementById("mistakeImportMsg");
+      if (res.error) {
+        if (msg) msg.textContent = `⚠️ ${res.error}`;
+        return;
+      }
+      saveMistakes(res.list);
+      showSheet(
+        "📥 匯入完成",
+        `<p>新增 <b>${res.added}</b> 題、更新 <b>${res.updated}</b> 題${res.skipped ? `、略過 ${res.skipped} 筆無效資料` : ""}喵。</p>
+         <p class="unit-hint">錯題本目前共 ${res.list.length} 題。</p>`,
+        "好耶",
+      );
+      setPetView("academy");
+    },
+    "取消",
+  );
+  document.getElementById("mistakeImportFile")?.addEventListener("change", (ev) => {
+    const file = ev.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const ta = document.getElementById("mistakeImportText");
+      if (ta) ta.value = String(reader.result || "");
+    };
+    reader.readAsText(file);
+  });
+}
 export function startMistakeSession(subjectId) {
   const sub = QUIZ_SUBJECTS[subjectId];
   if (!sub) return;
@@ -389,6 +501,14 @@ function renderQuizQuestion() {
   const sub = QUIZ_SUBJECTS[subjectId];
   const q = questions[currentIndex];
   currentQuizState.answered = false;
+  // 考試時每題可能來自不同科目，標題要跟著現在這一題的科目顯示
+  const qSub = currentQuizState.exam && q.examSubject ? QUIZ_SUBJECTS[q.examSubject] || sub : sub;
+  const headTitle = currentQuizState.exam
+    ? `<span style="font-weight:800; color:var(--pm-red);">📝 ${escapeHtml(currentQuizState.exam.name)}</span>
+       <span class="quiz-grade-tag">${qSub.icon} ${escapeHtml(qSub.name)}</span>`
+    : `<span style="font-weight:800; color:${sub.color};">${sub.icon} ${sub.name}</span>
+       <span class="quiz-grade-tag">${currentQuizState.review ? "📝 錯題複習" : `📶 ${termInfo(currentQuizState.term)?.label || ""}`}</span>
+       ${!currentQuizState.review && currentQuizState.publisher ? `<span class="quiz-grade-tag">📚 ${currentQuizState.publisher}</span>` : ""}`;
 
   const optionsHtml = q.options
     .map(
@@ -404,9 +524,7 @@ function renderQuizQuestion() {
   const body = `
     <div class="quiz-box">
       <div class="quiz-header">
-        <span style="font-weight:800; color:${sub.color};">${sub.icon} ${sub.name}</span>
-        <span class="quiz-grade-tag">${currentQuizState.review ? "📝 錯題複習" : `📶 ${termInfo(currentQuizState.term)?.label || ""}`}</span>
-        ${!currentQuizState.review && currentQuizState.publisher ? `<span class="quiz-grade-tag">📚 ${currentQuizState.publisher}</span>` : ""}
+        ${headTitle}
         <span class="quiz-counter">第 ${currentIndex + 1} / ${questions.length} 題</span>
       </div>
       <div class="quiz-question">${escapeHtml(q.prompt)}</div>
@@ -491,19 +609,40 @@ function finishQuizSession() {
   res.coins = coinsGained;
 
   addCoins(res.coins);
-  addPetStat(key, subjectId, res.statGain);
+  const examState = currentQuizState.exam || null;
+  if (examState) {
+    // 考試跨科目：把能力值獎勵平分給有考到的科目
+    const subs = [...new Set(questions.map((q) => q.examSubject || subjectId).filter(Boolean))];
+    const each = Math.max(1, Math.round(res.statGain / Math.max(1, subs.length)));
+    for (const sid of subs) addPetStat(key, sid, each);
+  } else {
+    addPetStat(key, subjectId, res.statGain);
+  }
   updatePetStatus(key, {
     energy: -res.staminaCost,
     hunger: -res.hungerCost,
     fatigue: res.fatigueGain,
   });
 
-  // 主線任務：答對題數（錯題複習則記在「錯題重練答對」）
+  // 主線任務：答對題數（錯題複習記在錯題重練、考試記在考試通過）
   try {
-    const { completed } = recordStoryEvent(currentQuizState.review ? "mistake_fix" : "quiz_correct", res.correctCount);
-    if (completed) setTimeout(() => celebrateChapter(completed), 350);
+    const type = examState ? null : currentQuizState.review ? "mistake_fix" : "quiz_correct";
+    if (type) {
+      const { completed } = recordStoryEvent(type, res.correctCount);
+      if (completed) setTimeout(() => celebrateChapter(completed), 350);
+    }
   } catch {
     /* 劇情系統不影響測驗 */
+  }
+  // 考試：達標才推進主線
+  const examPass = examState ? examPassed(res.correctCount, examState) : false;
+  if (examState && examPass) {
+    try {
+      const { completed } = recordStoryEvent("exam", 1);
+      if (completed) setTimeout(() => celebrateChapter(completed), 1450);
+    } catch {
+      /* 劇情系統不影響考試 */
+    }
   }
 
   const drop = res.dropItem;
@@ -517,18 +656,34 @@ function finishQuizSession() {
   audio.playVictory?.();
 
   const grade = res.perfect ? "S" : res.pass ? "A" : "B";
+  const examBanner = examState
+    ? `<div class="exam-banner ${examPass ? "pass" : "fail"}">
+         ${examPass ? "🎉 及格！" : "😿 不及格…"}
+         ${escapeHtml(examState.name)}：答對 ${res.correctCount} / ${res.totalCount} 題（及格需 ${examState.pass} 題）
+         ${examPass ? "" : "<br>休息一下，回錯題本練幾題再考一次喵！"}
+       </div>`
+    : "";
 
   const body = `
     <div class="quiz-result-card">
+      ${examBanner}
       <div class="quiz-grade-badge">${grade}</div>
       <div style="font-size:1.1rem; font-weight:800; color:var(--ink);">
-        ${res.perfect ? "全對滿分！天資聰穎喵！🎉" : res.pass ? "測驗合格！進步神速喵！✨" : "完成測驗！繼續加油喵！🐾"}
+        ${examState
+          ? examPass
+            ? "考試通過！你通過這一章了喵！🎉"
+            : "這次沒過，但錯的題目都變成你的了喵！💪"
+          : res.perfect
+            ? "全對滿分！天資聰穎喵！🎉"
+            : res.pass
+              ? "測驗合格！進步神速喵！✨"
+              : "完成測驗！繼續加油喵！🐾"}
       </div>
       <div style="font-size:0.82rem; color:var(--muted);">
         答對 ${res.correctCount} / ${res.totalCount} 題 · 得分 ${res.score} 分
       </div>
       <div style="font-size:0.78rem; color:var(--muted);">
-        ${quizTermUsed ? `📶 ${termInfo(quizTermUsed)?.full || ""}` : "📝 錯題複習"}${quizPublisherUsed ? `・${quizPublisherUsed}版` : quizTermUsed ? "・不限版本" : ""}${
+        ${examState ? `📝 ${escapeHtml(examState.name)}` : quizTermUsed ? `📶 ${termInfo(quizTermUsed)?.full || ""}` : "📝 錯題複習"}${quizPublisherUsed ? `・${quizPublisherUsed}版` : quizTermUsed && !examState ? "・不限版本" : ""}${
           res.rewardMul !== 1 ? `（獎勵 ×${res.rewardMul}）` : ""
         }
       </div>
@@ -544,7 +699,18 @@ function finishQuizSession() {
   `;
 
   currentQuizState = null;
-  showSheet("🏆 測驗成績單結算", body, "返回學院", () => setPetView("academy"));
+  if (examState) {
+    showSheet(
+      examPass ? `🎓 ${examState.name} 通過！` : `📝 ${examState.name} 成績單`,
+      body,
+      examPass ? "回學院" : "🔁 再考一次",
+      examPass ? () => setPetView("academy") : () => startExamSession(),
+      "返回學院",
+      () => setPetView("academy"),
+    );
+  } else {
+    showSheet("🏆 測驗成績單結算", body, "返回學院", () => setPetView("academy"));
+  }
 }
 
 export function handleDailyCare(type) {

@@ -1,5 +1,6 @@
-// story.js — 主線劇情、任務進度與貓咪提醒
+// story.js — 主線劇情、考試章節、任務進度與貓咪提醒
 // 設定：貓咪是「星讀學園」派來的見習學習貓，來陪你讀書、提醒你複習。
+// 主線每一章就是一場考試（期中考／期末考），考過就進下一章。
 // 這裡只有純資料與純函式，方便測試；UI 由 pet.js / academy.js 呈現。
 
 export const STORY = {
@@ -10,68 +11,69 @@ export const STORY = {
   chapters: [
     {
       id: "ch1",
-      title: "第一章・貓咪從天而降",
+      title: "第一章・四上期中考",
+      exam: { name: "四上期中考", term: "4-1", kind: "mid", count: 5, pass: 3 },
       lines: [
         "喵——！終於找到你了！我是星讀學園派來的見習學習貓。",
-        "我的任務很簡單：陪你學習、提醒你複習，還有……偶爾討摸。",
-        "先讓我看看你的實力吧！去學院排一次隨堂測驗，答對 3 題就好。",
+        "從今天開始，每一章就是一場考試：期中考考前半冊、期末考考整冊。",
+        "第一場是「四上期中考」，5 題答對 3 題就通過。我們一起加油喵！",
       ],
-      task: { type: "quiz_correct", target: 3, label: "隨堂測驗答對 3 題" },
+      task: { type: "exam", target: 1, label: "通過四上期中考（答對 3 / 5 題）" },
       reward: { coins: 150, affection: 10 },
     },
     {
       id: "ch2",
-      title: "第二章・錯題不是敵人",
+      title: "第二章・四上期末考",
+      exam: { name: "四上期末考", term: "4-1", kind: "final", count: 6, pass: 4 },
       lines: [
-        "答錯的題目我都有偷偷記下來喵（就在錯題本裡）。",
-        "錯題就像還沒拆開的禮物——把它弄懂，就變成你的了。",
-        "去錯題本按「練這科錯題」，把 2 題重新答對給我看！",
+        "期中考過了喵！但期末考才是整冊的總驗收。",
+        "期末考會多一題、及格線也提高，答錯的題目記得回錯題本練一下。",
       ],
-      task: { type: "mistake_fix", target: 2, label: "錯題重練答對 2 題" },
-      reward: { coins: 200, affection: 12 },
+      task: { type: "exam", target: 1, label: "通過四上期末考（答對 4 / 6 題）" },
+      reward: { coins: 220, affection: 12 },
     },
     {
       id: "ch3",
-      title: "第三章・照顧夥伴",
+      title: "第三章・五上期中考",
+      exam: { name: "五上期中考", term: "5-1", kind: "mid", count: 5, pass: 3 },
       lines: [
-        "讀書很重要，但吃飯、洗澡、梳毛也很重要喵。",
-        "把我照顧好，我的腦袋才會轉得快，陪讀也更有效。",
-        "幫我梳毛、洗澡，再餵我吃一頓好嗎？",
+        "年級往上爬了喵！五上的東西會難一點點，但你的腦袋也長大了。",
+        "記得先照顧好我——吃飯、洗澡、梳毛，我才有力氣陪你考試。",
       ],
-      task: { type: "care", target: 3, label: "照顧貓咪 3 次（梳毛／洗澡／餵食）" },
-      reward: { coins: 220, affection: 14 },
+      task: { type: "exam", target: 1, label: "通過五上期中考（答對 3 / 5 題）" },
+      reward: { coins: 260, affection: 14 },
     },
     {
       id: "ch4",
-      title: "第四章・出門看看世界",
+      title: "第四章・五上期末考",
+      exam: { name: "五上期末考", term: "5-1", kind: "final", count: 6, pass: 4 },
       lines: [
-        "課本裡的東西，其實外面都看得到喵。",
-        "去公園散步、去海邊吹風、去看一場電影——回來你會更想讀書。",
-        "帶我出門一次吧！",
+        "五上期末考來啦！這次我想看到你把錯題都變會。",
+        "考完就帶我出門走走吧，看看課本裡的東西在真實世界的樣子。",
       ],
-      task: { type: "trip", target: 1, label: "帶貓咪出門 1 次" },
-      reward: { coins: 250, affection: 16 },
+      task: { type: "exam", target: 1, label: "通過五上期末考（答對 4 / 6 題）" },
+      reward: { coins: 300, affection: 16 },
     },
     {
       id: "ch5",
-      title: "第五章・學科小達人",
+      title: "第五章・六上期中考",
+      exam: { name: "六上期中考", term: "6-1", kind: "mid", count: 5, pass: 3 },
       lines: [
-        "學習就像爬樹，一階一階來，累了就休息喵。",
-        "只要有一科能力值到 30 點，你就已經比昨天的自己厲害很多了。",
-        "選一科你最想變強的，我們一起練！",
+        "六上期中考喵！你已經比我第一次見到你的時候厲害太多了。",
+        "這次考前先挑一科你最沒把握的，去學院單科練一輪。",
       ],
-      task: { type: "subject_stat", target: 30, label: "任一科能力值達到 30" },
-      reward: { coins: 300, affection: 18 },
+      task: { type: "exam", target: 1, label: "通過六上期中考（答對 3 / 5 題）" },
+      reward: { coins: 340, affection: 18 },
     },
     {
       id: "ch6",
-      title: "第六章・星讀學園的考驗",
+      title: "第六章・六上期末考",
+      exam: { name: "六上期末考", term: "6-1", kind: "final", count: 6, pass: 4 },
       lines: [
-        "最後一關喵：學園要看看你是不是真的會自己學習了。",
-        "答對 12 題，不限科目、不限冊次——這是你的畢業考。",
-        "完成之後，我就會正式成為你的專屬學習夥伴！",
+        "最後一場期末考喵：考過它，你就是星讀學園認可的「自己會學習的人」。",
+        "我會一直在旁邊看著你——不是監考，是陪考喵。",
       ],
-      task: { type: "quiz_correct", target: 12, label: "答對 12 題" },
+      task: { type: "exam", target: 1, label: "通過六上期末考（答對 4 / 6 題）" },
       reward: { coins: 600, affection: 30, title: "星讀學園學習夥伴" },
     },
   ],
@@ -96,6 +98,15 @@ export function currentChapter(story) {
 export function storyFinished(story) {
   return normalizeStory(story).chapterIndex >= STORY.chapters.length;
 }
+export function chapterIndex(story) {
+  return normalizeStory(story).chapterIndex;
+}
+export function examOf(chapter) {
+  return chapter?.exam || null;
+}
+export function examPassed(correct, exam) {
+  return !!exam && correct >= exam.pass;
+}
 // 目前任務的進度（給 UI 畫進度條）
 export function taskProgress(story) {
   const s = normalizeStory(story);
@@ -117,7 +128,8 @@ export function applyEvent(story, type, n = 1) {
   const ch = currentChapter(s);
   if (!ch || !type) return { story: s, completed: null };
   const progress = { ...s.progress, [type]: (s.progress[type] || 0) + n };
-  if (progress[type] < ch.task.target) return { story: { ...s, progress }, completed: null };
+  // 只有「這一章任務要求的類型」累計到目標才算完成（其他事件只是累加進度）
+  if ((progress[ch.task.type] || 0) < ch.task.target) return { story: { ...s, progress }, completed: null };
   return {
     story: { ...s, chapterIndex: s.chapterIndex + 1, progress: {}, done: [...s.done, ch.id] },
     completed: ch,
@@ -125,9 +137,6 @@ export function applyEvent(story, type, n = 1) {
 }
 
 // ===== 貓咪說的話 =====
-function pad(n) {
-  return String(n).padStart(2, "0");
-}
 export function timeGreeting(date = new Date()) {
   const h = date.getHours();
   if (h < 6) return "這麼晚還沒睡喵？要注意作息喔。";
@@ -142,6 +151,7 @@ export function reminderLine({
   hunger = 100,
   energy = 100,
   mood = 80,
+  cleanliness = 80,
   mistakes = 0,
   story = null,
   streak = 0,
@@ -150,6 +160,7 @@ export function reminderLine({
   const p = taskProgress(story);
   if (hunger < 30) return `${name}肚子餓了喵…先餵我吃點東西好不好？`;
   if (energy < 25) return `${name}有點累了喵，讓我睡一下再陪你讀書好嗎？`;
+  if (cleanliness < 25) return `${name}身上髒兮兮的喵…（毛都黏在一起了）帶我去洗個澡好不好？`;
   if (mood < 30) return `${name}今天心情不太好喵，陪我玩一下好不好？`;
   if (mistakes >= 3) return `錯題本裡還有 ${mistakes} 題等你喵，我們一起把它們變會吧！`;
   if (p && !p.complete) return `今天的任務是「${p.label}」——目前 ${p.have}/${p.need}，加油喵！`;
@@ -158,6 +169,15 @@ export function reminderLine({
   if (streak >= 3) return `連續 ${streak} 天都來看我，你真的很棒喵！`;
   return `今天也想跟你一起學習喵！（先去學院排一次隨堂測驗吧）`;
 }
+// 貓咪有多髒：0＝乾淨、1＝有點髒、2＝髒、3＝該洗澡了
+export function dirtLevel(cleanliness = 80) {
+  const c = Number.isFinite(cleanliness) ? cleanliness : 80;
+  if (c >= 60) return 0;
+  if (c >= 40) return 1;
+  if (c >= 20) return 2;
+  return 3;
+}
+export const DIRT_LABEL = ["", "毛有點亂喵", "身上開始有味道了喵", "好髒喵！快帶我去洗澡！"];
 // 「說說話」：依狀態給不同回應
 export function talkLines({ mood = 80, affection = 0, hour = 12 } = {}) {
   const lines = [];

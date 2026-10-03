@@ -1,7 +1,8 @@
 // pet.js — 貓咪小屋（首頁）：養成資料、客廳、圖鑑、稱號、紀念日、節日活動，以及各分頁的切換與點擊委派
 import { audio } from "../audio.js";
-import { academyPageHtml, clearMistakeBook, handleDailyCare, handleQuizAnswer, setQuizPublisher, setQuizTerm, startMistakeSession, startQuizSession, statsPageHtml } from "./academy.js";
-import { STORY, STUDY_BUFF_MINUTES, STUDY_BUFF_RATE, TALK_CHOICES, applyEvent, currentChapter, newStoryState, normalizeStory, reminderLine, storyFinished, talkLines, taskProgress, timeGreeting } from "./story.js";
+import { academyPageHtml, clearMistakeBook, handleDailyCare, handleQuizAnswer, openMistakeExport, openMistakeImport, setQuizPublisher, setQuizTerm, startExamSession, startMistakeSession, startQuizSession, statsPageHtml } from "./academy.js";
+import { DIRT_LABEL, STORY, STUDY_BUFF_MINUTES, STUDY_BUFF_RATE, TALK_CHOICES, applyEvent, currentChapter, dirtLevel, newStoryState, normalizeStory, reminderLine, storyFinished, talkLines, taskProgress, timeGreeting } from "./story.js";
+import { AVATAR_PARTS, avatarLabel, defaultAvatar, normalizeAvatar, randomAvatar, renderAvatar } from "./avatar.js";
 import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
@@ -239,6 +240,7 @@ function defaultPetData() {
     stats: {},
     status: {},
     inventory: {},
+    avatar: null, // 主角造型（見 js/avatar.js）
     story: null, // 主線劇情進度（見 js/story.js）
     studyBuff: null, // 陪讀加成：{ until }
     lastGreetDate: null, // 每天第一次開遊戲時打招呼
@@ -809,6 +811,7 @@ export function pmTilesHtml() {
       }<b>${icon}</b><small>${label}</small></button>`,
   ).join("")}
     <button class="pm-bigbtn" data-pet-view="trip">📅 帶貓咪出門</button>
+    <button class="pm-bigbtn" data-avatar-open="1">🧍 我的角色（換裝）</button>
     <button class="pm-bigbtn" data-goto-puzzle="1">🧩 數獨打工</button>
   </div>`;
 }
@@ -1036,14 +1039,18 @@ function storyPanelHtml(key) {
     </div>`;
   }
   const p = taskProgress(s);
+  const exam = ch.exam;
   return `<div class="pm-panel story-panel">
     <div class="story-head"><b>📜 ${STORY.title}</b><span class="story-ch">第 ${s.chapterIndex + 1} / ${STORY.chapters.length} 章</span></div>
-    <div class="story-title">${escapeHtml(ch.title)}</div>
+    <div class="story-title">${escapeHtml(ch.title)}${exam ? `　<span class="story-exam">${exam.kind === "mid" ? "期中考" : "期末考"}</span>` : ""}</div>
     <div class="story-task">任務：${escapeHtml(p.label)}
       <div class="story-bar"><i style="width:${p.percent}%"></i></div>
       <span class="story-num">${p.have} / ${p.need}</span>
     </div>
-    <button class="academy-action-btn story-btn" data-story-start="1">📖 看劇情／接任務</button>
+    <div class="story-btn-row">
+      <button class="academy-action-btn story-btn" data-story-start="1">📖 劇情</button>
+      ${exam ? `<button class="academy-action-btn story-btn exam-btn" data-exam-start="1">📝 開始考試</button>` : ""}
+    </div>
   </div>`;
 }
 function openStorySheet() {
@@ -1054,6 +1061,7 @@ function openStorySheet() {
     return;
   }
   const p = taskProgress(s);
+  const exam = ch.exam;
   showSheet(
     `📜 ${ch.title}`,
     `<div class="talk-lines">${ch.lines.map((l) => `<p>🐱 ${escapeHtml(l)}</p>`).join("")}</div>
@@ -1061,7 +1069,9 @@ function openStorySheet() {
      <div class="unit-hint">完成後可獲得 🪙 ${ch.reward.coins} 金幣、好感 +${ch.reward.affection}${
        ch.reward.title ? `，並解鎖稱號「${escapeHtml(ch.reward.title)}」` : ""
      }。</div>`,
-    "接下任務！",
+    exam ? "📝 開始考試" : "接下任務！",
+    exam ? () => startExamSession() : null,
+    "稍後再說",
   );
 }
 function openTalkSheet() {
@@ -1124,10 +1134,61 @@ function catSpeechLine(key) {
       hunger: st.hunger,
       energy: st.energy,
       mood: petMoodValue(key),
+      cleanliness: st.cleanliness,
       mistakes: mistakeBookCount(),
       story: storyStateOf(),
       streak: data.loginStreak || 0,
     })
+  );
+}
+
+// ===== 主角（我的角色）與換裝 =====
+let avatarCat = "hair";
+function avatarState() {
+  if (!petData.avatar) petData.avatar = defaultAvatar();
+  return normalizeAvatar(petData.avatar);
+}
+function setAvatarPart(part, id) {
+  const a = avatarState();
+  if (!AVATAR_PARTS[part]?.some((o) => o.id === id)) return a;
+  petData.avatar = { ...a, [part]: id };
+  savePetData();
+  return petData.avatar;
+}
+export function openAvatarSheet() {
+  const a = avatarState();
+  const cat = avatarCat;
+  const items = AVATAR_PARTS[cat]
+    .map(
+      (o) =>
+        `<button class="avatar-item${a[cat] === o.id ? " active" : ""}" data-avatar-pick="${cat}:${o.id}">${
+          o.value ? `<span class="avatar-swatch" style="background:${o.value}"></span>` : ""
+        }${escapeHtml(o.name)}</button>`,
+    )
+    .join("");
+  const tabs = [
+    ["hair", "髮型"],
+    ["hairColor", "髮色"],
+    ["skin", "膚色"],
+    ["top", "上衣"],
+    ["bottom", "褲裙"],
+    ["shoes", "鞋子"],
+    ["hat", "帽子"],
+    ["accessory", "配件"],
+  ]
+    .map(([k, label]) => `<button class="avatar-tab${k === cat ? " active" : ""}" data-avatar-cat="${k}">${label}</button>`)
+    .join("");
+  showSheet(
+    "🧍 我的角色",
+    `<div class="avatar-wrap">${renderAvatar(a, { size: 168 })}</div>
+     <div class="avatar-tabs">${tabs}</div>
+     <div class="avatar-items">${items}</div>
+     <div class="avatar-actions">
+       <button class="academy-action-btn" data-avatar-random="1">🎲 隨機</button>
+       <button class="academy-action-btn" data-avatar-reset="1">↩️ 回復預設</button>
+     </div>
+     <p class="unit-hint">目前造型：${escapeHtml(avatarLabel(a))}</p>`,
+    "完成",
   );
 }
 
@@ -1183,7 +1244,8 @@ export function showPetHome() {
   const kotatsuHtml = petData.roomFurniture?.kotatsu
     ? '<img class="room-furniture-kotatsu" id="roomFurnitureKotatsu" src="./icons/room/furniture_kotatsu.webp" alt="暖被桌" title="點擊在暖被桌旁打盹">'
     : "";
-  const body = `<div class="pet-home">${petSubnavHtml("home")}${pmTopHtml(key)}${pmTilesHtml()}${storyPanelHtml(key)}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pm-stage-tile"><div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">${escapeHtml(catSpeechLine(key))}</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="interaction-row room-care"><button data-life-event="care:brush">🪮 梳毛</button><button data-life-event="care:bath">🛁 洗澡</button><button data-life-event="care:nails">✂️ 剪指甲</button><button data-pet-talk="1">💬 說說話</button></div></div><div class="pm-panel pm-detail"><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
+  const dirt = dirtLevel(petStatus(key).cleanliness);
+  const body = `<div class="pet-home">${petSubnavHtml("home")}${pmTopHtml(key)}${pmTilesHtml()}${storyPanelHtml(key)}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pm-stage-tile"><div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">${escapeHtml(catSpeechLine(key))}</span>${dirt >= 2 ? `<div class="room-dirt-badge" id="roomDirtBadge">🧼 ${DIRT_LABEL[dirt]}</div>` : ""}<div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap${dirt ? ` dirty-${dirt}` : ""}" id="roomCatWrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"><div class="cat-dirt-layer" aria-hidden="true"></div></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="room-me" id="roomMe" title="你（可到首頁按「我的角色」換裝）"><span class="room-me-label">你</span>${renderAvatar(avatarState(), { size: 68 })}</div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="interaction-row room-care"><button data-life-event="care:brush">🪮 梳毛</button><button data-life-event="care:bath">🛁 洗澡</button><button data-life-event="care:nails">✂️ 剪指甲</button><button data-pet-talk="1">💬 說說話</button></div></div><div class="pm-panel pm-detail"><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
     .slice(-4)
     .map((t) => `<span class="mini-title">${t}</span>`)
     .join(
@@ -1452,6 +1514,53 @@ function onPetClick(e) {
   if (pubBtn) {
     setQuizPublisher(pubBtn.dataset.quizPub);
     setPetView("academy"); // 換教科書版本
+    return;
+  }
+  const avatarOpen = e.target.closest("[data-avatar-open]");
+  if (avatarOpen) {
+    openAvatarSheet();
+    return;
+  }
+  const avatarCatBtn = e.target.closest("[data-avatar-cat]");
+  if (avatarCatBtn) {
+    avatarCat = avatarCatBtn.dataset.avatarCat;
+    openAvatarSheet();
+    return;
+  }
+  const avatarPick = e.target.closest("[data-avatar-pick]");
+  if (avatarPick) {
+    const [part, id] = String(avatarPick.dataset.avatarPick).split(":");
+    setAvatarPart(part, id);
+    openAvatarSheet();
+    return;
+  }
+  const avatarRandom = e.target.closest("[data-avatar-random]");
+  if (avatarRandom) {
+    petData.avatar = randomAvatar();
+    savePetData();
+    openAvatarSheet();
+    return;
+  }
+  const avatarReset = e.target.closest("[data-avatar-reset]");
+  if (avatarReset) {
+    petData.avatar = defaultAvatar();
+    savePetData();
+    openAvatarSheet();
+    return;
+  }
+  const examStart = e.target.closest("[data-exam-start]");
+  if (examStart) {
+    startExamSession(); // 📝 期中考／期末考
+    return;
+  }
+  const mistakesExport = e.target.closest("[data-mistake-export]");
+  if (mistakesExport) {
+    openMistakeExport();
+    return;
+  }
+  const mistakesImport = e.target.closest("[data-mistake-import]");
+  if (mistakesImport) {
+    openMistakeImport();
     return;
   }
   const talk = e.target.closest("[data-pet-talk]");
