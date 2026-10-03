@@ -13,25 +13,42 @@ const FOODS = {
   premium: { icon: "🍰", name: "豪華貓點心", affection: 18, mood: 14 },
 };
 const PET_LEVELS = [0, 20, 55, 105, 170, 250, 350, 470, 610, 770];
-const STARTER_CATS = ["0", "1", "2", "4", "5", "6", "8", "9", "10", "12"];
+// 可互動的貓：小屋只有這 4 隻（白貓 / 橘貓 / 黑貓 / 三花），每個品種都有 14 種全身姿勢立繪。
+// 臉圖示刻意挑與品種相符的（icons/cats.webp 第 0 / 2 / 1 / 4 張），
+// 這樣數獨裡看到的臉跟小屋裡的貓是同一隻。
+// ⚠ 數獨「🐱 換貓」那 81 個圖示是另一套、跟這份名單無關（見 js/meowdoku.js showSkinPicker）。
+export const INTERACTIVE_CATS = ["0", "2", "1", "4"];
+const CAT_LABELS = { "0": "白貓", "2": "橘貓", "1": "黑貓", "4": "三花" };
+// 舊存檔的 key 可能不在名單內：先用舊對應表換算品種，再取同名單品種的 key
+const LEGACY_BREED_BY_KEY = {
+  0: "white",
+  1: "black",
+  2: "orange",
+  3: "orange",
+  4: "calico",
+  5: "white",
+  6: "white",
+  7: "calico",
+  8: "orange",
+  9: "white",
+  10: "white",
+  11: "orange",
+  12: "black",
+};
+const ROSTER_BY_BREED = { white: "0", orange: "2", black: "1", calico: "4" };
+function normalizeCatKey(key) {
+  const k = String(key ?? "");
+  if (INTERACTIVE_CATS.includes(k)) return k;
+  const breed =
+    LEGACY_BREED_BY_KEY[k] || ["white", "orange", "calico", "black"][(Number(k) || 0) % 4];
+  return ROSTER_BY_BREED[breed] || INTERACTIVE_CATS[0];
+}
+const STARTER_CATS = INTERACTIVE_CATS;
+// 其餘 3 隻隨合作過關數解鎖
 const UNLOCK_WINS = {
-  3: 2,
-  7: 3,
-  11: 4,
-  15: 5,
-  20: 7,
-  25: 9,
-  30: 12,
-  35: 15,
-  40: 18,
-  45: 22,
-  50: 26,
-  55: 30,
-  60: 36,
-  65: 42,
-  70: 50,
-  75: 60,
-  80: 75,
+  2: 3,
+  1: 8,
+  4: 15,
 };
 const GROWTH_STAGES = [
   { name: "幼貓", icon: "🐾", min: 0 },
@@ -234,7 +251,8 @@ function loadPetData() {
       d.mood = { ...raw.mood };
       d.names = { ...raw.names };
       d.records = { ...raw.records };
-      d.unlocked = [...(raw.unlocked || [])];
+      d.unlocked = [...new Set((raw.unlocked || []).map(normalizeCatKey))];
+      if (raw.selected != null) d.selected = normalizeCatKey(raw.selected);
       d.growthStages = { ...(raw.growthStages || {}) };
       d.collectionFilter = raw.collectionFilter || "all";
       d.collectionSort = raw.collectionSort || "index";
@@ -326,7 +344,7 @@ export function activePetKey() {
   return String(petData.selected ?? "0");
 }
 export function petName(key = activePetKey()) {
-  return petData.names[key] || `貓咪 ${Number(key) + 1}`;
+  return petData.names[key] || CAT_LABELS[String(key)] || `貓咪 ${Number(key) + 1}`;
 }
 export function petAffection(key = activePetKey()) {
   return Number(petData.affection[key] || 0);
@@ -384,7 +402,7 @@ export function showStarterSetup() {
   let selected = STARTER_CATS[0];
   $("overlayTitle").textContent = "🐾 領養第一隻貓";
   $("overlayBody").innerHTML =
-    `<p class="starter-intro">一開始只能選擇一隻夥伴。完成關卡、累積合作紀錄後，會陸續認識更多貓咪。</p><div class="starter-preview-stage"><img id="starterPreviewImg" class="room-cat-img" src="${getRoomCatSprite(selected, "idle")}" alt="候選貓咪" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="starter-cats">${STARTER_CATS.map((k) => `<button class="starter-cat${k === selected ? " selected" : ""}" data-starter="${k}">${petFaceHtml(k, "face")}<span class="starter-name">候選貓咪 ${Number(k) + 1}</span></button>`).join("")}</div><label class="name-field"><span>替貓咪取名字</span><input id="starterName" maxlength="12" placeholder="輸入 1～12 個字" autocomplete="off"></label>`;
+    `<p class="starter-intro">小屋一共有 4 隻可以互動的貓咪，每一隻都有自己的全身動作立繪。先選一隻當夥伴，其他 3 隻會在合作過關後陸續認識。</p><div class="starter-preview-stage"><img id="starterPreviewImg" class="room-cat-img" src="${getRoomCatSprite(selected, "idle")}" alt="候選貓咪" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="starter-cats">${STARTER_CATS.map((k) => `<button class="starter-cat${k === selected ? " selected" : ""}" data-starter="${k}">${petFaceHtml(k, "face")}<span class="starter-name">${CAT_LABELS[k] || `貓咪 ${Number(k) + 1}`}</span></button>`).join("")}</div><label class="name-field"><span>替貓咪取名字</span><input id="starterName" maxlength="12" placeholder="輸入 1～12 個字" autocomplete="off"></label>`;
   const primary = $("overlayPrimary");
   primary.textContent = "開始一起冒險";
   primary.onclick = () => {
@@ -902,7 +920,7 @@ export function showPetHome() {
     rec = petRecord(key),
     stage = growthStage(aff),
     titles = earnedTitles(key);
-  let cats = [...Array(81)].map((_, i) => String(i));
+  let cats = [...INTERACTIVE_CATS];
   if (collectionFilter === "unlocked") cats = cats.filter(isUnlocked);
   else if (collectionFilter === "locked") cats = cats.filter((k) => !isUnlocked(k));
   else if (collectionFilter === "raised")
@@ -944,7 +962,7 @@ export function showPetHome() {
     )
     .join(
       "",
-    )}</div><div class="pet-collection-title"><span>📖 貓咪圖鑑 ${petData.unlocked.length}/81</span><small>合作過關可認識新貓咪</small></div><div class="collection-tools"><label>篩選<select data-collection-filter><option value="all" ${collectionFilter === "all" ? "selected" : ""}>全部貓咪</option><option value="unlocked" ${collectionFilter === "unlocked" ? "selected" : ""}>已解鎖</option><option value="locked" ${collectionFilter === "locked" ? "selected" : ""}>未解鎖</option><option value="raised" ${collectionFilter === "raised" ? "selected" : ""}>培養中</option>${GROWTH_STAGES.map((g, i) => `<option value="stage-${i}" ${collectionFilter === `stage-${i}` ? "selected" : ""}>${g.icon} ${g.name}</option>`).join("")}</select></label><label>排序<select data-collection-sort><option value="index" ${collectionSort === "index" ? "selected" : ""}>圖鑑編號</option><option value="name" ${collectionSort === "name" ? "selected" : ""}>名稱</option><option value="stage" ${collectionSort === "stage" ? "selected" : ""}>成長階段</option><option value="level" ${collectionSort === "level" ? "selected" : ""}>等級高到低</option><option value="affection" ${collectionSort === "affection" ? "selected" : ""}>好感度高到低</option><option value="cooperation" ${collectionSort === "cooperation" ? "selected" : ""}>合作關卡多到少</option></select></label><div class="collection-saved-note">✓ 篩選與排序會自動保存</div></div><div class="pet-collection">${
+    )}</div><div class="pet-collection-title"><span>📖 貓咪圖鑑 ${petData.unlocked.length}/${INTERACTIVE_CATS.length}</span><small>合作過關可認識新貓咪</small></div><div class="collection-tools"><label>篩選<select data-collection-filter><option value="all" ${collectionFilter === "all" ? "selected" : ""}>全部貓咪</option><option value="unlocked" ${collectionFilter === "unlocked" ? "selected" : ""}>已解鎖</option><option value="locked" ${collectionFilter === "locked" ? "selected" : ""}>未解鎖</option><option value="raised" ${collectionFilter === "raised" ? "selected" : ""}>培養中</option>${GROWTH_STAGES.map((g, i) => `<option value="stage-${i}" ${collectionFilter === `stage-${i}` ? "selected" : ""}>${g.icon} ${g.name}</option>`).join("")}</select></label><label>排序<select data-collection-sort><option value="index" ${collectionSort === "index" ? "selected" : ""}>圖鑑編號</option><option value="name" ${collectionSort === "name" ? "selected" : ""}>名稱</option><option value="stage" ${collectionSort === "stage" ? "selected" : ""}>成長階段</option><option value="level" ${collectionSort === "level" ? "selected" : ""}>等級高到低</option><option value="affection" ${collectionSort === "affection" ? "selected" : ""}>好感度高到低</option><option value="cooperation" ${collectionSort === "cooperation" ? "selected" : ""}>合作關卡多到少</option></select></label><div class="collection-saved-note">✓ 篩選與排序會自動保存</div></div><div class="pet-collection">${
     cats.length
       ? cats
           .map((k) => {

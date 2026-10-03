@@ -2291,9 +2291,9 @@ html.low-fx .board.skin-arrive {
 }
 .starter-cats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 9px;
-  max-height: 48dvh;
+  max-height: 30dvh;
   overflow: auto;
   padding: 3px;
 }
@@ -2556,8 +2556,8 @@ html.low-fx .board.skin-arrive {
 }
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
   .starter-cats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-height: 44dvh;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-height: 26dvh;
   }
   .pet-speech {
     left: 68%;
