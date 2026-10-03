@@ -775,18 +775,21 @@ export function pmTopHtml(key = activePetKey()) {
   </div>`;
 }
 const PM_TILES = [
-  ["academy", "📚", "學院"],
-  ["stats", "📊", "屬性"],
-  ["shop", "🛍️", "商店"],
-  ["gacha", "🎰", "扭蛋"],
-  ["titles", "🏅", "稱號"],
-  ["dates", "🎂", "紀念"],
-  ["events", "🎊", "活動"],
-  ["trip", "📸", "相簿"],
+  ["academy", "📚", "學院", "park"],
+  ["stats", "📊", "屬性", null],
+  ["shop", "🛍️", "商店", "cafe"],
+  ["gacha", "🎰", "扭蛋", null],
+  ["titles", "🏅", "稱號", "onsen"],
+  ["dates", "🎂", "紀念", "cinema"],
+  ["events", "🎊", "活動", "street"],
+  ["trip", "📸", "相簿", "beach"],
 ];
 export function pmTilesHtml() {
   return `<div class="pm-tiles">${PM_TILES.map(
-    ([view, icon, label]) => `<button class="pm-tile" data-pet-view="${view}"><b>${icon}</b><small>${label}</small></button>`,
+    ([view, icon, label, scene]) =>
+      `<button class="pm-tile${scene ? " has-scene" : ""}" data-pet-view="${view}">${
+        scene ? `<span class="pm-scene" style="--pm-scene:url(./icons/scenes/${scene}.webp)"></span>` : ""
+      }<b>${icon}</b><small>${label}</small></button>`,
   ).join("")}
     <button class="pm-bigbtn" data-pet-view="trip">📅 帶貓咪出門</button>
     <button class="pm-bigbtn" data-goto-puzzle="1">🧩 數獨打工</button>

@@ -4797,3 +4797,85 @@ label {
   color: #a8e0b0;
   border-color: #5aa86a;
 }
+/* PM 介面：照護小遊戲的框與目標大小 */
+.care-card {
+  border-radius: 4px;
+  border: 3px solid var(--pm-frame);
+  background: linear-gradient(var(--pm-black-2), var(--pm-black));
+  box-shadow: inset 0 0 0 1px var(--pm-gold), 0 12px 30px rgba(0, 0, 0, 0.6);
+  color: var(--pm-cream);
+}
+.care-head b {
+  color: var(--pm-cream);
+  font-family: var(--pm-serif);
+}
+.care-lv,
+.care-phase {
+  color: var(--pm-gold);
+}
+.care-label {
+  line-height: 1.4;
+  padding: 2px 0 1px;
+  color: var(--pm-cream);
+}
+.care-meta {
+  color: var(--pm-salmon);
+}
+.care-count {
+  font-family: var(--pm-serif);
+  color: var(--pm-salmon);
+}
+.care-timer i {
+  background: linear-gradient(#e0554c, #7e1a15);
+}
+.care-timer {
+  border: 1px solid var(--pm-frame);
+  background: #2a1a17;
+}
+.care-say {
+  background: #241a16;
+  border: 2px solid var(--pm-gold);
+  color: var(--pm-salmon);
+  border-radius: 3px;
+}
+.care-stop {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+/* 手機上貓咪放得很大，目標圈也跟著放大，箭頭更明顯 */
+.care-target {
+  width: 78px;
+  height: 78px;
+}
+.care-target span {
+  font-size: 1.8rem;
+}
+.care-target small {
+  font-size: 0.66rem;
+}
+.care-target .dir {
+  font-size: 1.9rem;
+  color: #ffd77a;
+  text-shadow: 0 0 3px #000, 0 0 8px #000;
+}
+@media (max-width: 640px) {
+  .care-target {
+    width: 70px;
+    height: 70px;
+  }
+}
+/* PM 介面：磚塊內的場景插畫（對應原版 PM 磚裡的大張插畫） */
+.pm-tile.has-scene {
+  min-height: 112px;
+}
+.pm-tile.has-scene .pm-scene {
+  opacity: 0.5;
+  filter: saturate(1.05) brightness(0.75);
+}
+.pm-tile.has-scene b {
+  font-size: 2.1rem;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
+}
+.pm-tile.has-scene small {
+  background: rgba(13, 10, 12, 0.78);
+}
