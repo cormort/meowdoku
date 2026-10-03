@@ -4,12 +4,14 @@ import { handleDailyCare } from "./academy.js";
 import {
   activePetKey,
   addCoins,
+  celebrateChapter,
   checkGrowthUpgrade,
   growthStage,
   petAffection,
   petCoins,
   petData,
   petMoodValue,
+  recordStoryEvent,
   petQuickStatusBarHtml,
   petStatus,
   savePetData,
@@ -918,6 +920,13 @@ function endCare(done) {
   if (done) {
     petData.careLevels = { ...petData.careLevels, [c.id]: Math.min(MAX_CARE_LV, c.lv + 1) };
     audio.playVictory();
+    // 主線任務：照顧貓咪的次數
+    try {
+      const { completed } = recordStoryEvent("care", 1);
+      if (completed) celebrateChapter(completed);
+    } catch {
+      /* 劇情系統不影響照護流程 */
+    }
   }
   savePetData();
   // 在放大畫面上顯示結果，稍等再關，避免最後一下點擊穿透到客廳

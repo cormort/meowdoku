@@ -1,12 +1,13 @@
 // pet.js — 貓咪小屋（首頁）：養成資料、客廳、圖鑑、稱號、紀念日、節日活動，以及各分頁的切換與點擊委派
 import { audio } from "../audio.js";
 import { academyPageHtml, clearMistakeBook, handleDailyCare, handleQuizAnswer, setQuizPublisher, setQuizTerm, startMistakeSession, startQuizSession, statsPageHtml } from "./academy.js";
+import { STORY, STUDY_BUFF_MINUTES, STUDY_BUFF_RATE, TALK_CHOICES, applyEvent, currentChapter, newStoryState, normalizeStory, reminderLine, storyFinished, talkLines, taskProgress, timeGreeting } from "./story.js";
 import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
 import { handleLifeEvent, sickInfo } from "./life.js";
 import { handleTripClick, tripPageHtml } from "./trip.js";
-import { $, LS, escapeHtml, hideSheet, localDay, playSkinArrivalSound } from "./ui.js";
+import { $, LS, escapeHtml, hideSheet, localDay, playSkinArrivalSound, showSheet } from "./ui.js";
 const FOODS = {
   fish: { icon: "🐟", name: "小魚乾", affection: 4, mood: 4 },
   chicken: { icon: "🍗", name: "雞肉條", affection: 7, mood: 6 },
@@ -238,6 +239,11 @@ function defaultPetData() {
     stats: {},
     status: {},
     inventory: {},
+    story: null, // 主線劇情進度（見 js/story.js）
+    studyBuff: null, // 陪讀加成：{ until }
+    lastGreetDate: null, // 每天第一次開遊戲時打招呼
+    lastPlayDate: null, // 用來計算連續上線天數
+    loginStreak: 0,
     trips: {},
     album: [],
   };
@@ -965,6 +971,166 @@ function claimSpecialDayBonus(key) {
     setTimeout(() => animatePet("pet-bounce", "今天是特別的日子！"), 250);
   }
 }
+// ===== 主線劇情（貓咪是星讀學園派來的學習夥伴） =====
+function storyStateOf() {
+  const data = petData;
+  if (!data.story) data.story = newStoryState();
+  return normalizeStory(data.story);
+}
+function mistakeBookCount() {
+  try {
+    return (JSON.parse(localStorage.getItem("meowdoku.mistakes") || "[]") || []).length;
+  } catch {
+    return 0;
+  }
+}
+// 記錄劇情事件；達標就自動進下一章並發獎勵。回傳 { story, completed }
+export function recordStoryEvent(type, n = 1) {
+  const data = petData;
+  data.story = normalizeStory(data.story);
+  const { story, completed } = applyEvent(data.story, type, n);
+  data.story = story;
+  if (completed) {
+    data.coins = (data.coins || 0) + (completed.reward.coins || 0);
+    const k = activePetKey();
+    if (k) {
+      data.affection = data.affection || {};
+      data.affection[k] = (data.affection[k] || 0) + (completed.reward.affection || 0);
+    }
+    savePetData();
+    return { story, completed };
+  }
+  savePetData();
+  return { story, completed: null };
+}
+export function celebrateChapter(completed) {
+  if (!completed) return;
+  audio.playCoin?.();
+  showSheet(
+    `🎉 完成 ${completed.title}`,
+    `<p class="story-congrats">喵嗚——！你完成了「${escapeHtml(completed.title)}」！</p>
+     <div class="quiz-rewards-row">
+       <span class="quiz-reward-pill">🪙 +${completed.reward.coins} 金幣</span>
+       <span class="quiz-reward-pill">💗 好感 +${completed.reward.affection}</span>
+       ${completed.reward.title ? `<span class="quiz-reward-pill">🏅 解鎖稱號：${escapeHtml(completed.reward.title)}</span>` : ""}
+     </div>
+     <p class="unit-hint">下一章的任務已經在首頁的「📜 主線任務」裡等你喵。</p>`,
+    "繼續加油！",
+  );
+}
+function syncStatTask(key) {
+  const s = storyStateOf();
+  const ch = currentChapter(s);
+  if (!ch || ch.task.type !== "subject_stat") return s;
+  const best = Math.max(0, ...Object.values(petStats(key)));
+  if (best < ch.task.target) return s;
+  return recordStoryEvent("subject_stat", ch.task.target).story;
+}
+function storyPanelHtml(key) {
+  const s = syncStatTask(key);
+  const ch = currentChapter(s);
+  if (!ch) {
+    return `<div class="pm-panel story-panel">
+      <div class="story-head"><b>📜 ${STORY.title}</b><span class="story-ch">全部完成 🎉</span></div>
+      <p class="unit-hint">你已經完成全部 ${s.done.length} 章，${escapeHtml(petName(key))}正式成為你的專屬學習夥伴了喵！</p>
+    </div>`;
+  }
+  const p = taskProgress(s);
+  return `<div class="pm-panel story-panel">
+    <div class="story-head"><b>📜 ${STORY.title}</b><span class="story-ch">第 ${s.chapterIndex + 1} / ${STORY.chapters.length} 章</span></div>
+    <div class="story-title">${escapeHtml(ch.title)}</div>
+    <div class="story-task">任務：${escapeHtml(p.label)}
+      <div class="story-bar"><i style="width:${p.percent}%"></i></div>
+      <span class="story-num">${p.have} / ${p.need}</span>
+    </div>
+    <button class="academy-action-btn story-btn" data-story-start="1">📖 看劇情／接任務</button>
+  </div>`;
+}
+function openStorySheet() {
+  const s = storyStateOf();
+  const ch = currentChapter(s);
+  if (!ch) {
+    showSheet("📜 主線任務", `<p>《${STORY.title}》全部章節都完成了喵！<br>接下來想練哪一科都可以，我會一直陪著你。</p>`, "好耶");
+    return;
+  }
+  const p = taskProgress(s);
+  showSheet(
+    `📜 ${ch.title}`,
+    `<div class="talk-lines">${ch.lines.map((l) => `<p>🐱 ${escapeHtml(l)}</p>`).join("")}</div>
+     <div class="story-task">任務：${escapeHtml(p.label)}（目前 ${p.have} / ${p.need}）</div>
+     <div class="unit-hint">完成後可獲得 🪙 ${ch.reward.coins} 金幣、好感 +${ch.reward.affection}${
+       ch.reward.title ? `，並解鎖稱號「${escapeHtml(ch.reward.title)}」` : ""
+     }。</div>`,
+    "接下任務！",
+  );
+}
+function openTalkSheet() {
+  const key = activePetKey();
+  const lines = talkLines({ mood: petMoodValue(key), affection: petAffection(key), hour: new Date().getHours() });
+  showSheet(
+    `💬 跟${escapeHtml(petName(key))}說話`,
+    `<div class="talk-lines">${lines.map((l) => `<p>🐱 ${escapeHtml(l)}</p>`).join("")}</div>
+     <div class="talk-choices">${TALK_CHOICES.map(
+       (c) => `<button class="academy-action-btn talk-choice" data-talk-choice="${c.id}">${c.label}</button>`,
+     ).join("")}</div>`,
+    "結束對話",
+  );
+}
+function handleTalkChoice(id) {
+  const c = TALK_CHOICES.find((x) => x.id === id);
+  if (!c) return;
+  const key = activePetKey();
+  const data = petData;
+  data.mood = data.mood || {};
+  data.affection = data.affection || {};
+  data.mood[key] = Math.min(100, (data.mood[key] || 0) + (c.mood || 0));
+  data.affection[key] = (data.affection[key] || 0) + (c.affection || 0);
+  if (c.buff) data.studyBuff = { until: Date.now() + STUDY_BUFF_MINUTES * 60000 };
+  savePetData();
+  audio.playPurr?.();
+  showPetHome();
+  showSheet(
+    `🐱 ${escapeHtml(petName(key))}`,
+    `<p class="talk-reply">${escapeHtml(c.reply)}</p>${c.buff ? `<p class="unit-hint">📖 陪讀中：${STUDY_BUFF_MINUTES} 分鐘內完成測驗，金幣 +${Math.round((STUDY_BUFF_RATE - 1) * 100)}%！</p>` : ""}`,
+    "好耶",
+  );
+}
+export function studyBuff() {
+  const data = petData;
+  const active = petData.studyBuff && petData.studyBuff.until > Date.now();
+  return active ? STUDY_BUFF_RATE : 1;
+}
+
+// 首頁貓咪說的話：每天第一次開會先打招呼（並記錄連續上線天數），再依狀態給提醒
+function catSpeechLine(key) {
+  const data = petData;
+  const today = new Date().toISOString().slice(0, 10);
+  let prefix = "";
+  if (data.lastPlayDate !== today) {
+    const yesterday = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    data.loginStreak = data.lastPlayDate === yesterday ? (data.loginStreak || 0) + 1 : 1;
+    data.lastPlayDate = today;
+    data.lastGreetDate = today;
+    prefix = `${timeGreeting()}`;
+    if (data.loginStreak >= 2) prefix += `（連續第 ${data.loginStreak} 天來看我喵！）`;
+    prefix += "　";
+    savePetData();
+  }
+  const st = petStatus(key);
+  return (
+    prefix +
+    reminderLine({
+      name: petName(key),
+      hunger: st.hunger,
+      energy: st.energy,
+      mood: petMoodValue(key),
+      mistakes: mistakeBookCount(),
+      story: storyStateOf(),
+      streak: data.loginStreak || 0,
+    })
+  );
+}
+
 export function showPetHome() {
   if (!petData.initialized) return;
   const key = activePetKey();
@@ -1017,7 +1183,7 @@ export function showPetHome() {
   const kotatsuHtml = petData.roomFurniture?.kotatsu
     ? '<img class="room-furniture-kotatsu" id="roomFurnitureKotatsu" src="./icons/room/furniture_kotatsu.webp" alt="暖被桌" title="點擊在暖被桌旁打盹">'
     : "";
-  const body = `<div class="pet-home">${petSubnavHtml("home")}${pmTopHtml(key)}${pmTilesHtml()}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pm-stage-tile"><div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">今天也要一起加油喵！</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="interaction-row room-care"><button data-life-event="care:brush">🪮 梳毛</button><button data-life-event="care:bath">🛁 洗澡</button><button data-life-event="care:nails">✂️ 剪指甲</button></div></div><div class="pm-panel pm-detail"><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
+  const body = `<div class="pet-home">${petSubnavHtml("home")}${pmTopHtml(key)}${pmTilesHtml()}${storyPanelHtml(key)}${festivalPreviewHtml(key)}${specialDayHtml(key)}<div class="pm-stage-tile"><div class="pet-room-stage${tatamiClass}" id="petRoomStage" data-interact-stage="true" title="互動客廳"><div class="pet-room-header-left"><div class="pet-room-badge" id="petRoomBadge">🏠 貓咪客廳</div><button class="room-snapshot-btn" id="roomSnapshotBtn" title="拍下貓咪生活照留念">📸 拍照留念</button></div><span class="pet-speech" id="petSpeech">${escapeHtml(catSpeechLine(key))}</span><div class="room-hearts" id="roomHearts"></div><div class="pet-room-rug"></div>${cattreeHtml}${kotatsuHtml}<div class="pet-room-cat-wrap">${birthdayDressHtml(key)}<img class="room-cat-img" id="roomCatImg" src="${getRoomCatSprite(key, roomCatPose)}" alt="${escapeHtml(petName(key))}" onerror="this.onerror=null; this.src=this.src.replace('.webp', '.png');"></div><div class="room-wand-follower" id="roomWandFollower"><img class="room-wand-img" src="./icons/room/teaser_wand.webp" alt="逗貓棒" onerror="this.onerror=null; this.src='./icons/room/teaser_wand.png';"></div><div class="room-litter-corner" id="roomLitterCorner" title="點擊清潔貓砂盆"><div class="room-litter-badge" id="roomLitterBadge">🧹 乾淨度 33%</div><div class="room-litter-tray" id="roomLitterTray"><img class="room-litter-img" src="./icons/room/litter_box.webp" alt="貓砂盆" onerror="this.onerror=null; this.src='./icons/room/litter_box.png';"><div class="room-litter-clumps" id="roomLitterClumps"></div></div></div><div class="pet-room-hint" id="petRoomHint">👋 輕觸貓咪摸摸，或點擊下方切換逗貓棒與貓砂！</div></div><div class="interaction-row room-actions"><button data-room-mode="pet" class="${roomToolMode === 'pet' ? 'active' : ''}">👋 摸摸</button><button data-room-mode="wand" class="${roomToolMode === 'wand' ? 'active' : ''}">🪶 逗貓棒</button><button data-room-mode="litter" class="${roomToolMode === 'litter' ? 'active' : ''}">🧹 鏟貓砂</button><button data-room-mode="rest" class="${roomToolMode === 'rest' ? 'active' : ''}">💤 休息</button></div><div class="interaction-row room-care"><button data-life-event="care:brush">🪮 梳毛</button><button data-life-event="care:bath">🛁 洗澡</button><button data-life-event="care:nails">✂️ 剪指甲</button><button data-pet-talk="1">💬 說說話</button></div></div><div class="pm-panel pm-detail"><div class="pet-status-card"><div class="pet-status-head"><div class="pet-name-title">${escapeHtml(petName(key))}　Lv.${level}</div><div class="growth-badges"><span class="growth-badge">${stage.icon} ${stage.name}</span><span class="title-badge" title="前往稱號牆可更換">🏅 ${primaryTitle(key)}・已裝備</span></div></div><div class="title-list">${titles
     .slice(-4)
     .map((t) => `<span class="mini-title">${t}</span>`)
     .join(
@@ -1286,6 +1452,21 @@ function onPetClick(e) {
   if (pubBtn) {
     setQuizPublisher(pubBtn.dataset.quizPub);
     setPetView("academy"); // 換教科書版本
+    return;
+  }
+  const talk = e.target.closest("[data-pet-talk]");
+  if (talk) {
+    openTalkSheet(); // 💬 說說話：依心情與好感給不同回應
+    return;
+  }
+  const talkChoice = e.target.closest("[data-talk-choice]");
+  if (talkChoice) {
+    handleTalkChoice(talkChoice.dataset.talkChoice);
+    return;
+  }
+  const storyStart = e.target.closest("[data-story-start]");
+  if (storyStart) {
+    openStorySheet(); // 📜 主線任務：看劇情／接任務
     return;
   }
   const drill = e.target.closest("[data-drill-subject]");

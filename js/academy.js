@@ -1,6 +1,6 @@
 // academy.js — 學院排課測驗（題庫來自 quizzes/，見 js/quiz.js）、能力象限與日常照護
 import { audio } from "../audio.js";
-import { activePetKey, addCoins, addPetStat, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, savePetData, setPetView, showPetHome, updatePetStatus } from "./pet.js";
+import { activePetKey, addCoins, addPetStat, celebrateChapter, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, recordStoryEvent, savePetData, setPetView, showPetHome, studyBuff, updatePetStatus } from "./pet.js";
 import { showClinic, sickInfo, startCare } from "./life.js";
 import { GRADES, PUBLISHERS, QUIZ_SUBJECTS, TERMS, TEXTBOOK_UNITS, calculateQuizResult, filterCount, gradeRewardMul, isCorrect, mistakeCounts, mistakesFor, mistakesToQuestions, pickRound, recordMistake, termInfo, unitsFor } from "./quiz.js";
 import { ACTION_POSES, getRoomCatSprite } from "./room.js";
@@ -485,6 +485,11 @@ function finishQuizSession() {
   const sub = QUIZ_SUBJECTS[subjectId];
   const key = activePetKey();
 
+  // 陪讀加成（📖 一起讀書）：30 分鐘內完成測驗，金幣 +20%
+  const buff = studyBuff();
+  const coinsGained = buff > 1 ? Math.round(res.coins * buff) : res.coins;
+  res.coins = coinsGained;
+
   addCoins(res.coins);
   addPetStat(key, subjectId, res.statGain);
   updatePetStatus(key, {
@@ -492,6 +497,14 @@ function finishQuizSession() {
     hunger: -res.hungerCost,
     fatigue: res.fatigueGain,
   });
+
+  // 主線任務：答對題數（錯題複習則記在「錯題重練答對」）
+  try {
+    const { completed } = recordStoryEvent(currentQuizState.review ? "mistake_fix" : "quiz_correct", res.correctCount);
+    if (completed) setTimeout(() => celebrateChapter(completed), 350);
+  } catch {
+    /* 劇情系統不影響測驗 */
+  }
 
   const drop = res.dropItem;
   if (drop?.type === "ticket_scrap") petData.ticketScraps = (petData.ticketScraps || 0) + drop.qty;
@@ -539,6 +552,13 @@ export function handleDailyCare(type) {
   if (type === "feed") {
     updatePetStatus(key, { hunger: 35, energy: 10 });
     audio.playCatPlace?.();
+    // 主線任務：照顧貓咪的次數
+    try {
+      const { completed } = recordStoryEvent("care", 1);
+      if (completed) celebrateChapter(completed);
+    } catch {
+      /* 劇情系統不影響餵食 */
+    }
     showPetHome();
   } else if (type === "sleep") {
     const s = petStatus(key);

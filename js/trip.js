@@ -1,7 +1,7 @@
 // trip.js — 帶貓咪出門玩：公園散步、咖啡廳、逛街、看電影、海邊、溫泉旅行
 // 每次出門拍一張相片（場景底圖 + 該品種立繪合成）收進相簿；相簿是這裡的主要收藏。
 import { audio } from "../audio.js";
-import { activePetKey, checkGrowthUpgrade, growthStage, petAffection, petCoins, petData, petMoodValue, petName, petStatus, petSubnavHtml, savePetData, updatePetHeroStats, updatePetStatus } from "./pet.js";
+import { activePetKey, celebrateChapter, checkGrowthUpgrade, growthStage, petAffection, petCoins, petData, petMoodValue, petName, petStatus, petSubnavHtml, recordStoryEvent, savePetData, updatePetHeroStats, updatePetStatus } from "./pet.js";
 import { getRoomCatSprite, setRoomCatPose } from "./room.js";
 import { $, escapeHtml, localDay, showSheet } from "./ui.js";
 const HOUR = 3600e3;
@@ -189,6 +189,13 @@ export function startTrip(id, key = activePetKey()) {
   album.push(entry);
   if (album.length > MAX_ALBUM) album.splice(0, album.length - MAX_ALBUM);
   savePetData();
+  // 主線任務：帶貓咪出門
+  try {
+    const { completed } = recordStoryEvent("trip", 1);
+    if (completed) setTimeout(() => celebrateChapter(completed), 400);
+  } catch {
+    /* 劇情系統不影響出門流程 */
+  }
   updatePetHeroStats(key);
   audio.playShutter(); // 拍照快門
   audio.setScene(t.scene); // 換成這個場景的專屬配樂

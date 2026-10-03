@@ -1259,7 +1259,7 @@ html.low-fx .board.skin-arrive {
   min-height: 28px;
 }
 .academy-action-btn {
-  background: var(--accent);
+  background: linear-gradient(#ff9d5c, #f2712c);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -4311,13 +4311,41 @@ html.low-fx .board.skin-arrive {
 }
 
 /* ============================================================
-   美少女夢工廠風格介面（PM 介面層）
-   設計依據：PC-98《Princess Maker 2》主畫面——深紅棕外框、
-   黑色內容面板、鮭紅數字、紅色計量表、藍框方格磚、米金字。
-   這一層放最後，覆蓋前面的主題；所有既有分頁共用同一套元件樣式。
+   遊戲介面層（參考《美少女夢工廠 2》的「功能與互動設計」：
+   外框式面板、數值計量表、方格磚、養成數值、對話式互動）
+   —— 但配色改為亮色繪本／學園風，不用深色。
+   深色只是可選的夜間模式（設定裡的 ☀️/🌙）。
    ============================================================ */
 :root {
   --pm-serif: "Noto Serif TC", "Songti TC", "PMingLiU", "Times New Roman", serif;
+  --pm-frame-dark: #d9a05b;
+  --pm-frame: #eab77a;
+  --pm-frame-light: #f9e2bf;
+  --pm-gold: #b8811b;
+  --pm-gold-dim: #ecd9b4;
+  --pm-black: #fffaf0;      /* 面板底色（亮） */
+  --pm-black-2: #fff2dd;    /* 面板漸層（亮） */
+  --pm-salmon: #c4562f;     /* 副色文字 */
+  --pm-cream: #4a3728;      /* 主要文字（深棕） */
+  --pm-red: #e0592f;
+  --pm-red-dark: #b23f1c;
+  --pm-blue: #3f6bb5;
+  --pm-blue-light: #6b93d6;
+  --pm-tile-blue: #e8f0fd;
+  /* 既有變數重映射 → 全站跟著換皮 */
+  --bg: #fdf3e3;
+  --card: var(--pm-black);
+  --ink: var(--pm-cream);
+  --muted: #8a7360;
+  --line: var(--pm-gold-dim);
+  --accent: var(--pm-red);
+  --accent-soft: #fdeee0;
+  --warn: #c96a1f;
+  --gold: var(--pm-gold);
+  --radius: 4px;
+}
+/* 夜間模式（可選）：回到原本的深紅棕 × 黑面板 */
+:root[data-theme="dark"] {
   --pm-frame-dark: #3b1613;
   --pm-frame: #7a2e26;
   --pm-frame-light: #b4634a;
@@ -4327,24 +4355,7 @@ html.low-fx .board.skin-arrive {
   --pm-black-2: #171114;
   --pm-salmon: #f2a9a2;
   --pm-cream: #ffe9c9;
-  --pm-red: #b8302a;
-  --pm-red-dark: #6e1a16;
-  --pm-blue: #2b3f92;
-  --pm-blue-light: #4a63c8;
   --pm-tile-blue: #1d2a63;
-  /* 既有變數重映射 → 全站跟著換皮 */
-  --bg: #1b1410;
-  --card: var(--pm-black);
-  --ink: var(--pm-cream);
-  --muted: #c9a98c;
-  --line: var(--pm-gold-dim);
-  --accent: var(--pm-red);
-  --accent-soft: #2a1a17;
-  --warn: #e0894f;
-  --gold: var(--pm-gold);
-  --radius: 4px;
-}
-:root[data-theme="dark"] {
   --bg: #12100e;
   --card: var(--pm-black);
   --ink: var(--pm-cream);
@@ -4367,7 +4378,7 @@ body {
   padding: 8px 10px;
   border: 3px solid var(--pm-frame);
   border-radius: 4px;
-  background: linear-gradient(#2a1411, #170d0b);
+  background: linear-gradient(#ffe9c9, #f7d9a8);
   box-shadow: inset 0 0 0 1px var(--pm-gold), 0 2px 0 #000;
 }
 .topbar h1 {
@@ -4378,7 +4389,7 @@ body {
   text-shadow: 0 2px 0 #000, 0 0 10px rgba(217, 178, 106, 0.35);
 }
 .topbar .toolbar button {
-  background: linear-gradient(#7a2e26, #4a1f1a);
+  background: linear-gradient(#7a2e26, #f7d9a8);
   border: 2px solid var(--pm-gold);
   color: var(--pm-cream);
   border-radius: 3px;
@@ -4400,7 +4411,7 @@ body {
 button {
   border: 2px solid var(--pm-gold);
   border-radius: 3px;
-  background: linear-gradient(#7a2e26, #4a1f1a);
+  background: linear-gradient(#7a2e26, #f7d9a8);
   color: var(--pm-cream);
   font-family: var(--pm-serif);
   letter-spacing: 0.02em;
@@ -4411,17 +4422,17 @@ button:active {
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
 }
 button.primary {
-  background: linear-gradient(#4a63c8, #2b3f92);
+  background: linear-gradient(#8faae0, #3f6bb5);
   border-color: var(--pm-cream);
   color: #fff;
 }
 button.on {
   background: linear-gradient(#d9b26a, #a8853d);
   border-color: #fff2cf;
-  color: #2a1a10;
+  color: #ffd9a3;
 }
 button:disabled {
-  background: linear-gradient(#4a3b34, #2b221e);
+  background: linear-gradient(#cbb9a2, #e8ddca);
   border-color: #7a6a55;
   color: #9b8b78;
 }
@@ -4446,12 +4457,12 @@ label {
   padding: 3px 8px;
   border: 2px solid var(--pm-frame-dark);
   border-radius: 2px;
-  background: linear-gradient(#b8302a, #6e1a16);
-  color: #ffe9c9;
+  background: linear-gradient(#ffe0b0, #f7c877);
+  color: #5a3a1a;
   font-family: var(--pm-serif);
   font-size: 0.82rem;
   letter-spacing: 0.12em;
-  text-shadow: 0 1px 0 #000;
+  text-shadow: none;
 }
 /* PM 數值面板（黑底＋鮭紅數字） */
 .pm-panel {
@@ -4466,7 +4477,7 @@ label {
   color: var(--pm-salmon);
   font-size: 1.7rem;
   letter-spacing: 0.04em;
-  text-shadow: 0 1px 0 #000;
+  text-shadow: none;
 }
 .pm-label {
   font-family: var(--pm-serif);
@@ -4496,14 +4507,14 @@ label {
   position: relative;
   height: 12px;
   border: 1px solid var(--pm-frame);
-  background: repeating-linear-gradient(90deg, #2a1a17 0 9%, #0d0a0c 9% 10%);
+  background: repeating-linear-gradient(90deg, #fdeedd 0 9%, #f5e7cf 9% 10%);
 }
 .pm-gauge i::before {
   content: "";
   position: absolute;
   inset: 1px auto 1px 1px;
   width: calc(var(--pm-pct, 0%) - 2px);
-  background: linear-gradient(#e0554c, #7e1a15);
+  background: linear-gradient(#e0554c, #d94a3d);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 /* PM 方格磚：藍框＋大圖示＋米金標籤 */
@@ -4521,8 +4532,8 @@ label {
   padding: 6px;
   border: 3px solid var(--pm-tile-blue);
   border-radius: 3px;
-  background: linear-gradient(160deg, #20161a, #0d0a0c);
-  box-shadow: inset 0 0 0 1px #4a63c8, inset 0 0 18px rgba(74, 99, 200, 0.25);
+  background: linear-gradient(160deg, #ffffff, #f5e7cf);
+  box-shadow: inset 0 0 0 1px #8faae0, inset 0 0 18px rgba(74, 99, 200, 0.25);
   color: var(--pm-cream);
   text-align: center;
   overflow: hidden;
@@ -4536,7 +4547,7 @@ label {
 .pm-tile small {
   display: block;
   padding: 2px 4px;
-  background: #2a1a17;
+  background: #fdeedd;
   border: 1px solid var(--pm-gold-dim);
   border-radius: 2px;
   color: var(--pm-cream);
@@ -4567,7 +4578,7 @@ label {
   padding: 12px;
   border: 3px solid var(--pm-frame-dark);
   border-radius: 3px;
-  background: linear-gradient(#4a63c8, #2b3f92);
+  background: linear-gradient(#8faae0, #3f6bb5);
   box-shadow: inset 0 0 0 1px var(--pm-cream), 0 3px 0 #000;
   color: #fff;
   font-family: var(--pm-serif);
@@ -4586,7 +4597,7 @@ label {
   height: 56px;
   border: 2px solid var(--pm-gold);
   border-radius: 3px;
-  background-color: #2a1a17;
+  background-color: #fdeedd;
   flex: 0 0 auto;
 }
 .pm-bubble {
@@ -4595,7 +4606,7 @@ label {
   padding: 7px 9px;
   border: 2px solid var(--pm-gold);
   border-radius: 3px;
-  background: #241a16;
+  background: #fff6e8;
   color: var(--pm-salmon);
   font-size: 0.96rem;
   min-height: 2.4em;
@@ -4635,7 +4646,7 @@ label {
   padding: 6px;
   border: 3px solid var(--pm-frame);
   border-radius: 3px;
-  background: #0d0a0c;
+  background: #f5e7cf;
   box-shadow: inset 0 0 0 1px var(--pm-gold);
 }
 .pm-detail {
@@ -4651,7 +4662,7 @@ label {
 .pet-subnav button.active {
   background: linear-gradient(#d9b26a, #a8853d);
   border-color: #fff2cf;
-  color: #2a1a10;
+  color: #ffd9a3;
 }
 .pet-status-card,
 .daily-feed,
@@ -4668,7 +4679,7 @@ label {
   font-size: 0.96rem;
   padding: 3px 6px;
   letter-spacing: 0.12em;
-  background: linear-gradient(#4a1f1a, #2a1411);
+  background: linear-gradient(#f7d9a8, #ffe9c9);
   border-color: var(--pm-gold);
   color: var(--pm-cream);
 }
@@ -4679,7 +4690,7 @@ label {
 .pet-quick-status {
   border: 2px solid var(--pm-gold-dim);
   border-radius: 3px;
-  background: #171114;
+  background: #fffdf7;
   color: var(--pm-cream);
 }
 .festival-preview span,
@@ -4695,7 +4706,7 @@ label {
 .room-litter-badge,
 .pet-room-badge {
   border: 1px solid var(--pm-gold-dim);
-  background: #241a16;
+  background: #fff6e8;
   color: var(--pm-cream);
   border-radius: 2px;
 }
@@ -4703,16 +4714,16 @@ label {
 .stat-meter,
 .care-timer {
   border: 1px solid var(--pm-frame);
-  background: repeating-linear-gradient(90deg, #2a1a17 0 9%, #0d0a0c 9% 10%);
+  background: repeating-linear-gradient(90deg, #fdeedd 0 9%, #f5e7cf 9% 10%);
   border-radius: 2px;
 }
 .affection-fill {
-  background: linear-gradient(#e0554c, #7e1a15);
+  background: linear-gradient(#e0554c, #d94a3d);
 }
 .pet-cat {
   border: 2px solid var(--pm-gold-dim);
   border-radius: 3px;
-  background: #171114;
+  background: #fffdf7;
 }
 .pet-cat.active {
   border-color: var(--pm-cream);
@@ -4727,14 +4738,14 @@ label {
   border: 3px solid var(--pm-frame);
   background:
     radial-gradient(58% 46% at 50% 60%, rgba(255, 226, 176, 0.28), rgba(255, 226, 176, 0) 72%),
-    linear-gradient(#3a2a20, #1d1512 72%);
+    linear-gradient(#f7ead2, #fff8ea 72%);
   box-shadow: inset 0 0 0 1px var(--pm-gold), inset 0 0 34px rgba(0, 0, 0, 0.6);
 }
 .pet-room-stage.wallpaper-tatami {
   background:
     radial-gradient(58% 46% at 50% 60%, rgba(255, 226, 176, 0.3), rgba(255, 226, 176, 0) 72%),
     repeating-linear-gradient(90deg, #4a3524 0 22px, #42301f 22px 44px),
-    linear-gradient(#3a2a20, #1d1512);
+    linear-gradient(#f7ead2, #fff8ea);
 }
 .pet-room-rug {
   background: radial-gradient(50% 50% at 50% 50%, rgba(184, 48, 42, 0.5), rgba(110, 26, 22, 0.12));
@@ -4743,7 +4754,7 @@ label {
 .pet-room-stage .pet-speech {
   background: #f3e3c4;
   border: 2px solid var(--pm-frame);
-  color: #3b2a17;
+  color: #fff8e6;
   border-radius: 3px;
 }
 .pet-room-hint,
@@ -4760,44 +4771,44 @@ label {
   padding: 6px 6px 0;
 }
 .trip-photo figcaption {
-  color: #3b2a17;
+  color: #fff8e6;
 }
 .academy-stat-val {
-  background: #2a1a17;
+  background: #fdeedd;
   border: 1px solid var(--pm-gold-dim);
   color: var(--pm-salmon);
   border-radius: 2px;
 }
 .gacha-rates-badge {
-  background: #3a2a12;
+  background: #fdf1d8;
   border: 1px solid var(--pm-gold);
   color: var(--pm-gold);
   border-radius: 2px;
 }
 .quiz-option-btn.correct {
-  background: #1c3a22 !important;
+  background: #e6f6ea !important;
   border-color: #5aa86a !important;
   color: var(--pm-cream) !important;
 }
 .quiz-option-btn.wrong {
-  background: #3a1a18 !important;
+  background: #fdeae6 !important;
   border-color: var(--pm-red) !important;
   color: var(--pm-cream) !important;
 }
 .quiz-feedback {
-  background: #171114 !important;
+  background: #fffdf7 !important;
   border-left: 4px solid var(--pm-gold) !important;
   color: var(--pm-cream) !important;
 }
 .pet-cat-stage,
 .pet-cat-level {
-  background: #241a16;
+  background: #fff6e8;
   border: 1px solid var(--pm-gold-dim);
   color: var(--pm-gold);
   border-radius: 2px;
 }
 .room-litter-badge.clean {
-  background: #1c3a22;
+  background: #e6f6ea;
   color: #a8e0b0;
   border-color: #5aa86a;
 }
@@ -4830,14 +4841,14 @@ label {
   color: var(--pm-salmon);
 }
 .care-timer i {
-  background: linear-gradient(#e0554c, #7e1a15);
+  background: linear-gradient(#e0554c, #d94a3d);
 }
 .care-timer {
   border: 1px solid var(--pm-frame);
-  background: #2a1a17;
+  background: #fdeedd;
 }
 .care-say {
-  background: #241a16;
+  background: #fff6e8;
   border: 2px solid var(--pm-gold);
   color: var(--pm-salmon);
   border-radius: 3px;
@@ -4907,7 +4918,7 @@ label {
   font-size: 0.84rem;
   font-weight: 800;
   color: var(--pm-cream);
-  background: #241a16;
+  background: #fff6e8;
   border: 2px solid var(--pm-frame);
   border-radius: 3px;
   cursor: pointer;
@@ -4919,7 +4930,7 @@ label {
   color: #3b1613;
   background: linear-gradient(#f6d79a, #d9a441);
   border-color: var(--pm-gold);
-  box-shadow: inset 0 0 0 1px #6b3410;
+  box-shadow: inset 0 0 0 1px #b8811b;
 }
 .quiz-grade-hint {
   font-size: 0.86rem;
@@ -4978,7 +4989,7 @@ label {
 }
 .unit-chip {
   padding: 2px 7px;
-  background: #241a16;
+  background: #fff6e8;
   border: 1px solid var(--pm-frame);
   border-radius: 3px;
   color: var(--pm-cream);
@@ -5010,7 +5021,7 @@ label {
 .mistake-block {
   margin-top: 10px;
   padding: 8px;
-  background: #241a16;
+  background: #fff6e8;
   border: 1px solid var(--pm-frame);
   border-radius: 4px;
 }
@@ -5056,3 +5067,68 @@ label {
   padding: 8px !important;
   background: var(--pm-red) !important;
 }
+
+/* 主線任務（劇情）與對話 */
+.story-panel {
+  margin: 10px 0;
+  padding: 9px 11px;
+  background: linear-gradient(var(--pm-black-2), var(--pm-black));
+  border: 2px solid var(--pm-frame);
+  border-radius: 4px;
+}
+.story-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--pm-serif);
+}
+.story-head b { color: var(--pm-gold); font-size: 0.94rem; }
+.story-ch { color: var(--pm-salmon); font-size: 0.82rem; }
+.story-title {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--pm-cream);
+}
+.story-task {
+  margin-top: 6px;
+  font-size: 0.86rem;
+  color: var(--pm-cream);
+  line-height: 1.5;
+}
+.story-bar {
+  height: 8px;
+  margin: 4px 0 2px;
+  background: #f3e3c8;
+  border: 1px solid var(--pm-frame-dark);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.story-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(#ffb066, #f2712c);
+  transition: width 0.3s ease;
+}
+.story-num { font-size: 0.82rem; color: var(--pm-salmon); }
+.story-btn { margin-top: 8px; width: 100%; }
+.talk-lines p {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.talk-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.talk-choice {
+  flex: 1 1 30%;
+  font-size: 0.86rem !important;
+  padding: 8px 6px !important;
+}
+.talk-reply { font-size: 0.9rem; line-height: 1.55; }
+.story-congrats { font-size: 0.92rem; line-height: 1.55; }
