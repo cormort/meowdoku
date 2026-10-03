@@ -157,7 +157,56 @@ def warp(gen, s, dx, dy):
     return gen.transform((SIDE, SIDE), Image.AFFINE, (s, 0, c - c * s + dx, 0, s, c - c * s + dy), resample=Image.BICUBIC, fillcolor=GREEN)
 
 
-def extract(gen, ref, crop):
+def enclosed_holes(keep):
+    """回傳被 keep 完全包圍的封閉區域（從邊界連不到的空白）。
+    背帶這種「白底＋深灰外框」的東西，外框會被摳出來、裡面鏤空，
+    看起來就只剩兩條線；把封閉區域補起來才會是實心的。"""
+    from collections import deque
+    h, w = keep.shape
+    outside = np.zeros_like(keep)
+    q = deque()
+    for y in range(h):
+        for x in (0, w - 1):
+            if not keep[y, x] and not outside[y, x]:
+                outside[y, x] = True
+                q.append((y, x))
+    for x in range(w):
+        for y in (0, h - 1):
+            if not keep[y, x] and not outside[y, x]:
+                outside[y, x] = True
+                q.append((y, x))
+    while q:
+        y, x = q.popleft()
+        for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
+            if 0 <= ny < h and 0 <= nx < w and not keep[ny, nx] and not outside[ny, nx]:
+                outside[ny, nx] = True
+                q.append((ny, nx))
+    return ~keep & ~outside
+
+
+def morph_close(mask, r):
+    """方形結構元素的膨脹再侵蝕：補掉背帶中間被上衣顏色吃掉的破洞。
+    AI 畫的背帶在壓到藍上衣的地方會吃進一點藍（彩度超過門檻）→ 摳圖時中間被挖空，
+    看起來像兩條斷掉的線；先膨脹再侵蝕可以把這種窄破洞接起來。"""
+    m = mask.copy()
+    for _ in range(r):
+        d = m.copy()
+        d[1:, :] |= m[:-1, :]
+        d[:-1, :] |= m[1:, :]
+        d[:, 1:] |= m[:, :-1]
+        d[:, :-1] |= m[:, 1:]
+        m = d
+    for _ in range(r):
+        e = m.copy()
+        e[1:, :] &= m[:-1, :]
+        e[:-1, :] &= m[1:, :]
+        e[:, 1:] &= m[:, :-1]
+        e[:, :-1] &= m[:, 1:]
+        m = e
+    return m
+
+
+def extract(gen, ref, crop, fill_holes=False):
     a = np.asarray(gen, np.int16)
     rf = np.asarray(ref, np.int16)
     sat = a.max(-1) - a.min(-1)
@@ -188,6 +237,9 @@ def extract(gen, ref, crop):
                         q.append((ny, nx))
     big = max(sizes)
     keep = np.isin(lab, [i for i, n in enumerate(sizes) if n > big * 0.02 and i])
+    if fill_holes:
+        keep = morph_close(keep, 6)
+        keep = keep | enclosed_holes(keep)
     lum = (a[..., 0] * 0.3 + a[..., 1] * 0.59 + a[..., 2] * 0.11).clip(0, 255).astype(np.uint8)
     alpha = Image.fromarray((keep * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))
     out = Image.merge("RGBA", (Image.fromarray(lum),) * 3 + (alpha,))
@@ -282,7 +334,7 @@ def process(kind, args):
         if gen.size != (SIDE, SIDE):
             gen = gen.resize((SIDE, SIDE), Image.LANCZOS)
         s, dx, dy = register(gen, ref, brown=kind in WITH_HAIR)
-        img = extract(warp(gen, s, dx, dy), ref, crop)
+        img = extract(warp(gen, s, dx, dy), ref, crop, fill_holes=(kind == "acc" and iid == "backpack"))
         if kind == "acc":
             save_acc(iid, img, out_dir)
         else:

@@ -6,6 +6,8 @@
 // 用法：~/.local/bin/ego-browser nodejs < tools/gen_avatar_redraw.js
 // 只想重畫其中一類就改 RUN；已經有輸出的項目會跳過，不滿意哪一張就刪掉那張再跑一次。
 const fs = await import("node:fs");
+// 要跑哪些類別。ego-browser 不繼承自訂環境變數，所以直接改這一行：
+// 平常三類都要 ["hair", "acc", "hat"]；只重畫配件那一次是暫時改成 ["acc"]。
 const RUN = ["hair", "acc", "hat"];
 const LOG = "/tmp/avatar_gen/log_redraw.txt";
 fs.mkdirSync("/tmp/avatar_gen", { recursive: true });
@@ -94,15 +96,28 @@ for (const it of ITEMS) {
     await page.waitForLoadState();
     await wait(7000);
     await newChat();
-    // 附上參考圖
+    // 附上參考圖：2026-10 的 Gemini 介面沒有常駐的 input[type=file]，
+    // 要先按輸入框左邊的「上傳與工具」（aria-label）開啟選單，input 才會出現在 DOM，
+    // 出現後直接把檔案塞進圖片 input（accept="image/*"），不必碰原生檔案選擇視窗。
     let attached = false;
     try {
-      const inputs = await page.evaluate(() => document.querySelectorAll('input[type=file]').length);
-      if (inputs > 0) {
-        await page.setInputFiles("input[type=file]", [it.ref]);
-        await wait(4000);
-        attached = await page.evaluate(() => !!document.querySelector('img[src^="blob:"], img[src^="data:image"]'));
+      await page.click('loc=role:button[name="上傳與工具"]', { label: "open upload menu" });
+      await wait(1500);
+      const n = await page.evaluate(
+        () => document.querySelectorAll('input[type=file][accept="image/*"]').length,
+      );
+      if (n > 0) {
+        await page.setInputFiles('input[type=file][accept="image/*"]', [it.ref]);
+        // 上傳＋產生縮圖要一點時間；只等一次容易誤判成「沒附上」（曾等 6s 失敗、8s 成功）
+        for (let i = 0; i < 10; i++) {
+          await wait(3000);
+          attached = await page.evaluate(() => !!document.querySelector('img[src^="blob:"], img[src^="data:image"]'));
+          if (attached) break;
+        }
+      } else {
+        log(`${it.key} 找不到圖片 input（選單沒開？）`);
       }
+      await page.keyboard.press("Escape"); // 收掉可能還開著的選單
     } catch (e) {
       log(`${it.key} 附件失敗 ${String(e).slice(0, 60)}`);
     }
@@ -124,22 +139,37 @@ for (const it of ITEMS) {
       el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", bubbles: true }));
     });
     log(`${it.key} 已送出`);
+    // 挑圖只在「模型回覆」區塊裡找：送出後 Gemini 會把使用者訊息裡附的參考圖重繪成新的 blob 圖，
+    // 那份會混進 document.images，取 pop() 就可能存到參考圖本身（看起來像「AI 沒改」）。
     let got = null;
     for (let i = 0; i < 60; i++) {
       await wait(4000);
       const imgs = await page.evaluate(
-        (seen) =>
-          [...document.querySelectorAll("img")]
-            .filter((i) => (i.src.startsWith("blob:") || i.src.startsWith("data:image")) && i.naturalWidth >= 512 && !seen.includes(i.src))
-            .map((i) => ({ src: i.src, w: i.naturalWidth, h: i.naturalHeight })),
+        (seen) => {
+          const inReply = [...document.querySelectorAll("model-response img")];
+          const pool = inReply.length ? inReply : [...document.querySelectorAll("img")];
+          return {
+            reply: inReply.length,
+            imgs: pool
+              .filter(
+                (i) =>
+                  (i.src.startsWith("blob:") || i.src.startsWith("data:image")) &&
+                  i.naturalWidth >= 512 &&
+                  !seen.includes(i.src),
+              )
+              .map((i) => ({ w: i.naturalWidth, h: i.naturalHeight })),
+            text: (document.querySelector("model-response")?.innerText || "").replace(/\s+/g, " ").slice(0, 120),
+          };
+        },
         before,
       );
-      if (imgs.length) {
-        log(`${it.key} 出圖 ${imgs[0].w}x${imgs[0].h}（${(i + 1) * 4}s）`);
-        got = imgs[0];
+      if (imgs.imgs.length) {
+        log(`${it.key} 出圖 ${imgs.imgs[0].w}x${imgs.imgs[0].h}（${(i + 1) * 4}s, 回覆區圖 ${imgs.imgs.length} 張）`);
+        if (!imgs.reply) log(`${it.key} ⚠ 找不到 model-response 區塊，退回全頁找圖`);
+        got = imgs.imgs[0];
         break;
       }
-      if (i % 4 === 3) log(`${it.key} 等待 ${(i + 1) * 4}s`);
+      if (i % 4 === 3) log(`${it.key} 等待 ${(i + 1) * 4}s｜回覆文字: ${imgs.text}`);
     }
     if (!got) {
       log(`${it.key} ❌ 沒出圖`);
@@ -147,7 +177,16 @@ for (const it of ITEMS) {
     }
     await wait(12000);
     const b64 = await page.evaluate(async (seen) => {
-      const img = [...document.querySelectorAll("img")].filter((i) => (i.src.startsWith("blob:") || i.src.startsWith("data:image")) && i.naturalWidth >= 512 && !seen.includes(i.src)).pop();
+      const inReply = [...document.querySelectorAll("model-response img")];
+      const pool = inReply.length ? inReply : [...document.querySelectorAll("img")];
+      const img = pool
+        .filter(
+          (i) =>
+            (i.src.startsWith("blob:") || i.src.startsWith("data:image")) &&
+            i.naturalWidth >= 512 &&
+            !seen.includes(i.src),
+        )
+        .pop();
       if (!img) return null;
       await img.decode();
       const c = document.createElement("canvas");
