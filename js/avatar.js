@@ -202,13 +202,14 @@ export function headClip(gradeOrTerm) {
   return `polygon(0 0,100% 0,100% ${p(n)},${p(r)} ${p(n)},${u.join(",")},${p(l)} ${p(n)},0 ${p(n)})`;
 }
 
-// 回傳 [{ file, color, alpha, tint, clip }]，順序＝疊圖順序（背包在最底、臉已含在 base 裡）
+// 回傳 [{ file, color, alpha, tint, clip }]，順序＝疊圖順序（背包在最底、後髮在身體後面、臉已含在 base 裡）
 export function avatarLayers(input, gradeOrTerm = 4) {
   const a = normalizeAvatar(input);
   const stage = avatarStage(gradeOrTerm);
   const out = [];
   const push = (file, color, alpha, tint = true, clip = "") => out.push({ file, color, alpha: alpha ?? 1, tint, part: file, clip });
   if (a.accessory === "backpack") push("acc_backpack", ACC_COLOR.backpack, 0.94);
+  push(`hairback_${a.hair}`, partValue("hairColor", a.hairColor, "#3a2f2a")); // 後髮在身體後面，臉和脖子蓋住中間
   push(`base_${stage}`, "#ffffff", 1, false); // 基本身體自帶膚色，不上色（依年級換身體）
   push(`bottom_${a.bottom}`, partValue("bottom", a.bottom, "#4a6fa5"));
   push(`shoes_${a.shoes}`, partValue("shoes", a.shoes, "#eeeeee"));

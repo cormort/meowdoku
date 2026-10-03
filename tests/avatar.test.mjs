@@ -36,21 +36,23 @@ check(avatarLabel(defaultAvatar()).includes("牛仔褲"), "造型描述包含褲
 
 console.log("=== 圖層順序 ===");
 const files = avatarLayers({ ...defaultAvatar(), top: "sailor", hat: "straw", accessory: "glasses" }).map((l) => l.file);
-check(files[0] === "base_g4", "第一層是基本身體（預設四年級）");
+check(files[0] === "hairback_bob" && files[1] === "base_g4", "最底是後髮，接著是基本身體（預設四年級）");
 check(
-  files.join(",") === "base_g4,bottom_jeans,shoes_sneaker,top_sailor,base_g4,hair_bob,hat_straw,acc_glasses",
+  files.join(",") === "hairback_bob,base_g4,bottom_jeans,shoes_sneaker,top_sailor,base_g4,hair_bob,hat_straw,acc_glasses",
   `疊圖順序正確（${files.join(" → ")}）`,
 );
 check(files.indexOf("top_sailor") > files.indexOf("bottom_jeans"), "上衣蓋在褲裙之上");
 check(files.indexOf("hair_bob") > files.indexOf("top_sailor"), "頭髮疊在上衣之上");
 const withPack = avatarLayers({ ...defaultAvatar(), accessory: "backpack" }).map((l) => l.file);
-check(withPack[0] === "acc_backpack" && withPack[1] === "base_g4", "背包畫在身體後面");
+check(withPack[0] === "acc_backpack" && withPack[1] === "hairback_bob" && withPack[2] === "base_g4", "背包畫在後髮和身體後面");
 check(!avatarLayers(defaultAvatar()).some((l) => l.file.startsWith("hat_")), "沒戴帽子時不會有帽子圖層");
 
 console.log("=== 上色 ===");
 const layers = avatarLayers({ ...defaultAvatar(), hairColor: "pink", top: "hoodie" });
 check(layers.find((l) => l.file.startsWith("base_g")).tint === false, "基本身體不上色（自帶膚色，改用濾鏡）");
 check(layers.find((l) => l.file.startsWith("hair_")).color === "#e88aa8", "頭髮帶出髮色");
+check(layers.find((l) => l.file.startsWith("hairback_")).color === "#e88aa8", "後髮和前髮同色");
+check(stageTransform("hairback_bob", 9).sx === stageTransform("hair_bob", 9).sx && stageTransform("hairback_bob", 9).dy === stageTransform("hair_bob", 9).dy, "後髮跟著頭變形，和前髮對齊");
 check(layers.find((l) => l.file.startsWith("top_")).color === "#6fa8dc", "上衣帶出衣服色");
 check(layers.filter((l) => !l.file.startsWith("base_g")).every((l) => l.tint), "除了身體以外每一層都會上色");
 check(layers.every((l) => l.alpha > 0 && l.alpha <= 1), "每層都有合法透明度");
@@ -90,12 +92,12 @@ for (const t of AVATAR_PARTS.top) {
   check(Math.abs(at(x, x.oy) - 202) < 0.01 && at(x, box) >= 356 - 0.01, `上衣「${t.name}」對齊領口線、下襬蓋過腰頭`);
 }
 const big = avatarLayers(defaultAvatar(), 9).map((l) => l.file);
-check(big[0] === "base_g9", "九年級用 base_g9 身體");
+check(big[1] === "base_g9", "九年級用 base_g9 身體");
 check(avatarLayers(defaultAvatar(), "5-1").some((l) => l.file === "base_g5"), "冊次 5-1 用 base_g5 身體");
 
 console.log("=== 圖層檔案都在 ===");
 const needed = new Set(GROWTH_GRADES.map((g) => `base_g${g}`));
-for (const hair of AVATAR_PARTS.hair) needed.add(`hair_${hair.id}`);
+for (const hair of AVATAR_PARTS.hair) needed.add(`hair_${hair.id}`).add(`hairback_${hair.id}`);
 for (const t of AVATAR_PARTS.top) needed.add(`top_${t.id}`);
 for (const b of AVATAR_PARTS.bottom) needed.add(`bottom_${b.id}`);
 for (const sh of AVATAR_PARTS.shoes) needed.add(`shoes_${sh.id}`);
@@ -103,13 +105,13 @@ for (const h of AVATAR_PARTS.hat) if (h.id !== "none") needed.add(`hat_${h.id}`)
 for (const ac of AVATAR_PARTS.accessory) if (ac.id !== "none") needed.add(`acc_${ac.id}`);
 const missing = [...needed].filter((f) => !existsSync(join(ROOT, avatarLayerUrl(f))));
 check(missing.length === 0, `每個可選項目都有對應的 PNG（缺 ${missing.length} 張${missing.length ? ": " + missing.join(", ") : ""}）`);
-check(needed.size === 38, `需要的圖層共 ${needed.size} 張（六個年級身體 + 衣服配件）`);
+check(needed.size === 44, `需要的圖層共 ${needed.size} 張（六個年級身體 + 前後髮 + 衣服配件）`);
 
 console.log("=== 角色輸出 ===");
 const html = renderAvatar({ ...defaultAvatar(), top: "sailor", hat: "straw" }, { size: 200 });
 check(html.startsWith('<div class="avatar-png"'), "輸出是可縮放的 div 容器");
 const count = (html.match(/class="av-layer"/g) || []).length;
-check(count === 7, `七個圖層疊起來（身體／褲／鞋／上衣／頭脖子／髮／帽，實際 ${count}）`);
+check(count === 8, `八個圖層疊起來（後髮／身體／褲／鞋／上衣／頭脖子／前髮／帽，實際 ${count}）`);
 const order = avatarLayers({ ...defaultAvatar(), top: "sailor" }, 7);
 const headIdx = order.findIndex((l) => l.clip);
 check(
