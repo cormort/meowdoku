@@ -4,17 +4,25 @@
 //   臉和脖子會蓋住中間，只有頭的兩側、髮絲縫隙、脖子兩旁露出來。
 // - 前髮 hair_<id>.png：補上頭頂沒蓋到的光頭（馬尾頭頂比頭髮大一圈），
 //   短髮、西瓜皮清掉下緣垂到臉頰的細雜線，短髮剪掉捲到右臉頰的髮尾。
-// 用法：node tools/split_avatar_hair.mjs（需要 ImageMagick；請對原始前髮跑一次，
-//   髮尾漸淡那步重跑會再淡一次）
+// 用法：node tools/split_avatar_hair.mjs [--fresh] [--dir 資料夾] [id ...]（需要 ImageMagick）
+//   --fresh：前髮是 avatar_hair.py 剛摳出來的新圖，跳過只針對舊圖的修補（清雜線、剪髮尾）
+//   --dir：讀寫別的資料夾（預覽用；身體圖仍讀 icons/avatar/）
+//   沒有 --fresh 時請對原始前髮跑一次，髮尾漸淡那步重跑會再淡一次
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const DIR = fileURLToPath(new URL("../icons/avatar/", import.meta.url));
+const AV = fileURLToPath(new URL("../icons/avatar/", import.meta.url));
+const argv = process.argv.slice(2);
+const FRESH = argv.includes("--fresh");
+const dirAt = argv.indexOf("--dir");
+const DIR = dirAt >= 0 ? argv[dirAt + 1].replace(/\/?$/, "/") : AV;
+const ONLY = argv.filter((a, i) => !a.startsWith("--") && !(dirAt >= 0 && i === dirAt + 1));
 const W = 512, H = 512;
 const read = (f) => execFileSync("convert", [f, "-depth", "8", "rgba:-"], { maxBuffer: 1 << 24 });
 const write = (f, buf) => execFileSync("convert", ["-size", `${W}x${H}`, "-depth", "8", "rgba:-", f], { input: buf });
 
 // 後髮在頭部高度要左右填滿到哪一列（g4 座標）：馬尾、雙馬尾只填到太陽穴，辮子之間保持鏤空
+// 新髮型沒列在這裡時，填到頭髮最下緣（短髮、鮑伯頭類）
 const BACK_FILL_TO = { short: 193, bob: 217, twin: 140, pony: 140, curly: 195, bowl: 169 };
 const CAP_LINE = 95; // 這條線以上，頭頂沒被頭髮蓋到的地方補成頭髮
 const STRAY_FROM = 140; // 這條線以下清掉細雜線（只對 short、bowl）
@@ -51,21 +59,21 @@ function fillHoles(mask) {
   return out.map((v) => (v ? 0 : 1));
 }
 
-const base = read(`${DIR}base_g4.png`);
-for (const id of Object.keys(BACK_FILL_TO)) {
+const base = read(`${AV}base_g4.png`);
+for (const id of ONLY.length ? ONLY : Object.keys(BACK_FILL_TO)) {
   const file = `${DIR}hair_${id}.png`;
   const px = read(file);
   const A = (i) => px[i * 4 + 3];
 
   // ── 前髮：清細雜線（opening 半徑 2，只在 STRAY_FROM 以下）──
   let fixed = 0;
-  if (STRAY.has(id)) {
+  if (!FRESH && STRAY.has(id)) {
     const solid = new Uint8Array(W * H);
     for (let i = 0; i < W * H; i++) solid[i] = A(i) >= 128 ? 1 : 0;
     const keep = grow(grow(solid, 2, 0), 2 + 2, 1);
     for (let i = STRAY_FROM * W; i < W * H; i++) if (A(i) && !keep[i]) { px[i * 4 + 3] = 0; fixed++; }
   }
-  const trim = TRIM[id];
+  const trim = !FRESH && TRIM[id];
   if (trim) {
     for (let y = trim.y0 - trim.fade; y < H; y++)
       for (let x = trim.x0; x <= trim.x1; x++) {
@@ -100,7 +108,8 @@ for (const id of Object.keys(BACK_FILL_TO)) {
   const sil = new Uint8Array(W * H);
   for (let i = 0; i < W * H; i++) sil[i] = A(i) >= 100 ? 1 : 0;
   const back = fillHoles(sil);
-  for (let y = 0; y <= BACK_FILL_TO[id]; y++) {
+  const fillTo = BACK_FILL_TO[id] ?? H - 1;
+  for (let y = 0; y <= fillTo; y++) {
     let l = -1, r = -1;
     for (let x = 0; x < W; x++) if (back[y * W + x]) { if (l < 0) l = x; r = x; }
     if (l >= 0) for (let x = l; x <= r; x++) back[y * W + x] = 1;
