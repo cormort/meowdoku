@@ -96,6 +96,57 @@ export function randomAvatar(rng = Math.random) {
   return { ...defaultAvatar(), hair: pick("hair"), hairColor: pick("hairColor"), top: pick("top"), bottom: pick("bottom"), shoes: pick("shoes"), hat: pick("hat"), accessory: pick("accessory"), skin: pick("skin") };
 }
 
+// ── 隨年級長大 ──
+// 每個年級一個身體（base_g4 … base_g9）；衣服共用同一組圖層，
+// 依各階段量到的頭寬／軀幹長／腿長縮放並平移，所以不用為每個年級重畫衣服。
+export const GROWTH_GRADES = [4, 5, 6, 7, 8, 9];
+
+// 各階段量測值（相對於 512x512 畫布的比例）：
+// headTop/headW = 頭頂與頭寬；shoulder/hip/feet = 肩、腰、腳底
+export const STAGE_METRICS = {
+  g4: { label: "四年級", headTop: 0.113, headW: 0.268, shoulder: 0.42, hip: 0.775, feet: 0.963 },
+  g5: { label: "五年級", headTop: 0.113, headW: 0.174, shoulder: 0.328, hip: 0.775, feet: 0.963 },
+  g6: { label: "六年級", headTop: 0.113, headW: 0.205, shoulder: 0.348, hip: 0.775, feet: 0.963 },
+  g7: { label: "七年級", headTop: 0.113, headW: 0.158, shoulder: 0.305, hip: 0.775, feet: 0.963 },
+  g8: { label: "八年級", headTop: 0.113, headW: 0.137, shoulder: 0.291, hip: 0.775, feet: 0.963 },
+  g9: { label: "九年級", headTop: 0.113, headW: 0.158, shoulder: 0.305, hip: 0.775, feet: 0.963 },
+};
+const REF_STAGE = "g4"; // 衣服圖層是以這個階段的身體對齊的
+
+export function gradeOfTerm(term) {
+  const g = parseInt(String(term || "").split("-")[0], 10);
+  return Number.isFinite(g) ? Math.min(9, Math.max(4, g)) : 4;
+}
+export function avatarStage(gradeOrTerm) {
+  const g = typeof gradeOrTerm === "string" && gradeOrTerm.includes("-") ? gradeOfTerm(gradeOrTerm) : Number(gradeOrTerm);
+  const g2 = Number.isFinite(g) ? Math.min(9, Math.max(4, g)) : 4;
+  return `g${g2}`;
+}
+export function stageLabel(gradeOrTerm) {
+  return STAGE_METRICS[avatarStage(gradeOrTerm)]?.label || "";
+}
+// 依階段算出每種圖層要縮放／平移多少（相對於衣服圖層的參考階段）
+export function stageTransform(part, gradeOrTerm) {
+  const st = STAGE_METRICS[avatarStage(gradeOrTerm)] || STAGE_METRICS[REF_STAGE];
+  const ref = STAGE_METRICS[REF_STAGE];
+  const key = part.startsWith("hat") || part.startsWith("acc_") || part.startsWith("hair") ? "head" : part;
+  const ratio = (a, b) => (b ? a / b : 1);
+  const H = 512;
+  if (key === "head") {
+    return { scale: ratio(st.headW, ref.headW), dy: (st.headTop - ref.headTop) * H };
+  }
+  if (part.startsWith("top")) {
+    return { scale: ratio(st.hip - st.shoulder, ref.hip - ref.shoulder), dy: (st.shoulder - ref.shoulder) * H };
+  }
+  if (part.startsWith("bottom")) {
+    return { scale: ratio(st.feet - st.hip, ref.feet - ref.hip), dy: (st.hip - ref.hip) * H };
+  }
+  if (part.startsWith("shoes")) {
+    return { scale: ratio(st.feet - st.hip, ref.feet - ref.hip), dy: (st.feet - ref.feet) * H };
+  }
+  return { scale: 1, dy: 0 };
+}
+
 // ── 角色繪製（PNG 分層）──
 // 素材在 icons/avatar/：Nano Banana 重繪的彩色 PNG（512x512 對齊，白色／灰階底稿），
 // 顏色在遊戲裡用 mix-blend-mode: multiply 疊上去，所以一種形狀一張圖、顏色可換、AI 的陰影保留。
@@ -118,12 +169,13 @@ export function avatarLayerSrc(file) {
 }
 
 // 回傳 [{ file, color, alpha, tint }]，順序＝疊圖順序（背包在最底、臉已含在 base 裡）
-export function avatarLayers(input) {
+export function avatarLayers(input, gradeOrTerm = 4) {
   const a = normalizeAvatar(input);
+  const stage = avatarStage(gradeOrTerm);
   const out = [];
-  const push = (file, color, alpha, tint = true) => out.push({ file, color, alpha: alpha ?? 1, tint });
+  const push = (file, color, alpha, tint = true) => out.push({ file, color, alpha: alpha ?? 1, tint, part: file });
   if (a.accessory === "backpack") push("acc_backpack", ACC_COLOR.backpack, 0.94);
-  push("base", "#ffffff", 1, false); // 基本身體自帶膚色，不上色
+  push(`base_${stage}`, "#ffffff", 1, false); // 基本身體自帶膚色，不上色（依年級換身體）
   push(`bottom_${a.bottom}`, partValue("bottom", a.bottom, "#4a6fa5"));
   push(`shoes_${a.shoes}`, partValue("shoes", a.shoes, "#eeeeee"));
   push(`top_${a.top}`, partValue("top", a.top, "#ffffff"));
@@ -133,20 +185,33 @@ export function avatarLayers(input) {
   return out;
 }
 
-export function renderAvatar(input, { size = 150 } = {}) {
+export function renderAvatar(input, { size = 150, grade = 4 } = {}) {
   const a = normalizeAvatar(input);
-  const layers = avatarLayers(a)
+  const stage = avatarStage(grade);
+  const layers = avatarLayers(a, grade)
     .map((l) => {
       const url = avatarLayerSrc(l.file);
-      const filter = l.file === "base" ? SKIN_FILTER[a.skin] || "" : "";
+      const isBase = l.file.startsWith("base_");
+      const filter = isBase ? SKIN_FILTER[a.skin] || "" : "";
+      // 依年級把衣服縮放／平移（頭髮、配件跟著頭；上衣跟肩；褲裙跟腰；鞋子跟腳）
+      let tf = "";
+      if (!isBase) {
+        const part = l.file.replace(/^(base_|hair_|top_|bottom_|shoes_|hat_|acc_)/, (m) => m);
+        const t = stageTransform(l.file, grade);
+        const origin = l.file.startsWith("shoes") ? "50% 100%" : "50% 0%";
+        if (t.scale !== 1 || t.dy !== 0) {
+          const dyPct = (t.dy / 512) * 100;
+          tf = ` style="transform-origin:${origin};transform:translateY(${dyPct.toFixed(2)}%) scale(${t.scale.toFixed(3)})"`;
+        }
+      }
       const img = `<img class="av-img" src="${url}" alt=""${filter ? ` style="filter:${filter}"` : ""}>`;
       const tint = l.tint
         ? `<i class="av-tint" style="background:${l.color};opacity:${l.alpha};-webkit-mask-image:url(${url});mask-image:url(${url})"></i>`
         : "";
-      return `<span class="av-layer">${img}${tint}</span>`;
+      return `<span class="av-layer"${tf}>${img}${tint}</span>`;
     })
     .join("");
-  return `<div class="avatar-png" style="--av-w:${size}px" role="img" aria-label="我的角色：${avatarLabel(a)}">${layers}</div>`;
+  return `<div class="avatar-png" style="--av-w:${size}px" data-stage="${stage}" role="img" aria-label="我的角色（${stageLabel(grade)}）：${avatarLabel(a)}">${layers}</div>`;
 }
 
 // 造型的完整描述（給 UI 顯示目前穿什麼）

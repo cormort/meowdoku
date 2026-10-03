@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = Path("/tmp/avatar_gen")
 OUT = ROOT / "icons" / "avatar"
 W = H = 512
-TREAT = 30  # 白底判斷容差
+TREAT = 10  # 白底判斷容差（要緊一點，否則白色衣服會被一起吃掉）
 CANVAS_INK = 8  # 這條線以下的亮度當成「封閉白區」挖掉
 
 # 圖板 → (欄數, 列數, [(格號, 檔名)], 是否挖掉封閉白區)
@@ -35,10 +35,10 @@ SHEET_ALIAS = {"accessories": ["accessories", "acc"]}
 # 以「量到的身體」對齊：head 是頭（肩膀以上）、shoulder 是脖子的位子、
 # feet 是腳底。w 是相對頭寬的比例，dy 是相對身體高度的微調。
 ANCHORS = {
-    "hair": {"line": "head_top", "dy": -0.09, "w": 1.04},
-    "hat": {"line": "head_top", "dy": -0.15, "w": 1.12},
-    "top": {"line": "shoulder", "dy": -0.07, "w": 1.02},
-    "bottom": {"line": "hip", "dy": -0.12, "w": 0.92},
+    "hair": {"line": "head_top", "dy": -0.05, "w": 1.06},
+    "hat": {"line": "head_top", "dy": -0.12, "w": 1.14},
+    "top": {"line": "shoulder", "dy": -0.03, "w": 1.02},
+    "bottom": {"line": "hip", "dy": -0.02, "w": 0.92},
     "shoes": {"line": "feet", "dy": 0.00, "w": 0.66},
     "acc_glasses": {"line": "eye", "dy": -0.01, "w": 0.64},
     "acc_scarf": {"line": "neck", "dy": 0.03, "w": 0.92},
@@ -73,7 +73,7 @@ def measure(canvas):
         "head_top": top, "head_h": head_h, "head_w": head_w,
         "neck": neck_y, "shoulder": neck_y + int(body_h * 0.02),
         "eye": top + int(head_h * 0.62), "chest": neck_y + int(body_h * 0.16),
-        "hip": top + int(body_h * 0.60), "feet": bottom,
+        "hip": top + int(body_h * 0.78), "feet": bottom,
         "cx": (rows[top][0] + rows[top][1]) // 2,
     }
 
@@ -188,9 +188,76 @@ def cut_white(im, kill_holes=False):
                 if max(c) - min(c) > 22:  # 有彩度 → 是彩色底不是線稿
                     for x, y in comp:
                         alpha[y * w + x] = 0
+    # AI 有時會在格子裡畫一張底色卡（白或淡彩、大、接近矩形）→ 清掉
+    seen3 = bytearray(w * h)
+    for sy in range(0, h, 2):
+        for sx in range(0, w, 2):
+            i = sy * w + sx
+            if seen3[i] or bg[i]:
+                continue
+            c0 = px[sx, sy]
+            comp, dq = [], deque([(sx, sy)])
+            seen3[i] = 1
+            minx = maxx = sx
+            miny = maxy = sy
+            while dq:
+                x, y = dq.popleft()
+                comp.append((x, y))
+                minx, maxx = min(minx, x), max(maxx, x)
+                miny, maxy = min(miny, y), max(maxy, y)
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < w and 0 <= ny < h:
+                        j = ny * w + nx
+                        if not seen3[j] and not bg[j] and px[nx, ny][0] > 225 and px[nx, ny][1] > 225 and px[nx, ny][2] > 225 and _close(px[nx, ny], c0, 22):
+                            seen3[j] = 1
+                            dq.append((nx, ny))
+            area = len(comp)
+            box_area = max(1, (maxx - minx + 1) * (maxy - miny + 1))
+            span_x = (maxx - minx + 1) / w
+            span_y = (maxy - miny + 1) / h
+            uniform = all(abs(v - c0[k]) < 26 for x, y in comp[:: max(1, len(comp) // 400)] for k, v in enumerate(px[x, y]))
+            if area > 8000 and area / box_area > 0.82 and span_x > 0.62 and span_y > 0.62 and uniform:
+                for x, y in comp:
+                    alpha[y * w + x] = 0
     out = im.convert("RGBA")
     out.putalpha(Image.frombytes("L", (w, h), bytes(alpha)).filter(ImageFilter.GaussianBlur(0.5)))
     return out
+
+
+def drop_pastel_card(layer):
+    """去掉圖層裡殘留的淡彩底卡（例如淡藍／淡紫矩形）：衣服本身是白／灰（幾乎無彩度），
+    所以「又亮又有彩度」的像素就是卡片。取中位數顏色後整片清成透明。"""
+    rgba = layer.convert("RGBA")
+    a = rgba.getchannel("A")
+    px = rgba.load()
+    w, h = rgba.size
+    cand = []
+    for y in range(0, h, 2):
+        for x in range(0, w, 2):
+            if a.getpixel((x, y)) < 200:
+                continue
+            r, g, b = px[x, y][:3]
+            lo, hi = min(r, g, b), max(r, g, b)
+            if hi > 200 and 6 < (hi - lo) < 70:
+                cand.append((r, g, b, x, y))
+    if len(cand) * 4 < 5000:
+        return layer
+    rs = sorted(c[0] for c in cand)
+    gs = sorted(c[1] for c in cand)
+    bs = sorted(c[2] for c in cand)
+    mid = (rs[len(rs) // 2], gs[len(gs) // 2], bs[len(bs) // 2])
+    alpha = a.copy()
+    ap = alpha.load()
+    removed = 0
+    for r, g, b, x, y in cand:
+        if abs(r - mid[0]) < 20 and abs(g - mid[1]) < 20 and abs(b - mid[2]) < 20:
+            ap[x, y] = 0
+            removed += 1
+    if removed * 4 > 5000:
+        rgba.putalpha(alpha)
+        return rgba
+    return layer
 
 
 def trim(im):
@@ -213,20 +280,27 @@ def find_sheet(key):
 
 def fit_base(base):
     """把基本身體放進畫布：高度佔 94%，水平置中。"""
-    r = (H * 0.94) / base.height
+    r = (H * 0.86) / base.height
     b = base.resize((max(1, int(base.width * r)), max(1, int(base.height * r))), Image.LANCZOS)
     canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    canvas.alpha_composite(b, ((W - b.width) // 2, int(H * 0.03)))
+    canvas.alpha_composite(b, ((W - b.width) // 2, int(H * 0.11)))
     return canvas
 
 
 def place(item, sprite, m):
     key = item if item in ANCHORS else item.rsplit("_", 1)[0]
     a = ANCHORS[key]
-    r = (m["head_w"] * a["w"]) / sprite.width
+    if key == "top":
+        target_h = (m["hip"] - m["shoulder"]) * 1.18
+        r = target_h / sprite.height
+    elif key == "bottom":
+        target_h = (m["feet"] - m["hip"]) * 1.02
+        r = target_h / sprite.height
+    else:
+        r = (m["head_w"] * a["w"]) / sprite.width
     sprite = sprite.resize((max(1, int(sprite.width * r)), max(1, int(sprite.height * r))), Image.LANCZOS)
     cx = m["cx"] - sprite.width // 2
-    if key == "hair":
+    if key in ("hair", "hat") or key.startswith("acc_"):
         cy = int(m[a["line"]] + m["head_h"] * a["dy"])
     elif key == "shoes":
         cy = int(m[a["line"]] + m["body_h"] * a["dy"]) - sprite.height
@@ -239,14 +313,30 @@ def main():
     preview = "--preview" in sys.argv
     out_dir = Path("/tmp/avatar_gen/preview_out") if preview else OUT
     out_dir.mkdir(parents=True, exist_ok=True)
-    base_file = SRC / "base_lite.png"
+    base_file = SRC / "base_g4.png"
     if not base_file.exists():
         base_file = SRC / "base.png"
     base_canvas = fit_base(trim(cut_white(Image.open(base_file))))
-    base_canvas.save(out_dir / "base.png")
-    print(f"基本身體 <= {base_file.name}")
+    base_canvas.save(out_dir / "base_g4.png")
+    print(f"參考身體（四年級）<= {base_file.name}")
     m = measure(base_canvas)
     print("量測", m)
+    # 各年級身體：base_g4 … base_g9（各自量測後貼進畫布，輸出量測值表）
+    metrics = {}
+    for g in range(4, 10):
+        f = SRC / f"base_g{g}.png"
+        if not f.exists():
+            continue
+        canvas = fit_base(trim(cut_white(Image.open(f))))
+        canvas.save(OUT / f"base_g{g}.png")
+        mm = measure(canvas)
+        if mm:
+            metrics[f"g{g}"] = {
+                "headTop": round(mm["head_top"] / H, 3), "headW": round(mm["head_w"] / W, 3),
+                "shoulder": round(mm["shoulder"] / H, 3), "hip": round(mm["hip"] / H, 3), "feet": round(mm["feet"] / H, 3),
+            }
+    if metrics:
+        print("STAGE_METRICS = " + str(metrics).replace("'", '"'))
     made = ["base"]
     for sheet_key, (cols, rows, names, holes) in SHEETS.items():
         f = find_sheet(sheet_key)

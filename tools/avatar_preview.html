@@ -16,9 +16,9 @@
     <div id="grid"></div>
     <script type="module">
       window.onerror = (m) => { document.getElementById("grid").textContent = "ERROR: " + m; };
-      let renderAvatar, defaultAvatar;
+      let renderAvatar, defaultAvatar, stageLabel;
       try {
-        ({ renderAvatar, defaultAvatar } = await import("../js/avatar.js?t=" + Date.now()));
+        ({ renderAvatar, defaultAvatar, stageLabel } = await import("../js/avatar.js?t=" + Date.now()));
       } catch (e) {
         document.getElementById("grid").textContent = "IMPORT FAIL: " + e;
         throw e;
@@ -32,6 +32,14 @@
         { skin: "deep", hair: "bowl", hairColor: "mint", top: "vest", bottom: "shorts", shoes: "sandal", hat: "beret", accessory: "headphone" },
       ];
       const grid = document.getElementById("grid");
+      // 同一個造型、不同年級：看角色怎麼長大
+      const growing = { skin: "light", hair: "bob", hairColor: "brown", top: "shirt", bottom: "jeans", shoes: "sneaker", hat: "none", accessory: "glasses" };
+      for (const g of [4, 5, 6, 7, 8, 9]) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.innerHTML = renderAvatar(growing, { size: 340, grade: g }) + `<small>${g} 年級（${stageLabel(g)}）</small>`;
+        grid.appendChild(cell);
+      }
       for (const c of combos) {
         const cell = document.createElement("div");
         cell.className = "cell";

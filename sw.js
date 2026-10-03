@@ -1,7 +1,7 @@
 /* 貓咪邏輯謎題 Service Worker：App Shell + 離線可玩。
  * 同源資源採網路優先、離線退回快取。 */
 const PREFIX='meowdoku';
-const SHELL=`${PREFIX}-shell-v49`;
+const SHELL=`${PREFIX}-shell-v50`;
 const APP_SHELL=[
   './',
   './index.html',
@@ -24,6 +24,12 @@ const APP_SHELL=[
   './icons/avatar/acc_headphone.png',
   './icons/avatar/acc_scarf.png',
   './icons/avatar/base.png',
+  './icons/avatar/base_g4.png',
+  './icons/avatar/base_g5.png',
+  './icons/avatar/base_g6.png',
+  './icons/avatar/base_g7.png',
+  './icons/avatar/base_g8.png',
+  './icons/avatar/base_g9.png',
   './icons/avatar/bottom_jeans.png',
   './icons/avatar/bottom_pleat.png',
   './icons/avatar/bottom_shorts.png',
