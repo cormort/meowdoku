@@ -1,6 +1,6 @@
 // pet.js — 貓咪小屋（首頁）：養成資料、客廳、圖鑑、稱號、紀念日、節日活動，以及各分頁的切換與點擊委派
 import { audio } from "../audio.js";
-import { academyPageHtml, handleDailyCare, handleQuizAnswer, setQuizPublisher, setQuizTerm, startQuizSession, statsPageHtml } from "./academy.js";
+import { academyPageHtml, clearMistakeBook, handleDailyCare, handleQuizAnswer, setQuizPublisher, setQuizTerm, startMistakeSession, startQuizSession, statsPageHtml } from "./academy.js";
 import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
@@ -1286,6 +1286,17 @@ function onPetClick(e) {
   if (pubBtn) {
     setQuizPublisher(pubBtn.dataset.quizPub);
     setPetView("academy"); // 換教科書版本
+    return;
+  }
+  const drill = e.target.closest("[data-drill-subject]");
+  if (drill) {
+    startMistakeSession(drill.dataset.drillSubject); // 錯題本：直接練這一科的錯題
+    return;
+  }
+  const clearMistakes = e.target.closest("[data-mistake-clear]");
+  if (clearMistakes) {
+    clearMistakeBook();
+    setPetView("academy");
     return;
   }
   const startQuiz = e.target.closest("[data-start-quiz]");

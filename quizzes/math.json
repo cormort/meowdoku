@@ -43,7 +43,7 @@
     },
     {
       "id": "math-003",
-      "grade": 4,
+      "grade": 5,
       "type": "choice",
       "prompt": "在平面幾何中，任何一個三角形的三個內角和總共是幾度？",
       "options": [
@@ -417,7 +417,7 @@
     },
     {
       "id": "math-g6-05",
-      "grade": 6,
+      "grade": 5,
       "type": "choice",
       "prompt": "一件外套原價 800 元，現在打七折，售價是多少元？",
       "options": [

@@ -2,7 +2,7 @@
 import { audio } from "../audio.js";
 import { activePetKey, addCoins, addPetStat, growthStage, petAffection, petData, petLevel, petName, petQuickStatusBarHtml, petStats, petStatus, petSubnavHtml, primaryTitle, savePetData, setPetView, showPetHome, updatePetStatus } from "./pet.js";
 import { showClinic, sickInfo, startCare } from "./life.js";
-import { GRADES, PUBLISHERS, QUIZ_SUBJECTS, TERMS, TEXTBOOK_UNITS, calculateQuizResult, filterCount, gradeRewardMul, isCorrect, pickRound, termInfo, unitsFor } from "./quiz.js";
+import { GRADES, PUBLISHERS, QUIZ_SUBJECTS, TERMS, TEXTBOOK_UNITS, calculateQuizResult, filterCount, gradeRewardMul, isCorrect, mistakeCounts, mistakesFor, mistakesToQuestions, pickRound, recordMistake, termInfo, unitsFor } from "./quiz.js";
 import { ACTION_POSES, getRoomCatSprite } from "./room.js";
 import { $, escapeHtml, showSheet } from "./ui.js";
 // 姿勢圖鑑：坐姿 + 13 種動作立繪
@@ -34,6 +34,84 @@ export function setQuizPublisher(publisher) {
   if (publisher && !PUBLISHERS.includes(publisher)) return quizPublisher();
   localStorage.setItem(LS_PUBLISHER, publisher || "");
   return quizPublisher();
+}
+
+// ===== 錯題本（答錯自動記錄，存在 localStorage） =====
+const LS_MISTAKES = "meowdoku.mistakes";
+export function loadMistakes() {
+  try {
+    const v = JSON.parse(localStorage.getItem(LS_MISTAKES) || "[]");
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}
+function saveMistakes(list) {
+  try {
+    localStorage.setItem(LS_MISTAKES, JSON.stringify(list));
+  } catch {
+    /* 存不進去就算了，不影響答題 */
+  }
+}
+export function clearMistakeBook() {
+  saveMistakes([]);
+}
+export function mistakeBookHtml() {
+  const list = loadMistakes();
+  const counts = mistakeCounts(list);
+  const total = list.length;
+  if (!total) {
+    return `<details class="mistake-panel"><summary>📝 錯題本（目前是空的）</summary>
+      <p class="unit-hint">答錯的題目會自動收進這裡，隨時可以按「練這科錯題」重新練習。</p></details>`;
+  }
+  const blocks = Object.values(QUIZ_SUBJECTS)
+    .filter((s) => counts[s.id])
+    .map((s) => {
+      const items = mistakesFor(list, s.id)
+        .slice(0, 3)
+        .map((e) => {
+          const q = (QUIZ_SUBJECTS[s.id].questions || []).find((x) => x.id === e.questionId);
+          if (!q) return "";
+          const prompt = q.prompt.length > 40 ? `${q.prompt.slice(0, 40)}…` : q.prompt;
+          return `<li><span class="mistake-q">${escapeHtml(prompt)}</span><span class="mistake-a">正解：${escapeHtml(q.options[q.answer])}</span></li>`;
+        })
+        .join("");
+      return `<div class="mistake-block">
+        <div class="mistake-head">
+          <b>${s.icon} ${s.name}</b>
+          <span class="mistake-count">${counts[s.id]} 題</span>
+          <button class="academy-action-btn mistake-drill" data-drill-subject="${s.id}">🔁 練這科錯題</button>
+        </div>
+        <ul class="mistake-list">${items}</ul>
+      </div>`;
+    })
+    .join("");
+  return `<details class="mistake-panel" open><summary>📝 錯題本（${total} 題待複習）</summary>
+    ${blocks}
+    <button class="academy-action-btn mistake-clear" data-mistake-clear="1">🗑 清空錯題本</button>
+  </details>`;
+}
+// 用錯題本的題目開一輪複習（不耗體力，答對照樣有獎勵）
+export function startMistakeSession(subjectId) {
+  const sub = QUIZ_SUBJECTS[subjectId];
+  if (!sub) return;
+  const questions = mistakesToQuestions(loadMistakes(), sub, sub.roundSize);
+  if (!questions.length) {
+    showSheet("錯題本沒有這一科的題目 📝", "先去學院排課測驗，答錯的題目會自動收進錯題本。", "知道了");
+    return;
+  }
+  currentQuizState = {
+    subjectId,
+    grade: questions[0].grade,
+    term: questions[0].term || null,
+    publisher: "",
+    questions,
+    currentIndex: 0,
+    correctCount: 0,
+    answered: false,
+    review: true,
+  };
+  renderQuizQuestion();
 }
 export function academyPageHtml(key = activePetKey()) {
   const stats = petStats(key);
@@ -128,6 +206,7 @@ export function academyPageHtml(key = activePetKey()) {
         </div>
       </div>
       ${unitPanel}
+      ${mistakeBookHtml()}
     </div>
   `;
 }
@@ -326,8 +405,8 @@ function renderQuizQuestion() {
     <div class="quiz-box">
       <div class="quiz-header">
         <span style="font-weight:800; color:${sub.color};">${sub.icon} ${sub.name}</span>
-        <span class="quiz-grade-tag">📶 ${termInfo(currentQuizState.term).label}</span>
-        ${currentQuizState.publisher ? `<span class="quiz-grade-tag">📚 ${currentQuizState.publisher}</span>` : ""}
+        <span class="quiz-grade-tag">${currentQuizState.review ? "📝 錯題複習" : `📶 ${termInfo(currentQuizState.term)?.label || ""}`}</span>
+        ${!currentQuizState.review && currentQuizState.publisher ? `<span class="quiz-grade-tag">📚 ${currentQuizState.publisher}</span>` : ""}
         <span class="quiz-counter">第 ${currentIndex + 1} / ${questions.length} 題</span>
       </div>
       <div class="quiz-question">${escapeHtml(q.prompt)}</div>
@@ -355,6 +434,17 @@ export function handleQuizAnswer(selectedIndex) {
     audio.playCoin?.();
   } else {
     audio.playError?.();
+    // 答錯就收進錯題本（同一題只留最新一次）
+    saveMistakes(
+      recordMistake(loadMistakes(), {
+        subjectId: currentQuizState.subjectId,
+        questionId: q.id,
+        term: currentQuizState.term || "",
+        publisher: currentQuizState.publisher || "",
+        chosen: Number(selectedIndex),
+        at: Date.now(),
+      }),
+    );
   }
   navigator.vibrate?.(correct ? [20, 20] : 40);
 
@@ -425,7 +515,7 @@ function finishQuizSession() {
         答對 ${res.correctCount} / ${res.totalCount} 題 · 得分 ${res.score} 分
       </div>
       <div style="font-size:0.78rem; color:var(--muted);">
-        📶 ${termInfo(quizTermUsed).full}${quizPublisherUsed ? `・${quizPublisherUsed}版` : "・不限版本"}${
+        ${quizTermUsed ? `📶 ${termInfo(quizTermUsed)?.full || ""}` : "📝 錯題複習"}${quizPublisherUsed ? `・${quizPublisherUsed}版` : quizTermUsed ? "・不限版本" : ""}${
           res.rewardMul !== 1 ? `（獎勵 ×${res.rewardMul}）` : ""
         }
       </div>

@@ -46,7 +46,7 @@
     },
     {
       "id": "science-003",
-      "grade": 7,
+      "grade": 5,
       "type": "choice",
       "prompt": "在室溫下，使用石蕊試紙檢測某水溶液，發現「紅色石蕊試紙變為藍色」，代表該溶液性質為何？",
       "options": [
@@ -81,7 +81,7 @@
     },
     {
       "id": "science-005",
-      "grade": 5,
+      "grade": 4,
       "type": "choice",
       "prompt": "農曆每月的十五日夜晚，我們通常可以看見圓滿明亮的月相，此時的月相稱為什麼？",
       "options": [
@@ -101,7 +101,7 @@
     },
     {
       "id": "science-006",
-      "grade": 6,
+      "grade": 7,
       "type": "choice",
       "prompt": "人體循環系統中，哪一種血管壁最薄且只由單層細胞構成，是血液與組織進行物質交換的場所？",
       "options": [
@@ -117,7 +117,7 @@
     },
     {
       "id": "science-007",
-      "grade": 6,
+      "grade": 4,
       "type": "choice",
       "prompt": "家中客廳的電燈與房間的冷氣，在家庭電路配線中通常是採用哪一種連接方式？",
       "options": [
@@ -339,7 +339,7 @@
     },
     {
       "id": "science-g5-05",
-      "grade": 5,
+      "grade": 6,
       "type": "choice",
       "prompt": "使用斜坡（斜面）把重物推到高處，和直接用手抬上去相比，通常是怎麼回事？",
       "options": [
@@ -355,7 +355,7 @@
     },
     {
       "id": "science-g5-06",
-      "grade": 5,
+      "grade": 6,
       "type": "choice",
       "prompt": "在「草→兔子→老鷹」這條食物鏈中，草扮演什麼角色？",
       "options": [
@@ -371,7 +371,7 @@
     },
     {
       "id": "science-g6-01",
-      "grade": 6,
+      "grade": 4,
       "type": "choice",
       "prompt": "一個用電池、電線和小燈泡組成的電路，接好後燈泡卻不亮，最可能是什麼原因？",
       "options": [
@@ -391,7 +391,7 @@
     },
     {
       "id": "science-g6-02",
-      "grade": 6,
+      "grade": 4,
       "type": "choice",
       "prompt": "把兩顆小燈泡串聯在同一電路中，如果其中一顆燈泡壞了（斷路），會發生什麼事？",
       "options": [
@@ -427,7 +427,7 @@
     },
     {
       "id": "science-g6-04",
-      "grade": 6,
+      "grade": 4,
       "type": "choice",
       "prompt": "地球自轉一圈大約需要多久，並造成什麼現象？",
       "options": [
@@ -462,7 +462,7 @@
     },
     {
       "id": "science-g6-06",
-      "grade": 6,
+      "grade": 4,
       "type": "choice",
       "prompt": "我們在地球上看到的月亮會有圓缺變化（月相），主要是什麼造成的？",
       "options": [
@@ -494,11 +494,11 @@
       "answer": 0,
       "tip": "只有植物有細胞壁",
       "explain": "植物細胞具有細胞壁，動物細胞沒有；細胞膜、細胞核、細胞質則是兩者都有的構造。",
-      "term": "4-1"
+      "term": "7-1"
     },
     {
       "id": "science-g7-02",
-      "grade": 7,
+      "grade": 5,
       "type": "choice",
       "prompt": "綠色植物行光合作用時，會釋放出下列哪一種氣體？",
       "options": [
@@ -552,7 +552,7 @@
     },
     {
       "id": "science-g7-05",
-      "grade": 7,
+      "grade": 5,
       "type": "choice",
       "prompt": "下列哪一種水溶液的pH值最可能小於7？",
       "options": [
@@ -572,7 +572,7 @@
     },
     {
       "id": "science-g7-06",
-      "grade": 7,
+      "grade": 4,
       "type": "choice",
       "prompt": "臺灣地震頻繁，主要原因是什麼？",
       "options": [
@@ -964,7 +964,7 @@
     },
     {
       "id": "science-g7-t2-05",
-      "grade": 7,
+      "grade": 6,
       "type": "choice",
       "prompt": "能量在食物鏈中由生產者傳遞到各級消費者的過程中，會有什麼變化？",
       "options": [

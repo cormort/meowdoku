@@ -25,6 +25,10 @@
 * {
   box-sizing: border-box;
 }
+html {
+  /* 全站字級基準：原本用瀏覽器預設 16px，調大讓手機上好讀（其餘尺寸多用 rem，會等比放大） */
+  font-size: 18px;
+}
 html,
 body {
   margin: 0;
@@ -59,7 +63,7 @@ h1 span {
 .sub {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   line-height: 1.5;
 }
 .card {
@@ -364,7 +368,7 @@ button:disabled {
 }
 footer {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   text-align: center;
   line-height: 1.6;
   max-width: 560px;
@@ -373,7 +377,7 @@ kbd {
   background: var(--accent-soft);
   border-radius: 5px;
   padding: 1px 5px;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 /* 換貓動畫、音效冷卻與手機修正 */
 html.skin-animation-lock,
@@ -638,7 +642,7 @@ body.skin-animation-lock {
 }
 @media (max-width: 400px) {
   .status {
-    font-size: 0.78rem;
+    font-size: 0.94rem;
     padding: 8px 10px;
   }
 }
@@ -731,7 +735,7 @@ button:focus-visible {
     font-size: 1.2rem;
   }
   .sub {
-    font-size: 0.72rem;
+    font-size: 0.86rem;
     line-height: 1.38;
     margin-top: 2px;
   }
@@ -749,7 +753,7 @@ button:focus-visible {
     min-width: 0;
     min-height: 44px;
     padding: 6px 4px;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     line-height: 1.15;
   }
 
@@ -760,7 +764,7 @@ button:focus-visible {
     gap: 3px;
     padding: 7px 8px;
     margin-top: 6px;
-    font-size: 0.72rem;
+    font-size: 0.86rem;
     text-align: center;
   }
   .status > span {
@@ -819,7 +823,7 @@ button:focus-visible {
     min-width: 0;
     min-height: 50px;
     padding: 5px 2px;
-    font-size: 0.71rem;
+    font-size: 0.85rem;
     line-height: 1.1;
     border-radius: 10px;
   }
@@ -833,12 +837,12 @@ button:focus-visible {
   }
   #newBtn::after {
     content: "🎲 新題";
-    font-size: 0.71rem;
+    font-size: 0.85rem;
   }
 
   footer {
     padding: 10px 8px 4px;
-    font-size: 0.66rem;
+    font-size: 0.79rem;
   }
   footer p:first-child {
     display: none;
@@ -866,7 +870,7 @@ button:focus-visible {
     margin-bottom: 3px;
   }
   .sheet p {
-    font-size: 0.78rem;
+    font-size: 0.94rem;
     line-height: 1.4;
   }
   .sheet .row {
@@ -910,18 +914,18 @@ button:focus-visible {
     display: none;
   }
   .levels button {
-    font-size: 0.69rem;
+    font-size: 0.83rem;
   }
   .status {
-    font-size: 0.67rem;
+    font-size: 0.8rem;
     padding-left: 5px;
     padding-right: 5px;
   }
   .controls button {
-    font-size: 0.65rem;
+    font-size: 0.78rem;
   }
   #newBtn::after {
-    font-size: 0.65rem;
+    font-size: 0.78rem;
   }
 }
 
@@ -1045,7 +1049,7 @@ html.low-fx .board.skin-arrive {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.74rem;
+  font-size: 0.89rem;
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 999px;
@@ -1058,7 +1062,7 @@ html.low-fx .board.skin-arrive {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 700;
   padding: 3px 9px;
   border-radius: 999px;
@@ -1173,7 +1177,7 @@ html.low-fx .board.skin-arrive {
   padding: 6px 12px;
   margin-bottom: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 700;
 }
 .pet-quick-pill {
@@ -1192,7 +1196,7 @@ html.low-fx .board.skin-arrive {
   padding: 3px 9px;
   border-radius: 999px;
   font-weight: 800;
-  font-size: 0.74rem;
+  font-size: 0.89rem;
 }
 
 /* 貓咪學院排課介面 */
@@ -1206,7 +1210,7 @@ html.low-fx .board.skin-arrive {
   border: 1px solid #bae6fd;
   border-radius: 14px;
   padding: 10px 12px;
-  font-size: 0.74rem;
+  font-size: 0.89rem;
   line-height: 1.45;
   color: #0369a1;
 }
@@ -1243,13 +1247,13 @@ html.low-fx .board.skin-arrive {
   font-size: 0.82rem;
 }
 .academy-stat-val {
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 999px;
 }
 .academy-desc {
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.35;
   min-height: 28px;
@@ -1261,7 +1265,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 10px;
   padding: 7px 10px;
   font-weight: 700;
-  font-size: 0.74rem;
+  font-size: 0.89rem;
   cursor: pointer;
   transition: filter 0.15s ease, transform 0.1s ease;
 }
@@ -1292,7 +1296,7 @@ html.low-fx .board.skin-arrive {
   padding-bottom: 6px;
 }
 .quiz-counter {
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   font-weight: 800;
   color: var(--accent);
 }
@@ -1347,7 +1351,7 @@ html.low-fx .board.skin-arrive {
   background: #f8fafc;
   border-radius: 12px;
   padding: 10px 12px;
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   line-height: 1.45;
   border: 1px solid var(--line);
   animation: fadeIn 0.25s ease;
@@ -1418,7 +1422,7 @@ html.low-fx .board.skin-arrive {
 .stat-bar-head {
   display: flex;
   justify-content: space-between;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 800;
   margin-bottom: 4px;
 }
@@ -1444,7 +1448,7 @@ html.low-fx .board.skin-arrive {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 8px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -1459,12 +1463,12 @@ html.low-fx .board.skin-arrive {
   border-color: var(--accent);
 }
 .daily-care-btn small {
-  font-size: 0.62rem;
+  font-size: 0.74rem;
   color: var(--muted);
 }
 .win-coins-notice {
   margin-top: 6px;
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: #d97706;
 }
@@ -1481,7 +1485,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--card);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   color: var(--ink);
@@ -1522,12 +1526,12 @@ html.low-fx .board.skin-arrive {
   background: rgba(0, 0, 0, 0.02);
 }
 .shop-item-name {
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   font-weight: 800;
   color: var(--ink);
 }
 .shop-item-desc {
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.35;
   min-height: 26px;
@@ -1539,7 +1543,7 @@ html.low-fx .board.skin-arrive {
   border: none;
   background: var(--accent);
   color: #fff;
-  font-size: 0.74rem;
+  font-size: 0.89rem;
   font-weight: 800;
   cursor: pointer;
   display: inline-flex;
@@ -1592,7 +1596,7 @@ html.low-fx .board.skin-arrive {
   100% { transform: rotate(0deg) scale(1); }
 }
 .gacha-rates-badge {
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: #92400e;
   background: #fef3c7;
@@ -1601,7 +1605,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
 }
 .gacha-pity-text {
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   color: var(--muted);
   font-weight: 600;
 }
@@ -1681,7 +1685,7 @@ html.low-fx .board.skin-arrive {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-align: center;
 }
@@ -1763,7 +1767,7 @@ html.low-fx .board.skin-arrive {
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   border: 1.5px solid color-mix(in srgb, var(--accent) 45%, var(--line));
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   font-weight: 800;
   color: var(--ink);
   pointer-events: none;
@@ -1877,7 +1881,7 @@ html.low-fx .board.skin-arrive {
   position: relative;
   z-index: 2;
   margin-top: 6px;
-  font-size: 0.7rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--muted);
   opacity: 0.9;
@@ -1946,7 +1950,7 @@ html.low-fx .board.skin-arrive {
   transform: scale(0.96);
 }
 .room-litter-badge {
-  font-size: 0.62rem;
+  font-size: 0.74rem;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 999px;
@@ -2027,7 +2031,7 @@ html.low-fx .board.skin-arrive {
   padding: 9px 4px;
   min-height: 42px;
   border-radius: 12px;
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   font-weight: 700;
   background: var(--card);
   border: 1px solid var(--line);
@@ -2049,7 +2053,7 @@ html.low-fx .board.skin-arrive {
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
   .interaction-row.room-actions button {
     padding: 8px 2px;
-    font-size: 0.72rem;
+    font-size: 0.86rem;
   }
 }
 .pet-status-card {
@@ -2115,7 +2119,7 @@ html.low-fx .board.skin-arrive {
 .pet-level {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.91rem;
 }
 .affection-bar {
   height: 12px;
@@ -2133,7 +2137,7 @@ html.low-fx .board.skin-arrive {
 }
 .pet-affection {
   margin-top: 4px;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 .food-grid {
@@ -2155,11 +2159,11 @@ html.low-fx .board.skin-arrive {
 }
 .food-info b {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.94rem;
 }
 .food-info small {
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.82rem;
 }
 .food-count {
   min-width: 26px;
@@ -2171,7 +2175,7 @@ html.low-fx .board.skin-arrive {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   font-weight: 800;
 }
 .pet-collection {
@@ -2207,7 +2211,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: rgba(20, 30, 28, 0.76);
   color: #fff;
-  font-size: 0.56rem;
+  font-size: 0.7rem;
   text-align: center;
 }
 .reward-box {
@@ -2286,7 +2290,7 @@ html.low-fx .board.skin-arrive {
 .starter-intro {
   margin: 0 0 10px;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   line-height: 1.55;
 }
 .starter-cats {
@@ -2315,7 +2319,7 @@ html.low-fx .board.skin-arrive {
   transform: scale(1.02);
 }
 .starter-name {
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 700;
 }
 .name-field {
@@ -2325,7 +2329,7 @@ html.low-fx .board.skin-arrive {
   text-align: left;
 }
 .name-field span {
-  font-size: 0.76rem;
+  font-size: 0.91rem;
   font-weight: 800;
 }
 .name-field input {
@@ -2344,7 +2348,7 @@ html.low-fx .board.skin-arrive {
   align-items: center;
   gap: 7px;
   margin-top: 5px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
 }
 .mood-pill {
   padding: 3px 8px;
@@ -2363,12 +2367,12 @@ html.low-fx .board.skin-arrive {
   background: color-mix(in srgb, var(--accent-soft) 70%, transparent);
 }
 .daily-feed b {
-  font-size: 0.78rem;
+  font-size: 0.94rem;
 }
 .daily-feed small {
   display: block;
   color: var(--muted);
-  font-size: 0.66rem;
+  font-size: 0.79rem;
 }
 .daily-feed button {
   min-height: 38px;
@@ -2382,7 +2386,7 @@ html.low-fx .board.skin-arrive {
 .interaction-row button {
   padding: 7px 4px;
   min-height: 43px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
 }
 .pet-avatar-wrap {
   position: relative;
@@ -2402,7 +2406,7 @@ html.low-fx .board.skin-arrive {
   background: var(--card);
   border: 1px solid var(--line);
   box-shadow: 0 5px 13px rgba(0, 0, 0, 0.12);
-  font-size: 0.66rem;
+  font-size: 0.79rem;
   font-weight: 700;
   opacity: 0;
   transform: translateY(5px) scale(0.9);
@@ -2491,7 +2495,7 @@ html.low-fx .board.skin-arrive {
   font-size: 0.9rem;
 }
 .pet-stat small {
-  font-size: 0.62rem;
+  font-size: 0.74rem;
   color: var(--muted);
 }
 .collection-tabs {
@@ -2526,7 +2530,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 6px;
   background: rgba(20, 30, 28, 0.72);
   color: #fff;
-  font-size: 0.48rem;
+  font-size: 0.6rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2570,7 +2574,7 @@ html.low-fx .board.skin-arrive {
     padding: 5px 3px;
   }
   .interaction-row button {
-    font-size: 0.69rem;
+    font-size: 0.83rem;
   }
 }
 
@@ -2585,7 +2589,7 @@ html.low-fx .board.skin-arrive {
 .title-badge {
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 .growth-badge {
@@ -2611,7 +2615,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 9px;
   background: color-mix(in srgb, var(--line) 65%, transparent);
   text-align: center;
-  font-size: 0.56rem;
+  font-size: 0.7rem;
   color: var(--muted);
 }
 .growth-step.done {
@@ -2636,7 +2640,7 @@ html.low-fx .board.skin-arrive {
 .collection-tools label {
   display: grid;
   gap: 3px;
-  font-size: 0.63rem;
+  font-size: 0.76rem;
   color: var(--muted);
 }
 .collection-tools select {
@@ -2648,7 +2652,7 @@ html.low-fx .board.skin-arrive {
   background: var(--card);
   color: var(--ink);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .pet-cat-stage {
   position: absolute;
@@ -2658,7 +2662,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.86);
   color: #463900;
-  font-size: 0.48rem;
+  font-size: 0.6rem;
   font-weight: 800;
 }
 .pet-cat-level {
@@ -2669,7 +2673,7 @@ html.low-fx .board.skin-arrive {
   padding: 18px;
   text-align: center;
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
 }
 .title-list {
   display: flex;
@@ -2682,21 +2686,21 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: var(--card);
   border: 1px solid var(--line);
-  font-size: 0.56rem;
+  font-size: 0.7rem;
 }
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
   .growth-track {
     gap: 3px;
   }
   .growth-step {
-    font-size: 0.5rem;
+    font-size: 0.62rem;
     padding: 4px 1px;
   }
   .collection-tools {
     grid-template-columns: 1fr 1fr;
   }
   .pet-cat-stage {
-    font-size: 0.43rem;
+    font-size: 0.54rem;
   }
 }
 
@@ -2708,7 +2712,7 @@ html.low-fx .board.skin-arrive {
 }
 .title-panel summary {
   cursor: pointer;
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   font-weight: 800;
   color: var(--accent);
   list-style: none;
@@ -2738,10 +2742,10 @@ html.low-fx .board.skin-arrive {
   grid-template-columns: 1fr auto;
   gap: 8px;
   align-items: center;
-  font-size: 0.62rem;
+  font-size: 0.74rem;
 }
 .title-condition b {
-  font-size: 0.65rem;
+  font-size: 0.78rem;
 }
 .title-condition small {
   color: var(--muted);
@@ -2775,7 +2779,7 @@ html.low-fx .board.skin-arrive {
   grid-column: 1/-1;
   text-align: right;
   color: var(--muted);
-  font-size: 0.56rem;
+  font-size: 0.7rem;
   margin-top: -2px;
 }
 .growth-up-overlay {
@@ -2815,7 +2819,7 @@ html.low-fx .board.skin-arrive {
   color: var(--accent);
 }
 .growth-up-title {
-  font-size: 0.76rem;
+  font-size: 0.91rem;
   color: var(--muted);
 }
 .growth-spark {
@@ -2904,7 +2908,7 @@ html.low-fx .board.skin-arrive {
 .pet-subnav button {
   min-height: 38px;
   padding: 5px 4px;
-  font-size: 0.7rem;
+  font-size: 0.84rem;
 }
 .pet-subnav button.active {
   background: var(--accent);
@@ -2952,13 +2956,13 @@ html.low-fx .board.skin-arrive {
 }
 .title-card b {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .title-card small {
   display: block;
   margin-top: 2px;
   color: var(--muted);
-  font-size: 0.59rem;
+  font-size: 0.74rem;
   line-height: 1.35;
 }
 .title-card .wall-progress {
@@ -2990,7 +2994,7 @@ html.low-fx .board.skin-arrive {
   font-size: 1rem;
 }
 .title-wall-stat small {
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   color: var(--muted);
 }
 .date-panel {
@@ -3008,7 +3012,7 @@ html.low-fx .board.skin-arrive {
 .date-card label {
   display: grid;
   gap: 4px;
-  font-size: 0.7rem;
+  font-size: 0.84rem;
   font-weight: 800;
 }
 .date-card input[type="date"] {
@@ -3022,7 +3026,7 @@ html.low-fx .board.skin-arrive {
   font: inherit;
 }
 .date-note {
-  font-size: 0.64rem;
+  font-size: 0.77rem;
   color: var(--muted);
   line-height: 1.45;
 }
@@ -3031,7 +3035,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 12px;
   background: linear-gradient(135deg, #fff0bc, var(--accent-soft));
   text-align: center;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 800;
 }
 .date-actions {
@@ -3068,7 +3072,7 @@ html.low-fx .board.skin-arrive {
     grid-template-columns: 1fr;
   }
   .pet-subnav button {
-    font-size: 0.64rem;
+    font-size: 0.77rem;
   }
   .growth-skip {
     right: 10px;
@@ -3170,18 +3174,18 @@ html.low-fx .board.skin-arrive {
 }
 .countdown-card b {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .countdown-card small {
   display: block;
   color: var(--muted);
-  font-size: 0.61rem;
+  font-size: 0.73rem;
   margin-top: 2px;
 }
 .countdown-days {
   min-width: 58px;
   text-align: right;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 900;
   color: var(--accent);
 }
@@ -3198,7 +3202,7 @@ html.low-fx .board.skin-arrive {
   padding: 8px 9px;
   border-radius: 11px;
   background: var(--accent-soft);
-  font-size: 0.64rem;
+  font-size: 0.77rem;
   color: var(--muted);
   line-height: 1.45;
 }
@@ -3211,7 +3215,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: #fff0b7;
   color: #765700;
-  font-size: 0.58rem;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 .title-card.equipped {
@@ -3222,7 +3226,7 @@ html.low-fx .board.skin-arrive {
   grid-column: 1/-1;
   min-height: 34px;
   padding: 4px 7px;
-  font-size: 0.62rem;
+  font-size: 0.74rem;
 }
 .title-equip[disabled] {
   opacity: 0.6;
@@ -3235,7 +3239,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: var(--accent);
   color: #fff;
-  font-size: 0.52rem;
+  font-size: 0.65rem;
   font-weight: 800;
 }
 .title-card.locked .title-equip {
@@ -3305,7 +3309,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: rgba(25, 35, 33, 0.78);
   color: #fff;
-  font-size: 0.56rem;
+  font-size: 0.7rem;
   font-weight: 800;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
 }
@@ -3355,10 +3359,10 @@ html.low-fx .board.skin-arrive {
   padding: 8px 10px;
   border-radius: 12px;
   background: linear-gradient(135deg, #fff1be, var(--accent-soft));
-  font-size: 0.66rem;
+  font-size: 0.79rem;
 }
 .festival-preview b {
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .festival-preview small {
   display: block;
@@ -3374,7 +3378,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 6px;
   background: color-mix(in srgb, var(--accent) 82%, #222);
   color: #fff;
-  font-size: 0.44rem;
+  font-size: 0.55rem;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
@@ -3396,7 +3400,7 @@ html.low-fx .board.skin-arrive {
     bottom: -20px;
   }
   .pet-cat-title {
-    font-size: 0.39rem;
+    font-size: 0.49rem;
     bottom: 15px;
   }
 }
@@ -3433,7 +3437,7 @@ html.low-fx .board.skin-arrive {
   display: block;
   margin-top: 3px;
   color: var(--muted);
-  font-size: 0.64rem;
+  font-size: 0.77rem;
   line-height: 1.4;
 }
 .event-missions {
@@ -3465,13 +3469,13 @@ html.low-fx .board.skin-arrive {
 }
 .event-mission b {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .event-mission small {
   display: block;
   margin-top: 2px;
   color: var(--muted);
-  font-size: 0.59rem;
+  font-size: 0.74rem;
 }
 .mission-progress {
   height: 6px;
@@ -3488,7 +3492,7 @@ html.low-fx .board.skin-arrive {
   background: linear-gradient(90deg, var(--accent), #ff9fb5);
 }
 .mission-reward {
-  font-size: 0.61rem;
+  font-size: 0.73rem;
   font-weight: 800;
   color: var(--accent);
   text-align: right;
@@ -3496,7 +3500,7 @@ html.low-fx .board.skin-arrive {
 .event-mission button {
   min-height: 34px;
   padding: 4px 8px;
-  font-size: 0.61rem;
+  font-size: 0.73rem;
 }
 .costume-collection {
   display: grid;
@@ -3536,20 +3540,20 @@ html.low-fx .board.skin-arrive {
 }
 .costume-card b {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .costume-card small {
   display: block;
   margin-top: 2px;
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.72rem;
   line-height: 1.35;
 }
 .costume-card button {
   grid-column: 1/-1;
   min-height: 34px;
   padding: 4px 7px;
-  font-size: 0.62rem;
+  font-size: 0.74rem;
 }
 .costume-lock {
   position: absolute;
@@ -3565,7 +3569,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 999px;
   background: var(--accent);
   color: #fff;
-  font-size: 0.5rem;
+  font-size: 0.62rem;
   font-weight: 800;
 }
 .collection-progress {
@@ -3579,7 +3583,7 @@ html.low-fx .board.skin-arrive {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.7rem;
+  font-size: 0.84rem;
   font-weight: 800;
 }
 .collection-progress-bar {
@@ -3596,7 +3600,7 @@ html.low-fx .board.skin-arrive {
   background: linear-gradient(90deg, #ffb84d, var(--accent), #8f7cff);
 }
 .collection-progress small {
-  font-size: 0.59rem;
+  font-size: 0.74rem;
   color: var(--muted);
 }
 .no-event {
@@ -3605,7 +3609,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 13px;
   text-align: center;
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.84rem;
 }
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
   .costume-collection {
@@ -3819,7 +3823,7 @@ html.low-fx .board.skin-arrive {
   line-height: 1;
 }
 .room-event small {
-  font-size: 0.66rem;
+  font-size: 0.79rem;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -3836,7 +3840,7 @@ html.low-fx .board.skin-arrive {
   border: 1.5px solid var(--warn);
   background: rgba(255, 255, 255, 0.96);
   color: #b4553f;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 800;
 }
 .clinic-box {
@@ -3867,7 +3871,7 @@ html.low-fx .board.skin-arrive {
   padding: 10px 12px; border-radius: 14px; background: var(--accent-soft); color: var(--ink);
 }
 .trip-hero b { font-size: 0.98rem; }
-.trip-hero small { color: var(--muted); font-size: 0.74rem; }
+.trip-hero small { color: var(--muted); font-size: 0.89rem; }
 .trip-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .trip-card {
   display: grid; gap: 6px; padding: 0 0 8px; overflow: hidden; text-align: left;
@@ -3881,13 +3885,13 @@ html.low-fx .board.skin-arrive {
 .trip-thumb i { font-style: normal; font-size: 1.7rem; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35)); }
 .trip-info { display: grid; gap: 2px; padding: 0 10px; }
 .trip-info b { font-size: 0.86rem; }
-.trip-info small { color: var(--muted); font-size: 0.68rem; line-height: 1.35; }
-.trip-count { padding: 0 10px; color: var(--muted); font-size: 0.64rem; }
+.trip-info small { color: var(--muted); font-size: 0.82rem; line-height: 1.35; }
+.trip-count { padding: 0 10px; color: var(--muted); font-size: 0.77rem; }
 .trip-album-title { display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px; }
 .trip-album-title span { font-weight: 700; }
-.trip-album-title small { color: var(--muted); font-size: 0.7rem; }
+.trip-album-title small { color: var(--muted); font-size: 0.84rem; }
 .trip-album { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.trip-empty { grid-column: 1 / -1; padding: 14px; border-radius: 12px; background: var(--accent-soft); color: var(--muted); font-size: 0.78rem; text-align: center; }
+.trip-empty { grid-column: 1 / -1; padding: 14px; border-radius: 12px; background: var(--accent-soft); color: var(--muted); font-size: 0.94rem; text-align: center; }
 .trip-photo {
   margin: 0; padding: 6px 6px 0; border-radius: 14px; background: #fff;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16); transform: rotate(var(--tilt, 0deg));
@@ -3899,13 +3903,13 @@ html.low-fx .board.skin-arrive {
 }
 .trip-shot .trip-cat { width: 46%; max-height: 88%; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.28)); }
 .trip-photo figcaption { display: grid; gap: 1px; padding: 6px 4px 7px; color: #22322e; }
-.trip-photo figcaption b { font-size: 0.76rem; }
-.trip-photo figcaption small { font-size: 0.68rem; line-height: 1.35; }
-.trip-photo figcaption em { font-style: normal; color: #6b7d77; font-size: 0.62rem; }
+.trip-photo figcaption b { font-size: 0.91rem; }
+.trip-photo figcaption small { font-size: 0.82rem; line-height: 1.35; }
+.trip-photo figcaption em { font-style: normal; color: #6b7d77; font-size: 0.74rem; }
 .trip-result { display: grid; place-items: center; padding: 4px 0 2px; }
 .trip-result .trip-photo { width: min(100%, 320px); transform: rotate(-1deg); }
 .trip-result-line { margin: 10px 0 0; text-align: center; font-weight: 700; }
-.trip-result-gain { margin: 6px 0 0; text-align: center; color: var(--muted); font-size: 0.78rem; }
+.trip-result-gain { margin: 6px 0 0; text-align: center; color: var(--muted); font-size: 0.94rem; }
 @media (min-width: 640px) {
   .trip-album { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .trip-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -3948,7 +3952,7 @@ html.low-fx .board.skin-arrive {
 .care-stop {
   margin-left: auto;
   padding: 4px 12px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
 }
 .care-label {
   font-size: 0.85rem;
@@ -3959,7 +3963,7 @@ html.low-fx .board.skin-arrive {
   align-items: center;
   gap: 8px;
   font-variant-numeric: tabular-nums;
-  font-size: 0.8rem;
+  font-size: 0.96rem;
 }
 .care-timer {
   flex: 1;
@@ -4104,7 +4108,7 @@ html.low-fx .board.skin-arrive {
   line-height: 1;
 }
 .care-target small {
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 /* 外圈縮小＝這個目標剩下的時間 */
@@ -4213,7 +4217,7 @@ html.low-fx .board.skin-arrive {
   border-radius: 12px;
   background: #fff;
   color: #22322e;
-  font-size: 0.78rem;
+  font-size: 0.94rem;
   font-weight: 800;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   opacity: 0;
@@ -4261,7 +4265,7 @@ html.low-fx .board.skin-arrive {
   background: var(--card);
   border: 1px solid var(--line);
   color: var(--ink);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   font-weight: 800;
 }
 .pose-grid {
@@ -4293,7 +4297,7 @@ html.low-fx .board.skin-arrive {
   object-fit: contain;
 }
 .pose-card small {
-  font-size: 0.62rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: var(--muted);
   white-space: nowrap;
@@ -4467,7 +4471,7 @@ label {
 .pm-label {
   font-family: var(--pm-serif);
   color: var(--pm-gold);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   letter-spacing: 0.16em;
 }
 /* PM 計量表：分段格子＋紅色填充 */
@@ -4476,7 +4480,7 @@ label {
   gap: 3px;
   grid-template-columns: 3.6rem 1fr 2.2rem;
   align-items: center;
-  font-size: 0.72rem;
+  font-size: 0.86rem;
 }
 .pm-gauge > span:first-child {
   font-family: var(--pm-serif);
@@ -4537,7 +4541,7 @@ label {
   border-radius: 2px;
   color: var(--pm-cream);
   font-family: var(--pm-serif);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   letter-spacing: 0.06em;
 }
 .pm-tile:hover {
@@ -4593,7 +4597,7 @@ label {
   border-radius: 3px;
   background: #241a16;
   color: var(--pm-salmon);
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   min-height: 2.4em;
 }
 @media (min-width: 640px) {
@@ -4642,7 +4646,7 @@ label {
 }
 .pet-subnav button {
   padding: 5px 9px;
-  font-size: 0.78rem;
+  font-size: 0.94rem;
 }
 .pet-subnav button.active {
   background: linear-gradient(#d9b26a, #a8853d);
@@ -4661,7 +4665,7 @@ label {
 }
 /* PM 介面：磚塊標籤與殘留元件的顏色校正 */
 .pm-tile small {
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   padding: 3px 6px;
   letter-spacing: 0.12em;
   background: linear-gradient(#4a1f1a, #2a1411);
@@ -4840,7 +4844,7 @@ label {
 }
 .care-stop {
   padding: 5px 10px;
-  font-size: 0.8rem;
+  font-size: 0.96rem;
 }
 /* 手機上貓咪放得很大，目標圈也跟著放大，箭頭更明顯 */
 .care-target {
@@ -4851,7 +4855,7 @@ label {
   font-size: 1.8rem;
 }
 .care-target small {
-  font-size: 0.66rem;
+  font-size: 0.79rem;
 }
 .care-target .dir {
   font-size: 1.9rem;
@@ -4893,7 +4897,7 @@ label {
   box-shadow: inset 0 0 0 1px var(--pm-gold);
 }
 .quiz-grade-title {
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: var(--pm-gold);
   font-family: var(--pm-serif);
@@ -4918,12 +4922,12 @@ label {
   box-shadow: inset 0 0 0 1px #6b3410;
 }
 .quiz-grade-hint {
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   color: var(--pm-salmon);
   margin-left: auto;
 }
 .quiz-grade-tag {
-  font-size: 0.7rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: var(--pm-gold);
   border: 1px solid var(--pm-frame);
@@ -4952,14 +4956,14 @@ label {
 }
 .unit-panel summary {
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: var(--pm-gold);
   font-family: var(--pm-serif);
 }
 .unit-block {
   margin-top: 8px;
-  font-size: 0.76rem;
+  font-size: 0.91rem;
   color: var(--pm-cream);
 }
 .unit-block b {
@@ -4978,13 +4982,77 @@ label {
   border: 1px solid var(--pm-frame);
   border-radius: 3px;
   color: var(--pm-cream);
-  font-size: 0.72rem;
+  font-size: 0.86rem;
   line-height: 1.5;
 }
 .unit-empty,
 .unit-hint {
   margin: 8px 0 0;
-  font-size: 0.74rem;
+  font-size: 0.89rem;
   color: var(--pm-salmon);
   line-height: 1.5;
+}
+/* 錯題本 */
+.mistake-panel {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: linear-gradient(var(--pm-black-2), var(--pm-black));
+  border: 2px solid var(--pm-frame);
+  border-radius: 4px;
+}
+.mistake-panel summary {
+  cursor: pointer;
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--pm-gold);
+  font-family: var(--pm-serif);
+}
+.mistake-block {
+  margin-top: 10px;
+  padding: 8px;
+  background: #241a16;
+  border: 1px solid var(--pm-frame);
+  border-radius: 4px;
+}
+.mistake-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.86rem;
+  color: var(--pm-cream);
+}
+.mistake-count {
+  color: var(--pm-salmon);
+  font-size: 0.82rem;
+}
+.mistake-drill {
+  margin-left: auto;
+  padding: 6px 10px !important;
+  font-size: 0.82rem !important;
+  width: auto !important;
+}
+.mistake-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 0.86rem;
+  color: var(--pm-cream);
+  line-height: 1.55;
+}
+.mistake-list li {
+  margin-bottom: 6px;
+}
+.mistake-q {
+  display: block;
+}
+.mistake-a {
+  color: var(--pm-gold);
+  font-size: 0.82rem;
+}
+.mistake-clear {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 0.86rem !important;
+  padding: 8px !important;
+  background: var(--pm-red) !important;
 }

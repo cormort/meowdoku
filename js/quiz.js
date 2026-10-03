@@ -231,6 +231,42 @@ export function unitsFor(subjectId, publisher, term) {
   return units.filter((u) => u.publisher === publisher && u.term === term);
 }
 
+// ===== 錯題本 =====
+export const MISTAKE_LIMIT = 120;
+export function mistakeKey(subjectId, questionId) {
+  return `${subjectId}:${questionId}`;
+}
+// 記錄一題錯題：同一題只留最新一次、最新在前、最多 MISTAKE_LIMIT 筆
+export function recordMistake(list, entry) {
+  const old = Array.isArray(list) ? list : [];
+  if (!entry?.subjectId || !entry?.questionId) return old;
+  const key = mistakeKey(entry.subjectId, entry.questionId);
+  const rest = old.filter((e) => mistakeKey(e.subjectId, e.questionId) !== key);
+  return [{ ...entry }, ...rest].slice(0, MISTAKE_LIMIT);
+}
+export function mistakeCounts(list) {
+  const counts = {};
+  for (const e of Array.isArray(list) ? list : []) counts[e.subjectId] = (counts[e.subjectId] || 0) + 1;
+  return counts;
+}
+export function mistakesFor(list, subjectId) {
+  return (Array.isArray(list) ? list : []).filter((e) => e.subjectId === subjectId);
+}
+// 從錯題本挑出可重練的題目（題目若已被刪除就跳過），依錯題新到舊排序
+export function mistakesToQuestions(list, subject, limit = 3) {
+  const byId = new Map((subject?.questions || []).map((q) => [q.id, q]));
+  const seen = new Set();
+  const out = [];
+  for (const e of mistakesFor(list, subject?.id)) {
+    const q = byId.get(e.questionId);
+    if (!q || seen.has(q.id)) continue;
+    seen.add(q.id);
+    out.push(q);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 // 從題庫隨機抽一輪（Fisher–Yates，不重複）。
 // filter 可帶 { grade, term, publisher }；第二個參數也接受單純的年級數字（舊用法）。
 // 依條件篩選後題數不足時，依序退回「同年級」→「整冊」，避免抽不到題。

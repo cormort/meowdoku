@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 import {
   GRADES,
+  MISTAKE_LIMIT,
   PUBLISHERS,
   SUBJECT_PUBLISHERS,
   filterCount,
@@ -11,8 +12,12 @@ import {
   gradeCounts,
   isCorrect,
   matchesFilter,
+  mistakeCounts,
+  mistakesFor,
+  mistakesToQuestions,
   pickRound,
   publisherCounts,
+  recordMistake,
   termCounts,
   validateSubject,
 } from "../js/quiz.js";
@@ -120,6 +125,30 @@ check(validateSubject({ ...good, color: "red" }).length > 0, "顏色格式錯誤
 console.log("=== 結算 ===");
 check(calculateQuizResult("math", 3, 3).perfect && calculateQuizResult("math", 2, 3).pass, "3 題答對 2 題算合格");
 check(!calculateQuizResult("math", 1, 3).pass, "3 題答對 1 題不合格");
+
+console.log("=== 錯題本 ===");
+{
+  const mk = (id, sub = "math", at = 1) => ({ subjectId: sub, questionId: id, at });
+  let book = [];
+  book = recordMistake(book, mk("math-001", "math", 1));
+  book = recordMistake(book, mk("math-002", "math", 2));
+  check(book.length === 2 && book[0].questionId === "math-002", "錯題依新到舊排序");
+  book = recordMistake(book, mk("math-001", "math", 3));
+  check(book.length === 2 && book[0].questionId === "math-001" && book[0].at === 3, "同一題再錯只留最新一次");
+  book = recordMistake(book, mk("chinese-001", "chinese", 4));
+  const counts = mistakeCounts(book);
+  check(counts.math === 2 && counts.chinese === 1, "各科錯題數統計正確");
+  check(mistakesFor(book, "math").length === 2, "可依科目篩選錯題");
+  // 上限
+  let big = [];
+  for (let i = 0; i < MISTAKE_LIMIT + 20; i++) big = recordMistake(big, mk(`math-x${i}`));
+  check(big.length === MISTAKE_LIMIT, `錯題本上限 ${MISTAKE_LIMIT} 筆`);
+  check(recordMistake(book, {}).length === 3, "壞資料不會寫進錯題本");
+  // 重練：過濾已刪除的題目、去重、依 roundSize 取前幾題
+  const subject = read("math.json");
+  const again = mistakesToQuestions([mk("math-001"), mk("不存在"), mk("math-001"), mk("math-002")], subject, 2);
+  check(again.length === 2 && again[0].id === "math-001" && again[1].id === "math-002", "錯題重練只取存在的題目且不重複");
+}
 
 console.log(failures ? `\n${failures} 項失敗` : "\n全部通過");
 process.exit(failures ? 1 : 0);
