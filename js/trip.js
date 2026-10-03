@@ -190,13 +190,15 @@ export function startTrip(id, key = activePetKey()) {
   if (album.length > MAX_ALBUM) album.splice(0, album.length - MAX_ALBUM);
   savePetData();
   updatePetHeroStats(key);
-  audio.playVictory?.();
+  audio.playShutter(); // 拍照快門
+  audio.setScene(t.scene); // 換成這個場景的專屬配樂
   setRoomCatPose(t.photoPose, `${t.name}好玩！`, "", 3000);
   showPetHome();
   showSheet(
     `${t.icon} ${t.name}`,
     `<div class="trip-result">${photoHtml(entry)}</div><p class="trip-result-line">${escapeHtml(caption)}</p><p class="trip-result-gain">💕 好感度 +${t.aff}・😺 心情 +${t.mood}・⚡ 體力 -${t.energy}${t.cost ? `・🪙 -${t.cost}` : ""}</p>`,
     "收下照片",
+    () => audio.setScene("room"), // 收起照片後回到小屋的曲子
   );
 }
 export function handleTripClick(e) {

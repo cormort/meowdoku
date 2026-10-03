@@ -22,6 +22,8 @@ function route() {
   $("puzzleBtn").hidden = next === "puzzle";
   if (next === "puzzle") enterPuzzle();
   else showPetHome();
+  // 各場景配樂：數獨打工有專屬曲，其餘分頁（小屋／出門／商店…）用小屋的主題曲
+  audio.setScene(next === "puzzle" ? "puzzle" : "room");
   scrollTo(0, 0);
 }
 

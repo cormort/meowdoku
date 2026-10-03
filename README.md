@@ -96,6 +96,32 @@
 - `js/main.js` 開機時強制 `data-theme = "dark"`（PM 風格沒有淺色版），並隱藏主題切換鈕。
 - 要改色只要動 PM 介面層開頭的 `--pm-*` 變數。
 
+## 場景配樂（Web Audio 即時合成）
+
+`audio.js` 是純 Web Audio 合成引擎，**沒有任何音檔**（零下載、離線可播、也不會讓 repo 變大）。
+每個場景有自己的曲子：不同的和弦進行、速度、主奏音色與節奏型，切換場景時舊曲淡出、新曲淡入。
+
+- **小屋**（`room`）：音樂盒音色、78 bpm、Fmaj7 系和弦的貓咪咖啡廳 Lofi，無鼓。
+- **公園散步**（`park`）：C 大調、112 bpm、撥弦（烏克麗麗感）、腳步低音、每 4 小節有鳥叫聲。
+- **貓咪咖啡廳**（`cafe`）：96 bpm 爵士搖擺、電鋼琴、ii–V–I–VI 進行、輕刷鈸。
+- **逛街購物**（`street`）：G 大調、126 bpm、電風琴主奏、四四拍鼓組（大鼓／小鼓／Hi-hat）。
+- **看電影**（`cinema`）：a 小調、68 bpm、鐘聲與暗色和聲襯底、每拍放映機滴答聲。
+- **海邊玩水**（`beach`）：D 大調 Bossa、104 bpm、鋼鼓音色、沙鈴，每 4 小節一段浪聲。
+- **溫泉旅行**（`onsen`）：a 小調五聲音階、60 bpm、箏（帶下滑音）、長音襯底、偶爾水滴聲。
+- **數獨打工**（`puzzle`）：88 bpm、音樂盒、穩定琶音加輕 Hi-hat，專注但不吵。
+
+曲子由 `tracks` 資料表定義（`chords` 8 個和弦 + `motifs` 4 條旋律動機 + `bpm`／`voice`／
+`arpPat`／`bassPat`／`drum`），`renderBar()` 是一小節的排程器——即時播放用
+`setTimeout` 逐小節往下排（`AudioContext`），**同一個函式也能餵 `OfflineAudioContext`**，
+所以可以用 `audio.exportTrack(id, 秒數)` 把任一首曲子離線渲染成 WAV 來試聽或驗收。
+
+- 音色表：`musicbox`／`epiano`／`pluck`／`organ`／`bell`／`steel`／`koto`／`pad`／`warmbass`。
+- 打擊與環境音：`kick`／`hat`／`snare`／`shaker`／`click`（放映機）／`drip`（水滴）／`wave`（浪）／`chirp`（鳥）。
+- 換場：`audio.setScene(id)`（活動代號自動對應，例如 `shopping`→`street`、`movie`→`cinema`）；
+  分頁切換在 `js/main.js` 的 `route()`、出門拍照在 `js/trip.js` 的 `startTrip()`（順便播快門聲）。
+- 瀏覽器政策要求先有使用者手勢才能出聲，所以 `audio.init()`／`startBgm()` 綁在第一次
+  `pointerdown`；右上角 **🎵 音樂：開／關** 可切換（記憶在 `meowdoku.bgm`，預設開）。
+
 ## 帶貓咪出門（🎒 出門）
 
 `js/trip.js`：6 個外出活動，每次出門會拍一張相片收進相簿。
