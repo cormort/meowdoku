@@ -493,11 +493,40 @@ const PARTS = {
   tail: [80, 86, "尾巴"],
 };
 const BODY = ["head", "cheek", "chin", "chest", "back", "waist", "tail"];
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const say1 = (arr) => arr[Math.floor(Math.random() * arr.length)];
+// 從清單裡隨機挑 n 個（不重複）
+function pickN(list, n) {
+  const pool = [...list],
+    out = [];
+  while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  return out;
+}
+// 描／擦的方向：每個目標隨機，玩家要順著箭頭拖
+const DIRS = ["down", "up", "left", "right"];
 const CARES = {
   brush: {
     title: "🪮 梳毛",
-    phases: [{ label: "點亮起來的部位，順著毛梳！", parts: [...BODY, "earL", "earR"], icon: "🪮", fx: "✨", goal: 8, time: 12, life: [1700, 900], flinch: 0 }],
-    start: () => (recently("brushedAt", 2 * 3600 * 1000) ? "剛剛才梳過…好吧再一下下" : "呼嚕～要梳毛了嗎"),
+    // 每場隨機挑 3 個部位、梳的方向也隨機；偶爾出現要梳兩下的毛球
+    makePhases: () => {
+      const zones = pickN(BODY, 3),
+        goal = rand(5, 6);
+      return [
+        {
+          label: `順著箭頭，從${zones.map((z) => PARTS[z][2]).join("、")}梳下去`,
+          parts: zones,
+          mode: "stroke",
+          bonus: true,
+          icon: "🪮",
+          fx: "✨",
+          goal,
+          time: goal * 3, // 描一次要拖一段距離，比連點慢，時間給寬一點
+          life: [3000, 1900],
+          flinch: 0,
+        },
+      ];
+    },
+    start: () => say1(["呼嚕～要梳毛了嗎", "今天想梳哪裡喵？", "來吧，輕輕梳就好～"]),
     finish: (s) => {
       const annoyed = recently("brushedAt", 2 * 3600 * 1000);
       s.brushedAt = Date.now();
@@ -510,25 +539,63 @@ const CARES = {
       audio.startPurr();
       setTimeout(() => audio.stopPurr(), 1800);
       befriend(3, 6);
-      return "毛毛蓬鬆又柔順～（清潔 +10、毛球 -1）";
+      return `${say1(["毛毛蓬鬆又柔順～", "梳完像換了一隻貓！", "呼嚕嚕～舒服吧"])}（清潔 +10、毛球 -1）`;
     },
     abort: () => "梳到一半跑掉了…",
   },
   bath: {
     title: "🛁 洗澡",
-    phases: [
-      { label: "搓泡泡！（會掙扎亂動）", parts: BODY, icon: "🧽", fx: "🫧", goal: 6, time: 10, life: [1500, 800], flinch: 0.15 },
-      { label: "快沖水！", parts: BODY, icon: "🚿", fx: "💧", goal: 5, time: 7, life: [1300, 750], flinch: 0.15 },
-      { label: "吹乾～", parts: [...BODY, "earL", "earR"], icon: "💨", fx: "💨", goal: 5, time: 7, life: [1300, 750], flinch: 0 },
-    ],
-    start: () => "咦？水？！不要啊喵——",
+    // 三段玩法都不同：搓泡泡＝連點、沖水＝按住沖、吹乾＝順箭頭擦，部位每場隨機
+    makePhases: () => {
+      const scrub = pickN(BODY, rand(3, 4)),
+        rinse = pickN(BODY, 3),
+        dry = pickN([...BODY, "earL", "earR"], 3);
+      return [
+        {
+          label: "搓泡泡！連點亮起來的地方把泡泡搓開",
+          parts: scrub,
+          mode: "tap",
+          icon: "🧽",
+          fx: "🫧",
+          goal: scrub.length,
+          time: scrub.length * 3.2,
+          life: [1700, 1100],
+          flinch: 0.12,
+        },
+        {
+          label: "沖水！按住亮起來的地方，沖到乾淨",
+          parts: rinse,
+          mode: "hold",
+          hold: 700,
+          icon: "🚿",
+          fx: "💧",
+          goal: rinse.length,
+          time: rinse.length * 4.6,
+          life: [2400, 1800],
+          flinch: 0.15,
+        },
+        {
+          label: "吹乾！順著箭頭把毛擦乾",
+          parts: dry,
+          mode: "stroke",
+          icon: "💨",
+          fx: "💨",
+          goal: dry.length,
+          time: dry.length * 4.2,
+          life: [2600, 1900],
+          flinch: 0,
+        },
+      ];
+    },
+    start: () => say1(["咦？水？！不要啊喵——", "又要洗澡？說好只沖一下喔…", "泡泡的味道好奇怪喵"]),
     finish: (s) => {
       const again = recently("bathedAt", 3 * DAY);
       s.bathedAt = Date.now();
       s.cleanliness = 100;
       befriend(2, again ? -15 : -6);
       animate("cat-spin", 1100);
-      return again ? "又洗澡！？三天內洗太多次了…😿（清潔 100%）" : "抖抖抖～香噴噴的！（清潔 100%）";
+      if (again) return "又洗澡！？三天內洗太多次了…😿（清潔 100%）";
+      return `${say1(["抖抖抖～香噴噴的！", "沖完泡泡香香的～", "洗完毛超軟！"])}（清潔 100%）`;
     },
     abort: (s) => {
       s.cleanliness = clamp(s.cleanliness + 20);
@@ -588,14 +655,43 @@ export function startCare(id) {
   el.innerHTML = `<div class="care-card"><div class="care-head"><b>${cfg.title}</b><small class="care-lv">Lv.${lv}</small><small class="care-phase"></small><button class="care-stop">結束</button></div><div class="care-label"></div><div class="care-meta"><b class="care-count"></b><div class="care-timer"><i></i></div><span class="care-sec"></span></div><div class="care-cat"><div class="care-lens"><img src="${sprite}" alt=""></div><div class="care-minimap"><img src="${sprite}" alt=""><i></i></div><span class="care-say"></span></div></div>`;
   document.body.append(el);
   el.querySelector(".care-stop").onclick = () => endCare(false);
-  el.querySelector(".care-cat").addEventListener("pointerdown", (e) => {
+  const cat = el.querySelector(".care-cat");
+  cat.addEventListener("pointerdown", (e) => {
     const t = e.target.closest(".care-target");
-    if (t) {
-      e.preventDefault();
-      hitTarget(t);
+    if (!t) return;
+    e.preventDefault();
+    beginTarget(e, t);
+  });
+  // 描／擦：拖到指定方向就完成；按住：時間到才完成。中途放開＝取消，目標壽命重新計算
+  cat.addEventListener("pointermove", (e) => {
+    const a = care?.acting;
+    if (!a || a.done || a.mode !== "stroke") return;
+    const dx = e.clientX - a.x0,
+      dy = e.clientY - a.y0,
+      need = 26;
+    const ok =
+      a.dir === "down" ? dy >= need : a.dir === "up" ? dy <= -need : a.dir === "right" ? dx >= need : dx <= -need;
+    if (ok) {
+      a.done = true;
+      completeTarget(a.t);
     }
   });
-  care = { id, cfg, el, lv, phase: -1, timers: new Set(), breed: sprite.match(/room\/(\w+)_/)?.[1] };
+  const release = () =>
+    cancelActing(care?.acting?.mode === "stroke" ? "順著箭頭拖～" : "要按住喔～");
+  cat.addEventListener("pointerup", release);
+  cat.addEventListener("pointercancel", release);
+  cat.addEventListener("pointerleave", release);
+  care = {
+    id,
+    cfg,
+    el,
+    lv,
+    phase: -1,
+    timers: new Set(),
+    breed: sprite.match(/room\/(\w+)_/)?.[1],
+    phases: cfg.makePhases ? cfg.makePhases() : cfg.phases,
+    acting: null,
+  };
   careSay(cfg.start());
   nextPhase();
 }
@@ -619,14 +715,14 @@ function careLater(fn, ms) {
 function nextPhase() {
   const c = care;
   c.phase++;
-  if (c.phase >= c.cfg.phases.length) return endCare(true);
-  const p = c.cfg.phases[c.phase];
+  if (c.phase >= c.phases.length) return endCare(true);
+  const p = c.phases[c.phase];
   c.hits = 0;
   c.goal = p.loupe ? (BREED_PAWS[c.breed] || BREED_PAWS.cat).paws.length * p.loupe.claws.length : p.goal;
   c.total = p.time * (c.goal / p.goal) * 1000 * (1 - (c.lv - 1) * 0.08); // 等級越高倒數越短
   c.deadline = performance.now() + c.total;
   c.el.querySelector(".care-label").textContent = p.label;
-  c.el.querySelector(".care-phase").textContent = c.cfg.phases.length > 1 ? `${c.phase + 1}／${c.cfg.phases.length}` : "";
+  c.el.querySelector(".care-phase").textContent = c.phases.length > 1 ? `${c.phase + 1}／${c.phases.length}` : "";
   c.el.querySelectorAll(".care-target").forEach((t) => t.remove());
   c.el.querySelector(".care-cat").classList.toggle("loupe", !!p.loupe);
   if (p.loupe) {
@@ -643,7 +739,7 @@ function nextPhase() {
 }
 function updateCareHud() {
   const c = care,
-    p = c.cfg.phases[c.phase],
+    p = c.phases[c.phase],
     left = Math.max(0, c.deadline - performance.now());
   c.el.querySelector(".care-count").textContent = `${c.hits}／${c.goal}`;
   c.el.querySelector(".care-sec").textContent = `${(left / 1000).toFixed(1)}s`;
@@ -663,7 +759,7 @@ const BREED_PAWS = {
 // 放大鏡對準目前這隻腳：圖片放大 zoom 倍，讓腳掌落在鏡片（正方形）正中央；左上小地圖標出位置
 function aimLoupe(instant = false) {
   const c = care,
-    { zoom } = c.cfg.phases[c.phase].loupe,
+    { zoom } = c.phases[c.phase].loupe,
     breed = BREED_PAWS[c.breed] || BREED_PAWS.cat,
     [, x, toeY] = breed.paws[c.paw],
     y = toeY - 3, // 鏡頭略高於爪尖，讓整隻腳掌落在鏡片中央（爪尖目標再往下偏移）
@@ -679,9 +775,21 @@ function aimLoupe(instant = false) {
   Object.assign(c.el.querySelector(".care-minimap i").style, { left: `${x}%`, top: `${y}%` });
 }
 // 亮起一個部位（放大鏡模式是這隻腳還沒剪的爪尖）；存活時間隨進度縮短；沒點到就扣時間
+function armLife(t, life) {
+  t.expire = careLater(() => {
+    if (!t.isConnected) return;
+    const c = care;
+    if (c.acting?.t === t) c.acting = null;
+    t.remove();
+    c.deadline -= 600;
+    careSay(say1(["慢吞吞的～", "這邊啦！", "喵？"]));
+    spawnTarget(t.dataset.part);
+  }, life);
+}
 function spawnTarget(avoid) {
   const c = care,
-    p = c.cfg.phases[c.phase],
+    p = c.phases[c.phase],
+    mode = p.mode || "tap",
     life = Math.round(p.life[0] - (p.life[0] - p.life[1]) * (c.hits / c.goal));
   let key, x, y, name;
   if (p.loupe) {
@@ -696,41 +804,62 @@ function spawnTarget(avoid) {
     [x, y, name] = PARTS[key];
   }
   const t = document.createElement("button");
-  t.className = "care-target";
+  t.className = `care-target${mode === "tap" ? "" : ` ${mode}`}`;
   t.dataset.part = key;
+  t.dataset.mode = mode;
   t.style.cssText = `left:${x}%;top:${y}%;--life:${life}ms`;
-  t.innerHTML = `<span>${p.icon}</span><small>${name}</small>`;
+  if (mode === "stroke") {
+    const dir = DIRS[Math.floor(Math.random() * DIRS.length)];
+    t.dataset.dir = dir;
+    // 偶爾混進一顆毛球：要梳兩下、算兩點
+    if (p.bonus && !c.bonusDone && Math.random() < 0.4) {
+      c.bonusDone = true;
+      t.dataset.bonus = "1";
+      t.innerHTML = `<span>🟤</span><i class="dir ${dir}"></i><small>毛球</small>`;
+    } else {
+      t.innerHTML = `<span>${p.icon}</span><i class="dir ${dir}"></i><small>${name}</small>`;
+    }
+  } else if (mode === "hold") {
+    t.style.setProperty("--hold", `${p.hold}ms`);
+    t.innerHTML = `<span>${p.icon}</span><i class="ring"></i><small>${name}</small>`;
+  } else {
+    t.innerHTML = `<span>${p.icon}</span><small>${name}</small>`;
+  }
   c.el.querySelector(".care-cat").append(t);
-  t.expire = careLater(() => {
-    if (!t.isConnected) return;
-    t.remove();
-    c.deadline -= 600;
-    careSay(["慢吞吞的～", "這邊啦！", "喵？"][Math.floor(Math.random() * 3)]);
-    spawnTarget(key);
-  }, life);
+  armLife(t, life);
 }
-function hitTarget(t) {
-  const c = care,
-    p = c.cfg.phases[c.phase];
+// 貓咪掙扎：這下不算，換個位置
+function flinchAway(t) {
+  const c = care;
   clearTimeout(t.expire);
   c.timers.delete(t.expire);
   t.remove();
-  if (Math.random() < p.flinch) {
-    // 貓咪掙扎：這下不算，換個位置
-    audio.playMeow(1.4);
-    navigator.vibrate?.(30);
-    careSay(["喵嗚！不要！", "嘶——", "放開我喵！"][Math.floor(Math.random() * 3)]);
-    const lens = c.el.querySelector(".care-lens");
-    lens.classList.remove("flinch");
-    void lens.offsetWidth;
-    lens.classList.add("flinch");
-    return spawnTarget(t.dataset.part);
+  audio.playMeow(1.4);
+  navigator.vibrate?.(30);
+  careSay(say1(["喵嗚！不要！", "嘶——", "放開我喵！"]));
+  const lens = c.el.querySelector(".care-lens");
+  lens.classList.remove("flinch");
+  void lens.offsetWidth;
+  lens.classList.add("flinch");
+  spawnTarget(t.dataset.part);
+}
+// 完成一次（點到／按滿／描對方向）
+function completeTarget(t) {
+  const c = care,
+    p = c.phases[c.phase];
+  if (c.acting) {
+    clearTimeout(c.holdTimer);
+    c.timers.delete(c.holdTimer);
+    c.acting = null;
   }
-  c.hits++;
+  clearTimeout(t.expire);
+  c.timers.delete(t.expire);
+  t.remove();
+  c.hits += t.dataset.bonus === "1" ? 2 : 1;
   navigator.vibrate?.(8);
   const fx = document.createElement("span");
   fx.className = "care-fx";
-  fx.textContent = p.fx;
+  fx.textContent = t.dataset.bonus === "1" ? "🟤" : p.fx;
   fx.style.cssText = t.style.cssText;
   c.el.querySelector(".care-cat").append(fx);
   setTimeout(() => fx.remove(), 700);
@@ -749,6 +878,34 @@ function hitTarget(t) {
     }
   }
   spawnTarget(t.dataset.part);
+}
+// 按下去：tap 直接算完成；hold 要按滿、stroke 要拖對方向 —— 先暫停壽命，讓玩家有時間完成動作
+function beginTarget(e, t) {
+  const c = care,
+    p = c.phases[c.phase],
+    mode = t.dataset.mode || "tap";
+  if (Math.random() < p.flinch) return flinchAway(t);
+  if (mode === "tap") return completeTarget(t);
+  clearTimeout(t.expire);
+  c.timers.delete(t.expire);
+  try {
+    t.setPointerCapture?.(e.pointerId);
+  } catch {}
+  c.acting = { t, mode, x0: e.clientX, y0: e.clientY, dir: t.dataset.dir, done: false };
+  t.classList.add("acting");
+  if (mode === "hold") c.holdTimer = careLater(() => completeTarget(t), p.hold);
+}
+// 中途放開：不算數，目標重新計時（比原本短一點）
+function cancelActing(hint) {
+  const c = care;
+  if (!c?.acting || c.acting.done) return;
+  const t = c.acting.t;
+  c.acting = null;
+  clearTimeout(c.holdTimer);
+  c.timers.delete(c.holdTimer);
+  t.classList.remove("acting");
+  if (t.isConnected) armLife(t, Math.round(c.phases[c.phase].life[0] * 0.9));
+  if (hint) careSay(hint);
 }
 function endCare(done) {
   const c = care;

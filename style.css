@@ -3931,6 +3931,7 @@ html.low-fx .board.skin-arrive {
   width: min(100%, (100dvh - 230px) * 0.8);
   aspect-ratio: 318 / 401;
   margin: 0 auto 18px;
+  touch-action: none; /* 梳毛／吹乾要拖曳，交給 JS 處理不要讓瀏覽器當成捲動 */
 }
 .care-lens {
   position: absolute;
@@ -4070,6 +4071,81 @@ html.low-fx .board.skin-arrive {
 @keyframes careTargetLife {
   from { scale: 1.35; opacity: 0.9; }
   to { scale: 0.85; opacity: 0.2; }
+}
+/* 按住型（沖水）：內圈由大縮到剛好＝還要按多久，放開就重來 */
+.care-target.hold {
+  touch-action: none;
+  background: rgba(219, 234, 254, 0.92); /* 淡藍底：白貓身上白圈會看不清楚 */
+}
+.care-target .ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.care-target .ring::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 3px solid rgba(37, 99, 235, 0.3);
+}
+.care-target.acting {
+  border-color: #2563eb;
+  border-width: 4px;
+  box-shadow: 0 0 0 10px rgba(37, 99, 235, 0.28);
+  scale: 1.05;
+}
+.care-target.acting .ring::before {
+  border-color: #2563eb;
+  border-width: 4px;
+  animation: careHold var(--hold, 700ms) linear forwards;
+}
+@keyframes careHold {
+  from { scale: 2.4; opacity: 0.25; }
+  to { scale: 1; opacity: 1; }
+}
+/* 描／擦型（梳毛、吹乾）：圓圈下方照著箭頭拖 */
+.care-target.stroke {
+  touch-action: none;
+  background: rgba(224, 242, 254, 0.94);
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 6px rgba(14, 165, 233, 0.22);
+}
+.care-target .dir {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  translate: -50% 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 900;
+  color: #0369a1;
+  text-shadow: 0 1px 0 #fff, 0 0 6px #fff;
+  pointer-events: none;
+  animation: careDir 0.85s ease-in-out infinite;
+}
+.care-target .dir::before {
+  content: "↓";
+}
+.care-target .dir.up::before {
+  content: "↑";
+}
+.care-target .dir.left::before {
+  content: "←";
+}
+.care-target .dir.right::before {
+  content: "→";
+}
+@keyframes careDir {
+  0%, 100% { opacity: 0.55; scale: 0.92; }
+  50% { opacity: 1; scale: 1.12; }
+}
+/* 梳毛偶爾出現的毛球：顏色不同、算兩點 */
+.care-target[data-bonus="1"] {
+  border-color: #a16207;
+  background: rgba(255, 247, 237, 0.95);
+  box-shadow: 0 0 0 7px rgba(161, 98, 7, 0.22);
 }
 .care-fx {
   position: absolute;
