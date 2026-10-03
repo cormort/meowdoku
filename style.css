@@ -5152,6 +5152,23 @@ label {
   background: var(--pm-red);
   border-radius: 8px;
 }
+.avatar-png {
+  position: relative;
+  width: var(--av-w, 150px);
+  height: calc(var(--av-w, 150px) * 400 / 260);
+  margin: 0 auto;
+  filter: drop-shadow(0 3px 4px rgba(90, 60, 35, 0.18));
+}
+.avatar-png .av-layer {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
 .avatar-svg { display: block; margin: 0 auto; }
 .avatar-wrap {
   display: flex;
