@@ -23,29 +23,22 @@
         document.getElementById("grid").textContent = "IMPORT FAIL: " + e;
         throw e;
       }
-      const combos = [
-        { skin: "light", hair: "short", hairColor: "black", top: "tshirt", bottom: "jeans", shoes: "sneaker", hat: "none", accessory: "none" },
-        { skin: "light", hair: "bob", hairColor: "brown", top: "shirt", bottom: "skirt", shoes: "loafer", hat: "straw", accessory: "glasses" },
-        { skin: "warm", hair: "twin", hairColor: "blonde", top: "sailor", bottom: "pleat", shoes: "boots", hat: "bow", accessory: "none" },
-        { skin: "light", hair: "pony", hairColor: "pink", top: "hoodie", bottom: "jeans", shoes: "sneaker", hat: "cap", accessory: "backpack" },
-        { skin: "tan", hair: "curly", hairColor: "blue", top: "sweater", bottom: "sport", shoes: "rainboot", hat: "beanie", accessory: "scarf" },
-        { skin: "deep", hair: "bowl", hairColor: "mint", top: "vest", bottom: "shorts", shoes: "sandal", hat: "beret", accessory: "headphone" },
-      ];
+      const cfg = { skin: "light", hair: "bob", hairColor: "brown", top: "sailor", bottom: "skirt", shoes: "loafer", hat: "none", accessory: "none" };
       const grid = document.getElementById("grid");
-      // 同一個造型、不同年級：看角色怎麼長大
-      const growing = { skin: "light", hair: "bob", hairColor: "brown", top: "shirt", bottom: "jeans", shoes: "sneaker", hat: "none", accessory: "glasses" };
-      for (const g of [4, 5, 6, 7, 8, 9]) {
+      grid.style.gridTemplateColumns = "repeat(4, 1fr)";
+      grid.style.width = "1720px";
+      for (const g of [4, 6, 9]) {
         const cell = document.createElement("div");
         cell.className = "cell";
-        cell.innerHTML = renderAvatar(growing, { size: 340, grade: g }) + `<small>${g} 年級（${stageLabel(g)}）</small>`;
+        cell.innerHTML = renderAvatar(cfg, { size: 400, grade: g }) + `<small>${g} 年級・全套</small>`;
         grid.appendChild(cell);
       }
-      for (const c of combos) {
-        const cell = document.createElement("div");
-        cell.className = "cell";
-        cell.innerHTML = renderAvatar(c, { size: 340 }) + `<small>${c.hair}/${c.top}/${c.bottom}/${c.shoes}/${c.hat}/${c.accessory}</small>`;
-        grid.appendChild(cell);
-      }
+      const bare = document.createElement("div");
+      bare.className = "cell";
+      bare.innerHTML =
+        renderAvatar({ ...cfg, top: "none", bottom: "none", shoes: "none", hair: "none" }, { size: 400, grade: 4 }) +
+        `<small>只有身體（看肩線/腰線/腳底）</small>`;
+      grid.appendChild(bare);
     </script>
   </body>
 </html>

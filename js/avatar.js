@@ -104,12 +104,12 @@ export const GROWTH_GRADES = [4, 5, 6, 7, 8, 9];
 // 各階段量測值（相對於 512x512 畫布的比例）：
 // headTop/headW = 頭頂與頭寬；shoulder/hip/feet = 肩、腰、腳底
 export const STAGE_METRICS = {
-  g4: { label: "四年級", headTop: 0.113, headW: 0.268, shoulder: 0.42, hip: 0.775, feet: 0.963 },
-  g5: { label: "五年級", headTop: 0.113, headW: 0.174, shoulder: 0.328, hip: 0.775, feet: 0.963 },
+  g4: { label: "四年級", headTop: 0.113, headW: 0.27, shoulder: 0.42, hip: 0.775, feet: 0.963 },
+  g5: { label: "五年級", headTop: 0.113, headW: 0.174, shoulder: 0.322, hip: 0.775, feet: 0.963 },
   g6: { label: "六年級", headTop: 0.113, headW: 0.205, shoulder: 0.348, hip: 0.775, feet: 0.963 },
-  g7: { label: "七年級", headTop: 0.113, headW: 0.158, shoulder: 0.305, hip: 0.775, feet: 0.963 },
-  g8: { label: "八年級", headTop: 0.113, headW: 0.137, shoulder: 0.291, hip: 0.775, feet: 0.963 },
-  g9: { label: "九年級", headTop: 0.113, headW: 0.158, shoulder: 0.305, hip: 0.775, feet: 0.963 },
+  g7: { label: "七年級", headTop: 0.113, headW: 0.158, shoulder: 0.309, hip: 0.775, feet: 0.963 },
+  g8: { label: "八年級", headTop: 0.113, headW: 0.135, shoulder: 0.289, hip: 0.775, feet: 0.963 },
+  g9: { label: "九年級", headTop: 0.113, headW: 0.156, shoulder: 0.307, hip: 0.775, feet: 0.963 },
 };
 const REF_STAGE = "g4"; // 衣服圖層是以這個階段的身體對齊的
 

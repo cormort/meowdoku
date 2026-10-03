@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = Path("/tmp/avatar_gen")
 OUT = ROOT / "icons" / "avatar"
 W = H = 512
-TREAT = 10  # 白底判斷容差（要緊一點，否則白色衣服會被一起吃掉）
+TREAT = 42  # 白底判斷容差：要大到能吃 AI 畫的淡彩底卡，又不能穿過衣服的深色描邊
 CANVAS_INK = 8  # 這條線以下的亮度當成「封閉白區」挖掉
 
 # 圖板 → (欄數, 列數, [(格號, 檔名)], 是否挖掉封閉白區)
@@ -35,8 +35,8 @@ SHEET_ALIAS = {"accessories": ["accessories", "acc"]}
 # 以「量到的身體」對齊：head 是頭（肩膀以上）、shoulder 是脖子的位子、
 # feet 是腳底。w 是相對頭寬的比例，dy 是相對身體高度的微調。
 ANCHORS = {
-    "hair": {"line": "head_top", "dy": -0.05, "w": 1.06},
-    "hat": {"line": "head_top", "dy": -0.12, "w": 1.14},
+    "hair": {"line": "head_top", "dy": -0.02, "w": 1.00},
+    "hat": {"line": "head_top", "dy": -0.10, "w": 1.06},
     "top": {"line": "shoulder", "dy": -0.03, "w": 1.02},
     "bottom": {"line": "hip", "dy": -0.02, "w": 0.92},
     "shoes": {"line": "feet", "dy": 0.00, "w": 0.66},
@@ -68,8 +68,15 @@ def measure(canvas):
     head_rows = [rows[y] for y in range(top, neck_y) if rows[y]]
     head_w = max((r[1] - r[0]) for r in head_rows) if head_rows else 0
     head_h = neck_y - top
+    def width_at(y):
+        r = rows[y] if 0 <= y < len(rows) else None
+        return (r[1] - r[0]) if r else 0
+
+    chest_y = neck_y + int(body_h * 0.16)
+    hip_y = top + int(body_h * 0.78)
     return {
         "top": top, "bottom": bottom, "body_h": body_h,
+        "chest_w": width_at(chest_y), "hip_w": width_at(hip_y),
         "head_top": top, "head_h": head_h, "head_w": head_w,
         "neck": neck_y, "shoulder": neck_y + int(body_h * 0.02),
         "eye": top + int(head_h * 0.62), "chest": neck_y + int(body_h * 0.16),
@@ -96,6 +103,11 @@ def erase_face(sprite, m, box, pos):
 
 def _is_white(px, tol=TREAT):
     return px[0] > 255 - tol and px[1] > 255 - tol and px[2] > 255 - tol
+
+
+def _is_bg(px, tol=TREAT):
+    """連到邊界的淺色（白底或 AI 畫的淡彩底卡）都算背景。"""
+    return min(px[0], px[1], px[2]) > 255 - tol
 
 
 def _close(px, ref, tol):
@@ -135,8 +147,8 @@ def cut_white(im, kill_holes=False):
                 if bg[j]:
                     continue
                 p2 = px[nx, ny]
-                # 只吃白色，不做顏色蔓延（否則會順著柔和陰影把角色本身吃掉）
-                if _is_white(p2):
+                # 只吃「連到邊界的淺色」（白色或淡彩底卡）；衣服內部被描邊包住所以安全
+                if _is_bg(p2):
                     bg[j] = 1
                     q.append((nx, ny, c))
     alpha = bytearray(255 - 255 * v for v in bg)
@@ -291,11 +303,9 @@ def place(item, sprite, m):
     key = item if item in ANCHORS else item.rsplit("_", 1)[0]
     a = ANCHORS[key]
     if key == "top":
-        target_h = (m["hip"] - m["shoulder"]) * 1.18
-        r = target_h / sprite.height
+        r = min((m["hip"] - m["shoulder"]) * 1.15 / sprite.height, (m.get("chest_w", m["head_w"]) * 1.28) / sprite.width)
     elif key == "bottom":
-        target_h = (m["feet"] - m["hip"]) * 1.02
-        r = target_h / sprite.height
+        r = min((m["feet"] - m["hip"]) * 1.02 / sprite.height, (m.get("hip_w", m["head_w"]) * 1.22) / sprite.width)
     else:
         r = (m["head_w"] * a["w"]) / sprite.width
     sprite = sprite.resize((max(1, int(sprite.width * r)), max(1, int(sprite.height * r))), Image.LANCZOS)
@@ -323,6 +333,7 @@ def main():
     print("量測", m)
     # 各年級身體：base_g4 … base_g9（各自量測後貼進畫布，輸出量測值表）
     metrics = {}
+    ref = measure(base_canvas) or {}
     for g in range(4, 10):
         f = SRC / f"base_g{g}.png"
         if not f.exists():
@@ -335,6 +346,12 @@ def main():
                 "headTop": round(mm["head_top"] / H, 3), "headW": round(mm["head_w"] / W, 3),
                 "shoulder": round(mm["shoulder"] / H, 3), "hip": round(mm["hip"] / H, 3), "feet": round(mm["feet"] / H, 3),
             }
+    # 把「對齊用的參考量測」當成 g4 的值，保證四年級的變形是 1:1
+    if ref:
+        metrics["g4"] = {
+            "headTop": round(ref["head_top"] / H, 3), "headW": round(ref["head_w"] / W, 3),
+            "shoulder": round(ref["shoulder"] / H, 3), "hip": round(ref["hip"] / H, 3), "feet": round(ref["feet"] / H, 3),
+        }
     if metrics:
         print("STAGE_METRICS = " + str(metrics).replace("'", '"'))
     made = ["base"]
