@@ -38,7 +38,7 @@ console.log("=== 圖層順序 ===");
 const files = avatarLayers({ ...defaultAvatar(), top: "sailor", hat: "straw", accessory: "glasses" }).map((l) => l.file);
 check(files[0] === "base_g4", "第一層是基本身體（預設四年級）");
 check(
-  files.join(",") === "base_g4,bottom_jeans,shoes_sneaker,top_sailor,hair_bob,hat_straw,acc_glasses",
+  files.join(",") === "base_g4,bottom_jeans,shoes_sneaker,top_sailor,base_g4,hair_bob,hat_straw,acc_glasses",
   `疊圖順序正確（${files.join(" → ")}）`,
 );
 check(files.indexOf("top_sailor") > files.indexOf("bottom_jeans"), "上衣蓋在褲裙之上");
@@ -109,14 +109,21 @@ console.log("=== 角色輸出 ===");
 const html = renderAvatar({ ...defaultAvatar(), top: "sailor", hat: "straw" }, { size: 200 });
 check(html.startsWith('<div class="avatar-png"'), "輸出是可縮放的 div 容器");
 const count = (html.match(/class="av-layer"/g) || []).length;
-check(count === 6, `六個圖層疊起來（身體／褲／鞋／上衣／髮／帽，實際 ${count}）`);
+check(count === 7, `七個圖層疊起來（身體／褲／鞋／上衣／頭脖子／髮／帽，實際 ${count}）`);
+const order = avatarLayers({ ...defaultAvatar(), top: "sailor" }, 7);
+const headIdx = order.findIndex((l) => l.clip);
+check(
+  headIdx > order.findIndex((l) => l.file === "top_sailor") && headIdx < order.findIndex((l) => l.file === "hair_bob") && order[headIdx].file === "base_g7",
+  "頭和脖子（同年級身體裁切）疊在上衣前面、頭髮後面",
+);
+check(html.includes("clip-path:polygon("), "頭脖子圖層用 clip-path 只留脖子以上");
 check(renderAvatar({ ...defaultAvatar(), accessory: "glasses" }).includes("acc_glasses.png"), "戴眼鏡會多一層配件圖層");
 check(html.includes("--av-w:200px"), "可以指定尺寸");
 check(html.includes("icons/avatar/hair_bob.png") && html.includes('class="av-img"'), "用 img 載入 AI 重繪的圖層");
 check(html.includes("av-tint"), "上色層用 .av-tint（CSS 走 multiply，保留 AI 的陰影）");
 check(html.includes("mask-image:url(") && (html.match(/hair_bob\.png/g) || []).length >= 2, "上色層拿同一張圖當遮罩，顏色只落在圖案上");
-check(renderAvatar({ ...defaultAvatar(), skin: "deep" }).includes("filter:saturate(1.45)"), "深色膚色會套濾鏡");
-check(!renderAvatar(defaultAvatar()).includes("filter:"), "預設膚色不加濾鏡");
+check((renderAvatar({ ...defaultAvatar(), skin: "deep" }).match(/filter:saturate\(1\.45\)/g) || []).length === 2, "深色膚色會套濾鏡（身體和頭脖子兩層都要）");
+check(!/<img[^>]*filter:/.test(renderAvatar(defaultAvatar())), "預設膚色不加濾鏡");
 check(html.includes("aria-label"), "帶有無障礙描述");
 
 console.log(failures ? `\n${failures} 項失敗` : "\n全部通過");

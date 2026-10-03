@@ -37,8 +37,8 @@ function measure(file) {
   let headTop = 0; while (!span(headTop)) headTop++;
   let feet = H - 1; while (!span(feet)) feet--;
   // 脖子＝頭頂到領口之間最窄的一列
-  let neck = collar, nw = 1e9;
-  for (let y = headTop + 30; y < collar; y++) { const s = span(y); if (s && s[1] - s[0] < nw) { nw = s[1] - s[0]; neck = y; } }
+  let neck = collar, nw = 1e9, nk = [0, 0];
+  for (let y = headTop + 30; y < collar; y++) { const s = span(y); if (s && s[1] - s[0] < nw) { nw = s[1] - s[0]; neck = y; nk = s; } }
   let hl = W, hr = 0;
   for (let y = headTop; y < neck; y++) { const s = span(y); if (s) { hl = Math.min(hl, s[0]); hr = Math.max(hr, s[1]); } }
   // 軀幹寬（含手臂）：領口到胯下之間最外側的範圍（上衣要蓋住的寬度）
@@ -53,7 +53,7 @@ function measure(file) {
   const ft = span(feet - 8);
   const r = (v) => Math.round(v);
   return {
-    headTop, neck, headL: hl, headR: hr,
+    headTop, neck, neckL: nk[0], neckR: nk[1], headL: hl, headR: hr,
     collar, crotch, armL: sh[0], armR: sh[1], hipL: r(hipC - hipW / 2), hipR: r(hipC + hipW / 2),
     ankle, feet, feetL: ft[0], feetR: ft[1],
   };

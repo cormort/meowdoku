@@ -102,15 +102,15 @@ export function randomAvatar(rng = Math.random) {
 export const GROWTH_GRADES = [4, 5, 6, 7, 8, 9];
 
 // 各階段錨點（512x512 畫布的像素座標），由 tools/measure_avatar.mjs 從身體 PNG 量出來：
-// headTop/neck/headL/headR＝頭頂、脖子、頭左右（含耳朵）；collar/crotch＝連身衣領口、胯下；
+// headTop/neck/headL/headR＝頭頂、脖子、頭左右（含耳朵）；neckL/neckR＝脖子最細處左右；collar/crotch＝連身衣領口、胯下；
 // armL/armR＝軀幹含手臂的最外側；hipL/hipR＝臀寬；ankle/feet＝腳踝、腳底；feetL/feetR＝兩腳外側
 export const STAGE_METRICS = {
-  g4: { label: "四年級", headTop: 57, neck: 207, headL: 185, headR: 325, collar: 219, crotch: 345, armL: 177, armR: 333, hipL: 210, hipR: 300, ankle: 463, feet: 494, feetL: 218, feetR: 292 },
-  g5: { label: "五年級", headTop: 57, neck: 158, headL: 211, headR: 300, collar: 172, crotch: 326, armL: 188, armR: 323, hipL: 217, hipR: 295, ankle: 453, feet: 494, feetL: 224, feetR: 287 },
-  g6: { label: "六年級", headTop: 57, neck: 170, headL: 202, headR: 308, collar: 185, crotch: 317, armL: 183, armR: 328, hipL: 213, hipR: 297, ankle: 456, feet: 494, feetL: 216, feetR: 295 },
-  g7: { label: "七年級", headTop: 57, neck: 148, headL: 215, headR: 296, collar: 164, crotch: 289, armL: 197, armR: 314, hipL: 219, hipR: 292, ankle: 451, feet: 494, feetL: 227, feetR: 284 },
-  g8: { label: "八年級", headTop: 57, neck: 141, headL: 221, headR: 290, collar: 160, crotch: 287, armL: 198, armR: 313, hipL: 219, hipR: 292, ankle: 467, feet: 494, feetL: 232, feetR: 280 },
-  g9: { label: "九年級", headTop: 57, neck: 150, headL: 214, headR: 296, collar: 163, crotch: 287, armL: 199, armR: 311, hipL: 222, hipR: 288, ankle: 451, feet: 494, feetL: 227, feetR: 284 },
+  g4: { label: "四年級", headTop: 57, neck: 207, neckL: 242, neckR: 268, headL: 185, headR: 325, collar: 219, crotch: 345, armL: 177, armR: 333, hipL: 210, hipR: 300, ankle: 463, feet: 494, feetL: 218, feetR: 292 },
+  g5: { label: "五年級", headTop: 57, neck: 158, neckL: 245, neckR: 266, headL: 211, headR: 300, collar: 172, crotch: 326, armL: 188, armR: 323, hipL: 217, hipR: 295, ankle: 453, feet: 494, feetL: 224, feetR: 287 },
+  g6: { label: "六年級", headTop: 57, neck: 170, neckL: 244, neckR: 267, headL: 202, headR: 308, collar: 185, crotch: 317, armL: 183, armR: 328, hipL: 213, hipR: 297, ankle: 456, feet: 494, feetL: 216, feetR: 295 },
+  g7: { label: "七年級", headTop: 57, neck: 148, neckL: 245, neckR: 266, headL: 215, headR: 296, collar: 164, crotch: 289, armL: 197, armR: 314, hipL: 219, hipR: 292, ankle: 451, feet: 494, feetL: 227, feetR: 284 },
+  g8: { label: "八年級", headTop: 57, neck: 141, neckL: 246, neckR: 265, headL: 221, headR: 290, collar: 160, crotch: 287, armL: 198, armR: 313, hipL: 219, hipR: 292, ankle: 467, feet: 494, feetL: 232, feetR: 280 },
+  g9: { label: "九年級", headTop: 57, neck: 150, neckL: 247, neckR: 264, headL: 214, headR: 296, collar: 163, crotch: 287, armL: 199, armR: 311, hipL: 222, hipR: 288, ankle: 451, feet: 494, feetL: 227, feetR: 284 },
 };
 const REF_STAGE = "g4"; // 衣服圖層是以這個階段的身體對齊的
 
@@ -186,17 +186,34 @@ export function avatarLayerSrc(file) {
   return new URL(`../${avatarLayerUrl(file)}`, import.meta.url).href;
 }
 
-// 回傳 [{ file, color, alpha, tint }]，順序＝疊圖順序（背包在最底、臉已含在 base 裡）
+// 頭＋脖子要疊在上衣領口前面：把身體圖再疊一次，只留脖子以上（頭整片＋脖子往下一截），
+// 脖子下緣切成 U 形（兩側淺、中間到領口），像衣服的圓領；回傳 CSS clip-path
+export function headClip(gradeOrTerm) {
+  const m = STAGE_METRICS[avatarStage(gradeOrTerm)];
+  const p = (v) => ((v / 512) * 100).toFixed(2) + "%";
+  const l = m.neckL - 1, r = m.neckR + 1, n = m.neck;
+  const depth = m.collar - n;
+  // U 形：從右側往下繞到左側，y = 脖子 + 深度 × (0.45 + 0.55 × (1 − x²))
+  const u = [];
+  for (let i = 0; i <= 8; i++) {
+    const t = 1 - (i / 8) * 2; // 1 → -1（右 → 左）
+    u.push(`${p((l + r) / 2 + (t * (r - l)) / 2)} ${p(n + depth * (0.45 + 0.55 * (1 - t * t)))}`);
+  }
+  return `polygon(0 0,100% 0,100% ${p(n)},${p(r)} ${p(n)},${u.join(",")},${p(l)} ${p(n)},0 ${p(n)})`;
+}
+
+// 回傳 [{ file, color, alpha, tint, clip }]，順序＝疊圖順序（背包在最底、臉已含在 base 裡）
 export function avatarLayers(input, gradeOrTerm = 4) {
   const a = normalizeAvatar(input);
   const stage = avatarStage(gradeOrTerm);
   const out = [];
-  const push = (file, color, alpha, tint = true) => out.push({ file, color, alpha: alpha ?? 1, tint, part: file });
+  const push = (file, color, alpha, tint = true, clip = "") => out.push({ file, color, alpha: alpha ?? 1, tint, part: file, clip });
   if (a.accessory === "backpack") push("acc_backpack", ACC_COLOR.backpack, 0.94);
   push(`base_${stage}`, "#ffffff", 1, false); // 基本身體自帶膚色，不上色（依年級換身體）
   push(`bottom_${a.bottom}`, partValue("bottom", a.bottom, "#4a6fa5"));
   push(`shoes_${a.shoes}`, partValue("shoes", a.shoes, "#eeeeee"));
   push(`top_${a.top}`, partValue("top", a.top, "#ffffff"));
+  push(`base_${stage}`, "#ffffff", 1, false, headClip(gradeOrTerm)); // 頭和脖子蓋在領口前面，頭髮再疊上去
   push(`hair_${a.hair}`, partValue("hairColor", a.hairColor, "#3a2f2a"));
   if (a.hat !== "none") push(`hat_${a.hat}`, partValue("hat", a.hat, "#e0574f"));
   if (a.accessory !== "none" && a.accessory !== "backpack") push(`acc_${a.accessory}`, ACC_COLOR[a.accessory] || "#8a5a34");
@@ -220,11 +237,14 @@ export function renderAvatar(input, { size = 150, grade = 4 } = {}) {
           tf = ` style="transform-origin:${pct(t.ox)} ${pct(t.oy)};transform:translate(${pct(t.dx)},${pct(t.dy)}) scale(${t.sx.toFixed(3)},${t.sy.toFixed(3)})"`;
         }
       }
-      const img = `<img class="av-img" src="${url}" alt=""${filter ? ` style="filter:${filter}"` : ""}>`;
+      const css = (filter ? `filter:${filter};` : "") + (l.clip ? `clip-path:${l.clip};` : "");
+      const img = `<img class="av-img" src="${url}" alt=""${css ? ` style="${css}"` : ""}>`;
       const tint = l.tint
         ? `<i class="av-tint" style="background:${l.color};opacity:${l.alpha};-webkit-mask-image:url(${url});mask-image:url(${url})"></i>`
         : "";
-      return `<span class="av-layer"${tf}>${img}${tint}</span>`;
+      // 切開的脖子下緣沒有線稿，用往下 0.6px 的淡陰影補一條邊線
+      const edge = l.clip ? ` style="filter:drop-shadow(0 0.6px 0 rgba(120,80,60,0.55))"` : "";
+      return `<span class="av-layer"${tf || edge}>${img}${tint}</span>`;
     })
     .join("");
   return `<div class="avatar-png" style="--av-w:${size}px" data-stage="${stage}" role="img" aria-label="我的角色（${stageLabel(grade)}）：${avatarLabel(a)}">${layers}</div>`;
