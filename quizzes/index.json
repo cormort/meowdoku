@@ -1,10 +1,9 @@
 {
   "subjects": [
-    "literacy.json",
+    "chinese.json",
     "math.json",
-    "language.json",
     "science.json",
-    "art.json",
-    "stamina.json"
+    "social.json",
+    "english.json"
   ]
 }

@@ -20,6 +20,34 @@ export const QUESTION_TYPES = {
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 
+// 程度（年級）：4=國小四年級、5=國小五年級、6=國小六年級、7=國中（七年級以上）
+export const GRADES = [
+  { grade: 4, label: "小四", full: "國小四年級" },
+  { grade: 5, label: "小五", full: "國小五年級" },
+  { grade: 6, label: "小六", full: "國小六年級" },
+  { grade: 7, label: "國中", full: "國中（七年級以上）" },
+];
+export const GRADE_MIN = 4;
+export const GRADE_MAX = 7;
+export function gradeInfo(grade) {
+  return GRADES.find((g) => g.grade === grade) || { grade, label: `G${grade}`, full: `程度 ${grade}` };
+}
+export function gradeLabel(grade) {
+  return gradeInfo(grade).label;
+}
+// 程度獎勵倍率：程度越高，同樣表現獲得的能力值與金幣越多（國小中年級較少、國中較多）
+const GRADE_REWARD = { 4: 0.85, 5: 1, 6: 1.15, 7: 1.3 };
+export function gradeRewardMul(grade) {
+  return GRADE_REWARD[grade] ?? 1;
+}
+// 各程度的題數，例如 { 4: 6, 5: 8, 6: 6, 7: 6 }
+export function gradeCounts(subject) {
+  const counts = {};
+  for (const { grade } of GRADES) counts[grade] = 0;
+  for (const q of subject?.questions || []) if (counts[q.grade] !== undefined) counts[q.grade]++;
+  return counts;
+}
+
 // 回傳錯誤訊息陣列；空陣列代表題庫合法
 export function validateSubject(subject) {
   const errors = [];
@@ -43,6 +71,8 @@ export function validateSubject(subject) {
     if (!nonEmpty(q?.prompt)) errors.push(`${at} 缺少 prompt`);
     if (!nonEmpty(q?.explain)) errors.push(`${at} 缺少 explain`);
     if (q?.tip !== undefined && !nonEmpty(q.tip)) errors.push(`${at} tip 若有填就不能空白`);
+    if (!Number.isInteger(q?.grade) || q.grade < GRADE_MIN || q.grade > GRADE_MAX)
+      errors.push(`${at} grade 必須是 ${GRADE_MIN}～${GRADE_MAX} 的整數（程度）`);
     const type = QUESTION_TYPES[q?.type];
     if (!type) errors.push(`${at} 未知題型 ${q?.type}`);
     else if (!type.validate(q)) errors.push(`${at} ${q.type} 欄位不合法`);
@@ -75,29 +105,36 @@ export async function loadSubjects(base = "./quizzes/") {
   return QUIZ_SUBJECTS;
 }
 
-// 從題庫隨機抽一輪（Fisher–Yates，不重複）
-export function pickRound(subject, rng = Math.random) {
-  const pool = [...subject.questions];
+// 從題庫隨機抽一輪（Fisher–Yates，不重複）。
+// grade 有給就只從該程度的題目抽；該程度題數不足時退回全部題目，避免抽不到題。
+export function pickRound(subject, grade = null, rng = Math.random) {
+  const all = subject.questions || [];
+  const byGrade = grade ? all.filter((q) => q.grade === grade) : [];
+  const src = byGrade.length ? byGrade : all;
+  const pool = [...src];
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-  return pool.slice(0, subject.roundSize);
+  return pool.slice(0, Math.min(subject.roundSize, pool.length));
 }
 
-// 測驗結算與獎勵計算
-export function calculateQuizResult(subjectId, correctCount, totalCount) {
+// 測驗結算與獎勵計算（grade 為程度，影響金幣與能力值倍率）
+export function calculateQuizResult(subjectId, correctCount, totalCount, grade = null) {
   const pass = correctCount >= Math.ceil(totalCount * 0.6);
   const perfect = correctCount === totalCount;
+  const mul = grade ? gradeRewardMul(grade) : 1;
 
-  // 基礎金幣獎勵 (滿分 150，合格 90，未達標 30)
+  // 基礎金幣獎勵 (滿分 150，合格 90，未達標 30)，再依程度加成
   const baseCoins = perfect ? 150 : pass ? 90 : 30;
-  // 學科屬性值增長 (+6~+15)
-  const statGain = perfect ? 12 : pass ? 7 : 2;
+  // 學科屬性值增長 (+6~+15)，再依程度加成
+  const baseStat = perfect ? 12 : pass ? 7 : 2;
+  const coins = Math.round(baseCoins * mul);
+  const statGain = Math.max(1, Math.round(baseStat * mul));
   // 經驗值
   const xpGain = correctCount * 30;
-  // 消耗體力與飽食度
-  const staminaCost = 15;
+  // 消耗體力與飽食度（程度越高越耗體力）
+  const staminaCost = Math.round(15 * (grade ? Math.max(0.8, mul) : 1));
   const hungerCost = 10;
   const fatigueGain = 12;
 
@@ -114,12 +151,14 @@ export function calculateQuizResult(subjectId, correctCount, totalCount) {
 
   return {
     subjectId,
+    grade,
+    rewardMul: mul,
     correctCount,
     totalCount,
     pass,
     perfect,
     score: Math.round((correctCount / totalCount) * 100),
-    coins: baseCoins,
+    coins,
     statGain,
     xpGain,
     staminaCost,

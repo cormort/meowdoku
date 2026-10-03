@@ -4879,3 +4879,66 @@ label {
 .pm-tile.has-scene small {
   background: rgba(13, 10, 12, 0.78);
 }
+/* 學院：程度（年級）切換 — 走美少女夢工廠的框＋金框選中樣式 */
+.quiz-grade-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 12px;
+  padding: 8px 10px;
+  background: linear-gradient(var(--pm-black-2), var(--pm-black));
+  border: 2px solid var(--pm-frame);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--pm-gold);
+}
+.quiz-grade-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--pm-gold);
+  font-family: var(--pm-serif);
+}
+.quiz-grade-btn {
+  padding: 4px 12px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--pm-cream);
+  background: #241a16;
+  border: 2px solid var(--pm-frame);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.quiz-grade-btn:hover {
+  border-color: var(--pm-gold);
+}
+.quiz-grade-btn.active {
+  color: #3b1613;
+  background: linear-gradient(#f6d79a, #d9a441);
+  border-color: var(--pm-gold);
+  box-shadow: inset 0 0 0 1px #6b3410;
+}
+.quiz-grade-hint {
+  font-size: 0.72rem;
+  color: var(--pm-salmon);
+  margin-left: auto;
+}
+.quiz-grade-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--pm-gold);
+  border: 1px solid var(--pm-frame);
+  border-radius: 3px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+.academy-action-btn[disabled] {
+  opacity: 0.45;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+}
+@media (max-width: 420px) {
+  .quiz-grade-hint {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

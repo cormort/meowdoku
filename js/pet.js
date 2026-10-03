@@ -1,6 +1,6 @@
 // pet.js — 貓咪小屋（首頁）：養成資料、客廳、圖鑑、稱號、紀念日、節日活動，以及各分頁的切換與點擊委派
 import { audio } from "../audio.js";
-import { academyPageHtml, handleDailyCare, handleQuizAnswer, startQuizSession, statsPageHtml } from "./academy.js";
+import { academyPageHtml, handleDailyCare, handleQuizAnswer, setQuizGrade, startQuizSession, statsPageHtml } from "./academy.js";
 import { facePos, setSkin } from "./meowdoku.js";
 import { bindRoomStageInteractions, captureRoomPhoto, getRoomCatSprite, renderRoomLitter, roomCatPose, roomLitterClumps, roomToolMode, scoopLitterClump, setRoomCatPose, setRoomToolMode, spawnRoomHeart, triggerWandPlay } from "./room.js";
 import { buyShopItem, gachaPageHtml, pullGacha, setShopTab, shopPageHtml } from "./shop.js";
@@ -293,17 +293,28 @@ export function addCoins(n) {
   savePetData();
   if (n > 0 && typeof audio !== "undefined") audio.playCoin?.();
 }
+// 學院五科能力初始值（key＝題庫 id，見 quizzes/README.md）
+const STAT_SEED = { chinese: 12, math: 15, science: 10, social: 10, english: 10 };
+// 舊版學院科目 → 新學科：換題庫時把玩家已累積的能力值帶過去，不要讓既有進度歸零
+const STAT_LEGACY = { chinese: "literacy", english: "language", social: "art" };
 export function petStats(key = activePetKey()) {
   petData.stats = petData.stats || {};
-  if (!petData.stats[key]) {
-    petData.stats[key] = {
-      literacy: 12,
-      math: 15,
-      language: 10,
-      science: 10,
-      art: 10,
-      stamina: 25,
-    };
+  const s = petData.stats[key];
+  if (!s) {
+    petData.stats[key] = { ...STAT_SEED };
+  } else {
+    let changed = false;
+    for (const [now, old] of Object.entries(STAT_LEGACY))
+      if (s[now] === undefined && typeof s[old] === "number") {
+        s[now] = s[old];
+        changed = true;
+      }
+    for (const k of Object.keys(STAT_SEED))
+      if (typeof s[k] !== "number") {
+        s[k] = STAT_SEED[k];
+        changed = true;
+      }
+    if (changed) savePetData();
   }
   return petData.stats[key];
 }
@@ -1263,6 +1274,12 @@ function onPetClick(e) {
   if (kotatsuClick) {
     setRoomCatPose("sleep", "暖被桌裡好溫暖喵～想睡了...", "pet-sleep");
     spawnRoomHeart(30, 70, "💤");
+    return;
+  }
+  const gradeBtn = e.target.closest("[data-quiz-grade]");
+  if (gradeBtn) {
+    setQuizGrade(gradeBtn.dataset.quizGrade);
+    setPetView("academy"); // 重畫學院頁：題池數與按鈕文字跟著換程度
     return;
   }
   const startQuiz = e.target.closest("[data-start-quiz]");

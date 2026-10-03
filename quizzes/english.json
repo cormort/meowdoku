@@ -1,0 +1,493 @@
+{
+  "format": 1,
+  "id": "english",
+  "name": "實用英語",
+  "icon": "🔤",
+  "color": "#7c3aed",
+  "bgLight": "#f5f3ff",
+  "statName": "外語",
+  "desc": "涵蓋國小到國中日常字彙、生活對話、時態與基本文法。",
+  "roundSize": 3,
+  "questions": [
+    {
+      "id": "english-001",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "What is the opposite (反義詞) of the word \"ancient\"?",
+      "options": [
+        "Traditional",
+        "Historic",
+        "Old",
+        "Modern"
+      ],
+      "answer": 3,
+      "tip": "\"Ancient\" means very old; its opposite means from recent times.",
+      "explain": "\"Ancient\" 意為古老的、古代的；其反義詞為 \"modern\"（現代的）。"
+    },
+    {
+      "id": "english-002",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Choose the correct past tense of the irregular verb \"bring\":",
+      "options": [
+        "bringed",
+        "brang",
+        "brought",
+        "bought"
+      ],
+      "answer": 2,
+      "tip": "\"Bought\" is the past tense of \"buy\", not \"bring\".",
+      "explain": "動詞 \"bring\"（帶來）的不規則過去式為 \"brought\"；\"bought\" 是 \"buy\"（買）的過去式。"
+    },
+    {
+      "id": "english-003",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "If someone says \"Thank you so much for your help!\", what is the most polite response?",
+      "options": [
+        "It doesn't matter.",
+        "Of course not.",
+        "Never mind.",
+        "You're welcome."
+      ],
+      "answer": 3,
+      "tip": "當別人道謝時，標準的回應是「不客氣」。",
+      "explain": "當他人表達感謝時，最常用的得體回應是 \"You're welcome.\"（不客氣）或 \"My pleasure.\"。"
+    },
+    {
+      "id": "english-004",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"We usually have lunch __ noon.\"",
+      "options": [
+        "at",
+        "on",
+        "to",
+        "in"
+      ],
+      "answer": 0,
+      "tip": "具體的時間點（如 noon, midnight, 7:00）前常搭配特定介系詞。",
+      "explain": "英語中表達具體精確的時間點（如 at noon、at night、at 8 o'clock）使用介系詞 \"at\"；月份年份用 \"in\"，星期日子用 \"on\"。"
+    },
+    {
+      "id": "english-005",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"An elephant is much __ than a dog.\"",
+      "options": [
+        "biggest",
+        "more big",
+        "bigger",
+        "big"
+      ],
+      "answer": 2,
+      "tip": "單音節短母音形容詞比較級通常重複字尾加上 -er。",
+      "explain": "兩者相比使用比較級，\"big\" 為單音節短母音+單子音結尾，比較級重複字尾加 er 成為 \"bigger\"。"
+    },
+    {
+      "id": "english-006",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "\"______ backpack is this on the desk?\" — \"It's Emily's.\"",
+      "options": [
+        "Who",
+        "Which",
+        "Whose",
+        "Where"
+      ],
+      "answer": 2,
+      "tip": "回答是所有格（Emily's），表示詢問物品的所有人。",
+      "explain": "\"Whose\" 用來詢問「誰的（所有權）」；\"Who\" 是指「誰」；\"Where\" 詢問地點；\"Which\" 詢問哪一個。"
+    },
+    {
+      "id": "english-007",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Choose the correct sentence with proper subject-verb agreement:",
+      "options": [
+        "Neither my cat nor my dogs likes the loud music.",
+        "Every student in our class has a textbook.",
+        "She don't want to go outside in the rain.",
+        "One of the boys are playing basketball."
+      ],
+      "answer": 1,
+      "tip": "\"Every + 單數名詞\" 視為單數主詞，動詞用單數形式 \"has\"。",
+      "explain": "\"Every student\" 視為單數主詞，搭配單數動詞 \"has\"；A選項就近原則主詞為 dogs 應搭配 like；C選項第三人稱單數應為 doesn't；D選項主詞為 One 應為 is playing。"
+    },
+    {
+      "id": "english-008",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "When someone says it is \"raining cats and dogs\", what does it mean?",
+      "options": [
+        "Animals are falling from the sky",
+        "The weather is very sunny",
+        "Pets are running outside",
+        "It is raining very heavily"
+      ],
+      "answer": 3,
+      "tip": "這是一句著名的英文慣用語（idiom）。",
+      "explain": "\"Raining cats and dogs\" 是英文常見成語，意思是「傾盆大雨、雨下得很大」。"
+    },
+    {
+      "id": "english-g4-01",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I ___ a student.\"",
+      "options": [
+        "are",
+        "is",
+        "am",
+        "be"
+      ],
+      "answer": 2,
+      "tip": "主詞是 I 的時候，be 動詞要用 am。",
+      "explain": "be 動詞有三種現在式：am / is / are。口訣是「I 配 am，he/she/it 配 is，you/we/they 配 are」。主詞是 I，所以選 am，句子是 I am a student.（我是學生。）"
+    },
+    {
+      "id": "english-g4-02",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I have two ___.\"",
+      "options": [
+        "cat",
+        "cats",
+        "cat's",
+        "cats'"
+      ],
+      "answer": 1,
+      "tip": "數字 two 後面要接複數名詞，直接加 s。",
+      "explain": "two 表示兩個，後面要用複數名詞，所以用 cats。cat 是單數；cat's 是「貓的」；cats' 是複數所有格（如 cats' food），都不能放在 two 後面。"
+    },
+    {
+      "id": "english-g4-03",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"___ is my pencil. (It is on my desk, near me.)\"",
+      "options": [
+        "Those",
+        "These",
+        "This",
+        "They"
+      ],
+      "answer": 2,
+      "tip": "單數東西且離自己很近，用 This。",
+      "explain": "This 指「單數、離說話者近」的東西；pencil 是單數，而且就在我桌上的近處，所以用 This is my pencil.。These 要接複數；Those 指遠處的東西；They 是「它們」，和 is 連用也不對。"
+    },
+    {
+      "id": "english-g4-04",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "A: How are you?  B: ___",
+      "options": [
+        "I'm ten years old.",
+        "I'm fine, thank you.",
+        "My name is Amy.",
+        "Nice to meet you, too."
+      ],
+      "answer": 1,
+      "tip": "How are you? 是問「你好嗎？」要回答身體或心情的狀況。",
+      "explain": "How are you? 問的是「你好嗎？」，所以回答 I'm fine, thank you.（我很好，謝謝）。回答「我十歲」是針對 How old are you?；回答名字是針對 What's your name?；Nice to meet you, too. 是回應初次見面的 Nice to meet you.。"
+    },
+    {
+      "id": "english-g4-05",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"My sister and I ___ good friends.\"",
+      "options": [
+        "are",
+        "am",
+        "be",
+        "is"
+      ],
+      "answer": 0,
+      "tip": "主詞有兩個人（My sister and I），等於 we，要用 are。",
+      "explain": "My sister and I 是兩個人，合起來就是複數主詞 we，所以 be 動詞用 are，句子是 My sister and I are good friends.（我姊姊和我是好朋友。）"
+    },
+    {
+      "id": "english-g4-06",
+      "grade": 4,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"There are ___ days in a week.\"",
+      "options": [
+        "five",
+        "eight",
+        "seven",
+        "six"
+      ],
+      "answer": 2,
+      "tip": "一星期從星期一到星期日，共有七天。",
+      "explain": "一星期有 seven days（七天）。five 是五、six 是六、eight 是八，都和一星期的天數不符。"
+    },
+    {
+      "id": "english-g5-01",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"He ___ to school every day.\"",
+      "options": [
+        "go",
+        "goes",
+        "gone",
+        "going"
+      ],
+      "answer": 1,
+      "tip": "第三人稱單數（he/she/it）的現在式動詞要加 s 或 es。",
+      "explain": "主詞 He 是第三人稱單數，現在式動詞要加 es，所以用 goes。every day 表示「每天」，用現在式而非過去式或進行式。"
+    },
+    {
+      "id": "english-g5-02",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "A: Can you swim?  B: Yes, I ___.",
+      "options": [
+        "am",
+        "do",
+        "can",
+        "was"
+      ],
+      "answer": 2,
+      "tip": "Can 開頭的問句，簡答要用 can 回答。",
+      "explain": "問句以 Can 開頭（問「能力」），肯定簡答要用 Yes, I can.。用 do 是回答 Do you...? 的問句；am 不能單獨當動詞；was 是過去式，和現在的能力問句不對應。"
+    },
+    {
+      "id": "english-g5-03",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"My birthday is ___ May.\"",
+      "options": [
+        "in",
+        "on",
+        "for",
+        "at"
+      ],
+      "answer": 0,
+      "tip": "月份前面用 in，例如 in May（在五月）。",
+      "explain": "時間介系詞：月份和年份用 in（in May, in 2026），特定日期用 on（on May 5th），時刻用 at（at seven o'clock）。May 是月份，所以用 in。"
+    },
+    {
+      "id": "english-g5-04",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"My brother is ___ engineer.\"",
+      "options": [
+        "a",
+        "the",
+        "an",
+        "of"
+      ],
+      "answer": 2,
+      "tip": "母音開頭的單字（engineer 的 e）前面用 an。",
+      "explain": "不定冠詞 a 用在子音開頭的單字前，an 用在母音發音開頭的單字前。engineer 的第一個音是母音 /e/，所以用 an engineer。the 是「這個／那個」，這裡第一次提到、非特定對象，不用 the。"
+    },
+    {
+      "id": "english-g5-05",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "\"It's half past six.\"  What time is it?",
+      "options": [
+        "7:30",
+        "5:30",
+        "6:00",
+        "6:30"
+      ],
+      "answer": 3,
+      "tip": "half past six 就是「六點過一半」，也就是 6:30。",
+      "explain": "half past six 表示「六點過三十分」，也就是 6:30。整點說 six o'clock（6:00）；half past five 才是 5:30。"
+    },
+    {
+      "id": "english-g5-06",
+      "grade": 5,
+      "type": "choice",
+      "prompt": "A: ___ is this T-shirt?  B: It is 200 dollars.",
+      "options": [
+        "How many",
+        "How much",
+        "How old",
+        "How long"
+      ],
+      "answer": 1,
+      "tip": "問價錢用 How much。",
+      "explain": "回答是 It is 200 dollars.（200 元），問的是價錢，所以用 How much。How many 問可數的數量；How old 問年齡；How long 問時間長度或長度。"
+    },
+    {
+      "id": "english-g6-01",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"Look! The baby ___ now.\"",
+      "options": [
+        "is crying",
+        "cries",
+        "cry",
+        "cried"
+      ],
+      "answer": 0,
+      "tip": "Look! 和 now 都是現在進行式的提示詞：be 動詞 + 動詞ing。",
+      "explain": "Look! 和 now 表示「現在正在發生」，要用現在進行式：is + crying。cry 是原形動詞不能單獨當述語；cries 是現在式（習慣）；cried 是過去式，都與「現在正在哭」不符。"
+    },
+    {
+      "id": "english-g6-02",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"We ___ to the zoo last Sunday.\"",
+      "options": [
+        "go",
+        "went",
+        "goes",
+        "going"
+      ],
+      "answer": 1,
+      "tip": "last Sunday 是過去時間，動詞要用過去式；go 的過去式是 went。",
+      "explain": "last Sunday（上星期日）表示過去，動詞要用過去式。go 是不規則動詞，過去式是 went。goes 用於第三人稱單數現在式，going 必須搭配 be 動詞才正確。"
+    },
+    {
+      "id": "english-g6-03",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"This book is ___ than that one.\"",
+      "options": [
+        "more interesting",
+        "interestinger",
+        "interesting",
+        "most interesting"
+      ],
+      "answer": 0,
+      "tip": "三個音節以上的形容詞，比較級用 more + 形容詞。",
+      "explain": "interesting 是長音節形容詞，比較級用 more interesting，最高級用 most interesting。句中有 than（比...），所以要用比較級。interestinger 不是英文；interesting 是原級，不能和 than 連用。"
+    },
+    {
+      "id": "english-g6-04",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"___ students are there in your class?\"",
+      "options": [
+        "How much",
+        "How many",
+        "How old",
+        "How long"
+      ],
+      "answer": 1,
+      "tip": "問可數名詞的數量用 How many。",
+      "explain": "students 是可數名詞的複數，問「多少個」要用 How many + 複數名詞。How much 問不可數的量或價錢；How old 問年齡；How long 問時間多久或長度。"
+    },
+    {
+      "id": "english-g6-05",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I ___ go to bed at ten. (100%)\"",
+      "options": [
+        "never",
+        "usually",
+        "sometimes",
+        "always"
+      ],
+      "answer": 3,
+      "tip": "頻率副詞中，always 表示 100%，never 表示 0%。",
+      "explain": "頻率副詞由高到低大約是 always(100%) → usually(約80%) → sometimes(約50%) → never(0%)。括號標示 100%，所以選 always。"
+    },
+    {
+      "id": "english-g6-06",
+      "grade": 6,
+      "type": "choice",
+      "prompt": "It is raining outside. What should you take with you?",
+      "options": [
+        "an umbrella",
+        "a swimsuit",
+        "sunglasses",
+        "gloves"
+      ],
+      "answer": 0,
+      "tip": "下雨天要帶傘。umbrella 是雨傘。",
+      "explain": "外面在下雨（It is raining.），應該帶 an umbrella（一把傘）。sunglasses 是太陽眼鏡（晴天用）；gloves 是手套（保暖或冬天用）；a swimsuit 是泳衣（游泳用），都不符合下雨的情境。"
+    },
+    {
+      "id": "english-g7-01",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"I ___ TV when my mom came home.\"",
+      "options": [
+        "watch",
+        "watched",
+        "were watching",
+        "was watching"
+      ],
+      "answer": 3,
+      "tip": "when 子句用過去式表示「突然發生」，主要子句常用過去進行式表示「當時正在做的事」。",
+      "explain": "這裡表示「媽媽回家的那一刻，我當時正在看電視」，主要子句用過去進行式 was watching（主詞 I 搭配 was）。watched 是過去式，會變成兩件事「先後」發生；were 和主詞 I 不搭。"
+    },
+    {
+      "id": "english-g7-02",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"We ___ visit our grandparents next weekend.\"",
+      "options": [
+        "was",
+        "will",
+        "does",
+        "did"
+      ],
+      "answer": 1,
+      "tip": "next weekend 是未來時間，用 will + 原形動詞。",
+      "explain": "next weekend（下個週末）是未來時間，助動詞要用 will，句型是 will + 原形動詞。did 和 was 是過去式；does 是第三人稱單數現在式的助動詞，都不能搭配未來時間。"
+    },
+    {
+      "id": "english-g7-03",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "You look tired. You ___ take a rest.",
+      "options": [
+        "should",
+        "is",
+        "are",
+        "does"
+      ],
+      "answer": 0,
+      "tip": "情態助動詞（can/should/must）後面接原形動詞，should 表示「應該」。",
+      "explain": "空格後面是原形動詞 take，前面要放情態助動詞。對方看起來很累，所以給他建議：You should take a rest.（你應該休息一下。）is / are / does 都不能直接接原形動詞。"
+    },
+    {
+      "id": "english-g7-04",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Please ___ your shoes before you come in.",
+      "options": [
+        "took off",
+        "taking off",
+        "takes off",
+        "take off"
+      ],
+      "answer": 3,
+      "tip": "Please 後面接原形動詞；take off 是「脫掉」的片語動詞。",
+      "explain": "Please 引導的祈使句後面要用原形動詞，所以用 take off（脫掉）。takes off 是第三人稱單數；took off 是過去式；taking off 需要搭配 be 動詞，都不能用在 Please 後面。"
+    },
+    {
+      "id": "english-g7-05",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"He is good ___ playing basketball.\"",
+      "options": [
+        "for",
+        "at",
+        "in",
+        "on"
+      ],
+      "answer": 1,
+      "tip": "慣用語 be good at + 動名詞，表示「擅長...」。",
+      "explain": "be good at 是固定用法，後面接名詞或動名詞（V-ing），表示「擅長某事」。後面是 playing basketball，所以用 at：He is good at playing basketball.。in / on / for 都不能和 good 組成這個慣用語。"
+    },
+    {
+      "id": "english-g7-06",
+      "grade": 7,
+      "type": "choice",
+      "prompt": "Fill in the blank: \"The news ___ very surprising today.\"",
+      "options": [
+        "is",
+        "are",
+        "were",
+        "have"
+      ],
+      "answer": 0,
+      "tip": "news 雖然字尾有 s，但是不可數名詞，要當單數看待。",
+      "explain": "news（新聞）是不可數名詞，字形雖有 s 但意義為單數，所以動詞用 is。today 表示現在，不用過去式 were；have 是原形／複數動詞，也不能和單數主詞 news 連用。"
+    }
+  ]
+}
