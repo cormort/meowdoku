@@ -97,19 +97,20 @@ export function randomAvatar(rng = Math.random) {
 }
 
 // ── 隨年級長大 ──
-// 每個年級一個身體（base_g4 … base_g9）；衣服共用同一組圖層，
-// 依各階段量到的頭寬／軀幹長／腿長縮放並平移，所以不用為每個年級重畫衣服。
+// 每個年級一個身體（base_g4 … base_g9）；衣服共用同一組圖層（以 g4 身體對齊畫的），
+// 依各階段身體的錨點把每種圖層「寬、高分開」縮放再平移，所以不用為每個年級重畫衣服。
 export const GROWTH_GRADES = [4, 5, 6, 7, 8, 9];
 
-// 各階段量測值（相對於 512x512 畫布的比例）：
-// headTop/headW = 頭頂與頭寬；shoulder/hip/feet = 肩、腰、腳底
+// 各階段錨點（512x512 畫布的像素座標），由 tools/measure_avatar.mjs 從身體 PNG 量出來：
+// headTop/neck/headL/headR＝頭頂、脖子、頭左右（含耳朵）；collar/crotch＝連身衣領口、胯下；
+// armL/armR＝軀幹含手臂的最外側；hipL/hipR＝臀寬；ankle/feet＝腳踝、腳底；feetL/feetR＝兩腳外側
 export const STAGE_METRICS = {
-  g4: { label: "四年級", headTop: 0.113, headW: 0.27, shoulder: 0.42, hip: 0.775, feet: 0.963 },
-  g5: { label: "五年級", headTop: 0.113, headW: 0.174, shoulder: 0.322, hip: 0.775, feet: 0.963 },
-  g6: { label: "六年級", headTop: 0.113, headW: 0.205, shoulder: 0.348, hip: 0.775, feet: 0.963 },
-  g7: { label: "七年級", headTop: 0.113, headW: 0.158, shoulder: 0.309, hip: 0.775, feet: 0.963 },
-  g8: { label: "八年級", headTop: 0.113, headW: 0.135, shoulder: 0.289, hip: 0.775, feet: 0.963 },
-  g9: { label: "九年級", headTop: 0.113, headW: 0.156, shoulder: 0.307, hip: 0.775, feet: 0.963 },
+  g4: { label: "四年級", headTop: 57, neck: 207, headL: 185, headR: 325, collar: 219, crotch: 345, armL: 177, armR: 333, hipL: 210, hipR: 300, ankle: 463, feet: 494, feetL: 218, feetR: 292 },
+  g5: { label: "五年級", headTop: 57, neck: 158, headL: 211, headR: 300, collar: 172, crotch: 326, armL: 188, armR: 323, hipL: 217, hipR: 295, ankle: 453, feet: 494, feetL: 224, feetR: 287 },
+  g6: { label: "六年級", headTop: 57, neck: 170, headL: 202, headR: 308, collar: 185, crotch: 317, armL: 183, armR: 328, hipL: 213, hipR: 297, ankle: 456, feet: 494, feetL: 216, feetR: 295 },
+  g7: { label: "七年級", headTop: 57, neck: 148, headL: 215, headR: 296, collar: 164, crotch: 289, armL: 197, armR: 314, hipL: 219, hipR: 292, ankle: 451, feet: 494, feetL: 227, feetR: 284 },
+  g8: { label: "八年級", headTop: 57, neck: 141, headL: 221, headR: 290, collar: 160, crotch: 287, armL: 198, armR: 313, hipL: 219, hipR: 292, ankle: 467, feet: 494, feetL: 232, feetR: 280 },
+  g9: { label: "九年級", headTop: 57, neck: 150, headL: 214, headR: 296, collar: 163, crotch: 287, armL: 199, armR: 311, hipL: 222, hipR: 288, ankle: 451, feet: 494, feetL: 227, feetR: 284 },
 };
 const REF_STAGE = "g4"; // 衣服圖層是以這個階段的身體對齊的
 
@@ -125,36 +126,43 @@ export function avatarStage(gradeOrTerm) {
 export function stageLabel(gradeOrTerm) {
   return STAGE_METRICS[avatarStage(gradeOrTerm)]?.label || "";
 }
-// 依階段算出每種圖層要縮放／平移多少（相對於衣服圖層的參考階段）
+// 每種圖層跟著哪一段身體走：回傳 [左, 右, 上, 下]（上＝錨點，縮放時固定在這條線上）
+// 頭髮／帽子／眼鏡／耳機跟頭；上衣／圍巾／名牌／背包跟軀幹；褲裙從胯下到腳踝；鞋子以腳底為準
+function regionBox(part, m) {
+  if (part.startsWith("top") || part === "acc_scarf" || part === "acc_badge" || part === "acc_backpack") return [m.armL, m.armR, m.collar, m.crotch];
+  if (part.startsWith("bottom")) return [m.hipL, m.hipR, m.crotch, m.ankle];
+  if (part.startsWith("shoes")) return [m.feetL, m.feetR, m.feet, m.feet];
+  if (part.startsWith("hat") || part.startsWith("acc_") || part.startsWith("hair")) return [m.headL, m.headR, m.headTop, m.neck];
+  return null;
+}
+// 上衣各自的 [上緣, 下襬, 加寬]（上緣／下襬是 g4 座標，alpha 量的）。AI 畫的上衣高低胖瘦不一：
+// 有的肩膀太低太窄會露肩，有的下襬碰不到褲裙腰頭會露出一條皮膚，
+// 所以先把每件上衣拉到同一條領口線、下襬至少蓋過腰頭、肩膀窄的加寬，再套年級變形
+const TOP_BOX = { tshirt: [202, 356, 1], hoodie: [220, 373, 1.18], shirt: [202, 352, 1.05], sailor: [203, 342, 1], sweater: [222, 354, 1.08], vest: [203, 408, 1] };
+// 褲裙加寬：長裙畫得比兩腿還窄，兩側會露出腿
+const BOTTOM_WIDEN = { pleat: 1.4 };
+const TOP_NECK = 202; // 上衣上緣要到的線（脖子根部）
+const TOP_MIN_HEM = 356; // 下襬至少到這裡（褲裙腰頭在 343，至少重疊 13px）
+// 依階段算出圖層的變形：以 (ox, oy) 為原點，寬縮 sx、高縮 sy，再平移 (dx, dy)（像素）
 export function stageTransform(part, gradeOrTerm) {
   const st = STAGE_METRICS[avatarStage(gradeOrTerm)] || STAGE_METRICS[REF_STAGE];
   const ref = STAGE_METRICS[REF_STAGE];
-  const key = part.startsWith("hat") || part.startsWith("acc_") || part.startsWith("hair") ? "head" : part;
-  const ratio = (a, b) => (b ? a / b : 1);
-  const H = 512;
-  if (key === "head") {
-    return { scale: ratio(st.headW, ref.headW), dy: (st.headTop - ref.headTop) * H };
+  const r = regionBox(part, ref);
+  const t = regionBox(part, st);
+  if (!r) return { sx: 1, sy: 1, dx: 0, dy: 0, ox: 256, oy: 0 };
+  const sx = (t[1] - t[0]) / (r[1] - r[0]);
+  // 鞋子沒有高度可比，跟寬度等比例縮（腳底不動）
+  const sy = r[3] === r[2] ? sx : (t[3] - t[2]) / (r[3] - r[2]);
+  const ox = (r[0] + r[1]) / 2;
+  const dx = (t[0] + t[1]) / 2 - ox;
+  const box = part.startsWith("top_") && TOP_BOX[part.slice(4)];
+  if (box) {
+    // 先把上衣 [上緣, 下襬] 拉到 [TOP_NECK, 下襬或 TOP_MIN_HEM]，再套年級變形（兩段合成一個變形，原點放在上衣上緣）
+    const k = (Math.max(box[1], TOP_MIN_HEM) - TOP_NECK) / (box[1] - box[0]);
+    return { sx: sx * box[2], sy: sy * k, dx, dy: t[2] - box[0] + sy * (TOP_NECK - r[2]), ox, oy: box[0] };
   }
-  if (part.startsWith("top")) {
-    return { scale: ratio(st.hip - st.shoulder, ref.hip - ref.shoulder), dy: (st.shoulder - ref.shoulder) * H };
-  }
-  if (part.startsWith("bottom")) {
-    return { scale: ratio(st.feet - st.hip, ref.feet - ref.hip), dy: (st.hip - ref.hip) * H };
-  }
-  if (part.startsWith("shoes")) {
-    return { scale: ratio(st.feet - st.hip, ref.feet - ref.hip), dy: (st.feet - ref.feet) * H };
-  }
-  return { scale: 1, dy: 0 };
-}
-// 各圖層縮放的基準線（Y，佔畫布百分比）：stageTransform 的 dy 假設圖層是繞著自己的錨點縮放
-// （頭＝頭頂、上衣＝肩、褲裙＝腰、鞋＝腳底），所以 transform-origin 必須設在同一條線上
-export function stageOriginY(part) {
-  const ref = STAGE_METRICS[REF_STAGE];
-  if (part.startsWith("top")) return ref.shoulder * 100;
-  if (part.startsWith("bottom")) return ref.hip * 100;
-  if (part.startsWith("shoes")) return ref.feet * 100;
-  if (part.startsWith("hat") || part.startsWith("acc_") || part.startsWith("hair")) return ref.headTop * 100;
-  return 0;
+  const widen = (part.startsWith("bottom_") && BOTTOM_WIDEN[part.slice(7)]) || 1;
+  return { sx: sx * widen, sy, dx, dy: t[2] - r[2], ox, oy: r[2] };
 }
 
 // ── 角色繪製（PNG 分層）──
@@ -203,14 +211,13 @@ export function renderAvatar(input, { size = 150, grade = 4 } = {}) {
       const url = avatarLayerSrc(l.file);
       const isBase = l.file.startsWith("base_");
       const filter = isBase ? SKIN_FILTER[a.skin] || "" : "";
-      // 依年級把衣服縮放／平移（頭髮、配件跟著頭；上衣跟肩；褲裙跟腰；鞋子跟腳）
+      // 依年級把衣服縮放／平移（頭髮、帽子跟頭；上衣跟軀幹；褲裙跟腿；鞋子跟腳）
       let tf = "";
       if (!isBase) {
         const t = stageTransform(l.file, grade);
-        const origin = `50% ${stageOriginY(l.file).toFixed(2)}%`;
-        if (t.scale !== 1 || t.dy !== 0) {
-          const dyPct = (t.dy / 512) * 100;
-          tf = ` style="transform-origin:${origin};transform:translateY(${dyPct.toFixed(2)}%) scale(${t.scale.toFixed(3)})"`;
+        if (t.sx !== 1 || t.sy !== 1 || t.dx !== 0 || t.dy !== 0) {
+          const pct = (v) => ((v / 512) * 100).toFixed(2) + "%";
+          tf = ` style="transform-origin:${pct(t.ox)} ${pct(t.oy)};transform:translate(${pct(t.dx)},${pct(t.dy)}) scale(${t.sx.toFixed(3)},${t.sy.toFixed(3)})"`;
         }
       }
       const img = `<img class="av-img" src="${url}" alt=""${filter ? ` style="filter:${filter}"` : ""}>`;

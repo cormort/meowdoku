@@ -61,18 +61,34 @@ check(avatarStage(4) === "g4" && avatarStage(9) === "g9" && avatarStage(12) === 
 check(avatarStage("6-1") === "g6" && gradeOfTerm("8-2") === 8, "冊次可以換算年級");
 check(stageLabel("7-1") === "七年級", "有年級名稱");
 check(
-  GROWTH_GRADES.every((g) => STAGE_METRICS[`g${g}`] && STAGE_METRICS[`g${g}`].headW > 0),
+  GROWTH_GRADES.every((g) => STAGE_METRICS[`g${g}`] && STAGE_METRICS[`g${g}`].headR > STAGE_METRICS[`g${g}`].headL && STAGE_METRICS[`g${g}`].feet > STAGE_METRICS[`g${g}`].ankle),
   "每個階段都有量測資料",
 );
-check(
-  STAGE_METRICS.g9.headW < STAGE_METRICS.g4.headW && STAGE_METRICS.g9.shoulder < STAGE_METRICS.g4.shoulder,
-  "年級越高頭越小、肩膀越高（比例變成熟）",
-);
-const hairScale = GROWTH_GRADES.map((g) => stageTransform("hair_bob", g).scale);
-check(hairScale[0] === 1 && hairScale[5] < 1, "頭髮會隨年級縮小（頭變小）");
-const topScale = GROWTH_GRADES.map((g) => stageTransform("top_tshirt", g).scale);
-check(topScale[5] > topScale[0], "上衣會隨年級放大（軀幹變長）");
-check(stageTransform("shoes_sneaker", 9).scale > 0 && stageTransform("hat_cap", 9).scale < 1, "鞋子與帽子也會依年級變形（腳不變位、帽子縮小）");
+const hw = (m) => m.headR - m.headL;
+check(hw(STAGE_METRICS.g9) < hw(STAGE_METRICS.g4) && STAGE_METRICS.g9.collar < STAGE_METRICS.g4.collar, "年級越高頭越小、肩膀越高（比例變成熟）");
+const tf = (part, g) => stageTransform(part, g);
+check(tf("hair_bob", 4).sx === 1 && tf("hair_bob", 4).sy === 1 && tf("hair_bob", 9).sx < 1, "頭髮會隨年級縮小（頭變小），四年級不變");
+check(tf("top_tshirt", 9).sx < 1 && tf("top_tshirt", 9).sy > tf("top_tshirt", 9).sx, "上衣寬高分開縮放（高年級變瘦但不變矮）");
+check(tf("bottom_jeans", 9).sy > 1 && tf("bottom_jeans", 9).sx < 1, "褲子隨腿變長變細");
+check(tf("shoes_sneaker", 9).sx === tf("shoes_sneaker", 9).sy && tf("shoes_sneaker", 9).oy === STAGE_METRICS.g4.feet, "鞋子等比例縮、以腳底為原點");
+check(tf("acc_badge", 9).sx === tf("top_tshirt", 9).sx && tf("acc_glasses", 9).sx === tf("hair_bob", 9).sx, "名牌跟軀幹走，眼鏡跟頭走");
+// 錨點對位：參考身體的胯下／腳踝／腳底／脖子，變形後要落在各年級身體的同一條線上
+const at = (t, y) => t.oy + t.dy + t.sy * (y - t.oy);
+for (const g of GROWTH_GRADES) {
+  const m = STAGE_METRICS[`g${g}`], ref = STAGE_METRICS.g4;
+  const ok =
+    Math.abs(at(tf("bottom_jeans", g), ref.crotch) - m.crotch) < 0.01 &&
+    Math.abs(at(tf("bottom_jeans", g), ref.ankle) - m.ankle) < 0.01 &&
+    Math.abs(at(tf("shoes_sneaker", g), ref.feet) - m.feet) < 0.01 &&
+    Math.abs(at(tf("hair_bob", g), ref.neck) - m.neck) < 0.01;
+  check(ok, `${g} 年級：褲裙對到胯下與腳踝、鞋子對到腳底、頭髮對到脖子`);
+}
+// 四年級時每件上衣都從同一條領口線開始，下襬蓋過褲裙腰頭（343）
+for (const t of AVATAR_PARTS.top) {
+  const x = tf(`top_${t.id}`, 4);
+  const box = { tshirt: 356, hoodie: 373, shirt: 352, sailor: 342, sweater: 354, vest: 408 }[t.id];
+  check(Math.abs(at(x, x.oy) - 202) < 0.01 && at(x, box) >= 356 - 0.01, `上衣「${t.name}」對齊領口線、下襬蓋過腰頭`);
+}
 const big = avatarLayers(defaultAvatar(), 9).map((l) => l.file);
 check(big[0] === "base_g9", "九年級用 base_g9 身體");
 check(avatarLayers(defaultAvatar(), "5-1").some((l) => l.file === "base_g5"), "冊次 5-1 用 base_g5 身體");
