@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- tools/avatar_preview.html — 開發用：把換裝圖層排成大圖檢查對齊（用本機伺服器開） -->
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <title>角色圖層預覽</title>
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      body { display: block; padding: 16px; }
+      #grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 1180px; }
+      .cell { background: #fdf3e3; border: 1px solid #e0c9a0; padding: 4px; }
+      .cell small { display: block; text-align: center; font-size: 12px; color: #7a5c3a; }
+    </style>
+  </head>
+  <body>
+    <div id="grid"></div>
+    <script type="module">
+      window.onerror = (m) => { document.getElementById("grid").textContent = "ERROR: " + m; };
+      let renderAvatar, defaultAvatar;
+      try {
+        ({ renderAvatar, defaultAvatar } = await import("../js/avatar.js?t=" + Date.now()));
+      } catch (e) {
+        document.getElementById("grid").textContent = "IMPORT FAIL: " + e;
+        throw e;
+      }
+      const combos = [
+        { skin: "light", hair: "short", hairColor: "black", top: "tshirt", bottom: "jeans", shoes: "sneaker", hat: "none", accessory: "none" },
+        { skin: "light", hair: "bob", hairColor: "brown", top: "shirt", bottom: "skirt", shoes: "loafer", hat: "straw", accessory: "glasses" },
+        { skin: "warm", hair: "twin", hairColor: "blonde", top: "sailor", bottom: "pleat", shoes: "boots", hat: "bow", accessory: "none" },
+        { skin: "light", hair: "pony", hairColor: "pink", top: "hoodie", bottom: "jeans", shoes: "sneaker", hat: "cap", accessory: "backpack" },
+        { skin: "tan", hair: "curly", hairColor: "blue", top: "sweater", bottom: "sport", shoes: "rainboot", hat: "beanie", accessory: "scarf" },
+        { skin: "deep", hair: "bowl", hairColor: "mint", top: "vest", bottom: "shorts", shoes: "sandal", hat: "beret", accessory: "headphone" },
+      ];
+      const grid = document.getElementById("grid");
+      for (const c of combos) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.innerHTML = renderAvatar(c, { size: 340 }) + `<small>${c.hair}/${c.top}/${c.bottom}/${c.shoes}/${c.hat}/${c.accessory}</small>`;
+        grid.appendChild(cell);
+      }
+    </script>
+  </body>
+</html>

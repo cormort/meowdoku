@@ -97,29 +97,37 @@ export function randomAvatar(rng = Math.random) {
 }
 
 // ── 角色繪製（PNG 分層）──
-// 素材在 icons/avatar/：每張都是「白色形狀 + alpha」的遮罩 PNG，尺寸 260x400 對齊，
-// 這裡用 CSS mask-image 上色，所以換顏色不需要換圖。
+// 素材在 icons/avatar/：Nano Banana 重繪的彩色 PNG（512x512 對齊，白色／灰階底稿），
+// 顏色在遊戲裡用 mix-blend-mode: multiply 疊上去，所以一種形狀一張圖、顏色可換、AI 的陰影保留。
 const ACC_COLOR = { glasses: "#333333", scarf: "#e0574f", backpack: "#8a5a34", headphone: "#3a3a3a", badge: "#c9a227" };
 
+// 膚色用濾鏡調整基本身體（AI 重繪的膚色為預設「白皙」）
+export const SKIN_FILTER = {
+  light: "",
+  warm: "saturate(1.12) brightness(0.98) sepia(0.1)",
+  tan: "saturate(1.3) brightness(0.9) sepia(0.24)",
+  deep: "saturate(1.45) brightness(0.76) sepia(0.4)",
+};
+
+// 相對路徑（測試用）；實際載入用 avatarLayerSrc 解析成絕對網址，子路徑部署也正確
 export function avatarLayerUrl(file) {
   return `icons/avatar/${file}.png`;
 }
+export function avatarLayerSrc(file) {
+  return new URL(`../${avatarLayerUrl(file)}`, import.meta.url).href;
+}
 
-// 回傳 [{ file, color, alpha }]，順序＝疊圖順序（背包在最後面、臉在頭髮之後）
+// 回傳 [{ file, color, alpha, tint }]，順序＝疊圖順序（背包在最底、臉已含在 base 裡）
 export function avatarLayers(input) {
   const a = normalizeAvatar(input);
   const out = [];
-  const push = (file, color, alpha) => out.push({ file, color, alpha: alpha ?? 1 });
-  if (a.accessory === "backpack") push("acc_backpack", ACC_COLOR.backpack, 0.92);
-  push("base", partValue("skin", a.skin, "#ffe1c9"));
-  push("face_blush", "#f19a9a", 0.45);
+  const push = (file, color, alpha, tint = true) => out.push({ file, color, alpha: alpha ?? 1, tint });
+  if (a.accessory === "backpack") push("acc_backpack", ACC_COLOR.backpack, 0.94);
+  push("base", "#ffffff", 1, false); // 基本身體自帶膚色，不上色
   push(`bottom_${a.bottom}`, partValue("bottom", a.bottom, "#4a6fa5"));
   push(`shoes_${a.shoes}`, partValue("shoes", a.shoes, "#eeeeee"));
   push(`top_${a.top}`, partValue("top", a.top, "#ffffff"));
   push(`hair_${a.hair}`, partValue("hairColor", a.hairColor, "#3a2f2a"));
-  push("face_eyes", "#2b2b2b");
-  push("face_shine", "#ffffff", 0.92);
-  push("face_mouth", "#b3604f");
   if (a.hat !== "none") push(`hat_${a.hat}`, partValue("hat", a.hat, "#e0574f"));
   if (a.accessory !== "none" && a.accessory !== "backpack") push(`acc_${a.accessory}`, ACC_COLOR[a.accessory] || "#8a5a34");
   return out;
@@ -129,8 +137,13 @@ export function renderAvatar(input, { size = 150 } = {}) {
   const a = normalizeAvatar(input);
   const layers = avatarLayers(a)
     .map((l) => {
-      const url = avatarLayerUrl(l.file);
-      return `<span class="av-layer" style="background:${l.color};opacity:${l.alpha};-webkit-mask-image:url(${url});mask-image:url(${url})"></span>`;
+      const url = avatarLayerSrc(l.file);
+      const filter = l.file === "base" ? SKIN_FILTER[a.skin] || "" : "";
+      const img = `<img class="av-img" src="${url}" alt=""${filter ? ` style="filter:${filter}"` : ""}>`;
+      const tint = l.tint
+        ? `<i class="av-tint" style="background:${l.color};opacity:${l.alpha};-webkit-mask-image:url(${url});mask-image:url(${url})"></i>`
+        : "";
+      return `<span class="av-layer">${img}${tint}</span>`;
     })
     .join("");
   return `<div class="avatar-png" style="--av-w:${size}px" role="img" aria-label="我的角色：${avatarLabel(a)}">${layers}</div>`;

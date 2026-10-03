@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 W, H = 260, 400
 SS = 4  # 超取樣倍率，畫完再縮小以獲得平滑邊緣
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons", "avatar")
+OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons", "avatar_pil")  # 備用（程式繪製版），不要覆蓋 AI 重繪的圖層
 
 # 幾何：頭、脖子、身體、手臂、腿
 HEAD = (68, 46, 192, 170)
