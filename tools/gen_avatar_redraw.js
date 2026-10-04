@@ -8,10 +8,19 @@
 const fs = await import("node:fs");
 // 要跑哪些類別。ego-browser 不繼承自訂環境變數，所以直接改這一行：
 // 平常全部 ["hair", "acc", "hat", "shoes"]；只重畫某一類時暫時改成例如 ["shoes"]。
-const RUN = ["hair"];
+// 平常全部 ["hair", "acc", "hat", "shoes"]；只重畫某一類時暫時改成例如 ["shoes"]。
+const RUN = ["top", "hat"];
 const LOG = "/tmp/avatar_gen/log_redraw.txt";
 fs.mkdirSync("/tmp/avatar_gen", { recursive: true });
 const log = (m) => fs.appendFileSync(LOG, `[${new Date().toISOString().slice(11, 19)}] ${m}\n`);
+
+// 上衣：重新繪製背心
+const TOP = [
+  {
+    key: "vest",
+    look: "a cute Japanese school knit sweater vest (學院風針織背心). It is a sleeveless V-neck vest worn over the upper body, fitting the shoulders and torso neatly. The armholes cleanly reveal the child's arms, and the ribbed hem stops neatly at the waistline right at the top of the shorts (does NOT cover or extend down past the shorts). Symmetrical straight-on front view",
+  },
+];
 
 // 髮型：key 要跟 js/avatar.js 的 AVATAR_PARTS.hair 一致（新增髮型時兩邊都要加）
 const HAIR = [
@@ -50,16 +59,29 @@ const ACC = [
 ];
 // 帽子：key 要跟 AVATAR_PARTS.hat 一致
 const HAT = [
-  { key: "cap", look: "a baseball cap worn straight, facing forward, its curved visor pointing toward the viewer above the eyebrows; the round crown sits snugly on top of the hair" },
-  { key: "beanie", look: "a knitted beanie with a folded ribbed cuff and a small pom-pom on top, pulled down to just above the eyebrows; the hair shows beneath it at the sides" },
-  { key: "straw", look: "a wide-brim straw sun hat with a ribbon band around the crown, sitting straight on the head; the round brim is wider than the head but stays above the eyes" },
-  { key: "beret", look: "a soft round beret worn slightly tilted toward one side, with a tiny stalk on top; it sits on top of the hair, above the bangs" },
-  { key: "bow", look: "one big ribbon bow tied on top of the hair, slightly to one side of the head, with two short ribbon tails" },
+  {
+    key: "cap",
+    look: "a stylish anime baseball cap / peaked cap worn facing forward: the rounded solid crown fits snugly over the top and back of the head, completely covering the upper scalp and crown; the curved visor extends forward above the eyebrows. Cute, sporty chibi mobile-game design with clean panel seams",
+  },
+  {
+    key: "beanie",
+    look: "a warm, cozy knitted winter beanie / watch cap with a thick folded ribbed cuff and a cute fluffy pom-pom on top. The beanie fits snugly over the dome of the head, pulled down to just above the eyebrows, completely covering the top of the scalp. The front bangs and side hair emerge naturally from beneath the folded cuff",
+  },
+  {
+    key: "straw",
+    look: "a charming wide-brim straw sun hat: a rounded woven crown that sits comfortably on top of the head, wrapped with a cute fabric ribbon band, and a wide, gently curved circular brim that extends out around the head to shade the face while staying comfortably above the eyes",
+  },
+  {
+    key: "beret",
+    look: "an artistic French beret / painter's cap worn with a stylish tilt toward one side of the head, featuring a cute tiny stalk (stem) in the center. The beret has soft, puffy, pillowy circular volume sitting gracefully on top of the hair above the forehead",
+  },
+  {
+    key: "bow",
+    look: "a lovely large ribbon bow hair accessory (雙層立體大蝴蝶結) clipped securely onto the hair on the upper side of the head. It features full, plump ribbon loops with a neat center knot and two short fluttering ribbon tails, adding an adorable touch",
+  },
 ];
 
 // 鞋子：key 要跟 AVATAR_PARTS.shoes 一致。
-// 鞋子以前是用「物件圖板」畫好一雙鞋再猜位置貼上去，結果是 3/4 視角的鞋貼在正面站姿的腳上
-// （腳趾露在外面、鞋歪一邊）→ 改成跟頭髮／配件一樣直接畫在腳上。
 const SHOES = [
   { key: "sneaker", look: "a pair of chunky lace-up sneakers with a thick rubber sole" },
   { key: "boots", look: "a pair of short lace-up ankle boots with a low heel" },
@@ -72,6 +94,10 @@ const STYLE =
   " The new item is drawn PURE WHITE / very light silver-gray with soft gray cel shading and a clean thin dark-gray outline — no other colours in it at all (the game recolours it later)." +
   " Cute Japanese mobile-game art, the same lineart style as the character. No text, no watermark, no extra objects, no shadow on the background.";
 const RULES = {
+  top:
+    " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, hair, skin, neck, arms, denim shorts, pose, size, position and framing, and the same perfectly flat pure green background. Only add this garment." +
+    " The vest fits this exact body at the right size and stops at the waistline at the top of the shorts. Symmetrical straight-on front view." +
+    STYLE,
   hair:
     " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, ears, neck, light-blue T-shirt, pose, size, position and framing, and the same perfectly flat pure green background. Only add the hair." +
     " The hair must fully cover the top and back of the scalp (no bald skin showing through the hair), sit naturally on this exact head, and must NOT cover the eyes; no loose strands lying across the eyes or cheeks." +
@@ -83,8 +109,8 @@ const RULES = {
     " The item fits this exact body at the right size and is not tilted. No other accessories, no hat." +
     STYLE,
   hat:
-    " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, brown hair (keep it brown; the hat sits ON the hair, the hair stays as it is under and around it), light-blue T-shirt, pose, size, position and framing, and the same perfectly flat pure green background. Only add this one hat." +
-    " The hat fits this exact head at the right size and does NOT cover the eyes. No other accessories." +
+    " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, brown hair, light-blue T-shirt, pose, size, position and framing, and the same perfectly flat pure green background. Only add this one hat." +
+    " The hat is worn naturally on the child's head. The hat has a solid, opaque crown that covers the top of the scalp and upper hair snugly, while the front bangs and lower side locks flow out naturally from underneath the hat brim. The hat has natural 3D depth and volume fitting a chibi character. The hat must NOT cover the eyes." +
     STYLE,
   shoes:
     " Keep EVERYTHING else exactly the same as the attached image: the same legs, knees, skin, pose, size, position and framing, and the same perfectly flat pure green background. Only add these shoes." +
@@ -94,6 +120,7 @@ const RULES = {
     STYLE,
 };
 const ITEMS = [
+  ...(RUN.includes("top") ? TOP.map((s) => ({ kind: "top", key: s.key, prompt: `Edit the attached image: dress the child in ${s.look}.` })) : []),
   ...(RUN.includes("hair") ? HAIR.map((s) => ({ kind: "hair", key: s.key, prompt: `Edit the attached image: give this bald chibi child a new hairstyle — ${s.look}.` })) : []),
   ...(RUN.includes("acc") ? ACC.map((s) => ({ kind: "acc", key: s.key, prompt: `Edit the attached image: add ${s.look}.` })) : []),
   ...(RUN.includes("hat") ? HAT.map((s) => ({ kind: "hat", key: s.key, prompt: `Edit the attached image: give the child ${s.look}.` })) : []),

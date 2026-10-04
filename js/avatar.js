@@ -140,16 +140,16 @@ function regionBox(part, m) {
 // 上衣各自的 [上緣, 下襬, 加寬]（上緣／下襬是 g4 座標，alpha 量的）。AI 畫的上衣高低胖瘦不一：
 // 有的肩膀太低太窄會露肩，有的下襬碰不到褲裙腰頭會露出一條皮膚，
 // 所以先把每件上衣拉到同一條領口線、下襬至少蓋過腰頭、肩膀窄的加寬，再套年級變形
-const TOP_BOX = { tshirt: [202, 356, 1], hoodie: [220, 373, 1.25], shirt: [202, 352, 1.10], sailor: [203, 342, 1.05], sweater: [222, 354, 1.08], vest: [203, 408, 1.02] };
+const TOP_BOX = { tshirt: [202, 356, 1], hoodie: [220, 373, 1.25], shirt: [202, 352, 1.10], sailor: [203, 342, 1.05], sweater: [222, 354, 1.08], vest: [207, 354, 1] };
 // 褲裙加寬：長裙畫得比兩腿還窄，兩側會露出腿；牛仔褲、運動褲微調包覆小腿外側
 const BOTTOM_WIDEN = { pleat: 1.95, jeans: 1.07, sport: 1.07 };
-// 帽子微調：向下貼合髮型與頭頂，避免懸空
+// 帽子微調：原位重繪已自帶 100% 精準對位
 const HAT_ADJUST = {
-  straw: { dy: 18, sx: 1.0 },
-  beanie: { dy: 14, sx: 1.28 },
-  beret: { dy: 12, sx: 1.0 },
-  cap: { dy: 8, sx: 1.0 },
-  bow: { dy: 6, sx: 1.0 },
+  straw: { dy: 0, sx: 1.0 },
+  beanie: { dy: 0, sx: 1.0 },
+  beret: { dy: 0, sx: 1.0 },
+  cap: { dy: 0, sx: 1.0 },
+  bow: { dy: 0, sx: 1.0 },
 };
 const TOP_NECK = 202; // 上衣上緣要到的線（脖子根部）
 const TOP_MIN_HEM = 356; // 下襬至少到這裡（褲裙腰頭在 343，至少重疊 13px）

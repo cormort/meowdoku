@@ -41,6 +41,7 @@ KINDS = {
     "acc": {"crop": (56, 20, 456, 420), "prefix": "acc_"},  # 頭到腰，背包、名牌、圍巾都在框內
     "hat": {"crop": (96, 0, 416, 320), "prefix": "hat_"},  # 頭往上留空間給帽冠、兩側給寬帽簷
     "shoes": {"crop": (156, 292, 376, 512), "prefix": "shoes_"},  # 膝下到腳底（鞋子要穿在腳上，不能用「物件圖」猜位置）
+    "top": {"crop": (106, 160, 406, 460), "prefix": "top_"},  # 肩膀到大腿，上衣背心在框內
 }
 WITH_HAIR = {"acc", "hat"}  # 參考圖戴棕色妹妹頭的類別（配件、帽子要戴在頭髮外面）
 # 和 js/avatar.js 的 ACC_COLOR 一致（預覽用）
@@ -67,16 +68,17 @@ def tinted(file, color):
 
 
 def scene(kind, hair_color=HAIR_REF):
-    """參考場景（512 畫布）：身體 → 上衣 → 頭和脖子（疊在領口前面，跟遊戲一樣）；配件、帽子版再加短褲、棕色妹妹頭"""
+    """參考場景（512 畫布）：身體 → 上衣 → 頭和脖子（疊在領口前面，跟遊戲一樣）；配件、帽子版再加短褲、棕色妹妹頭；top 版不穿上衣"""
     base = Image.open(AV / "base_g4.png").convert("RGBA")
     canvas = Image.new("RGBA", (W, H), GREEN + (255,))
-    hair = kind in WITH_HAIR
+    hair = kind in WITH_HAIR or kind == "top"
     if hair:
         canvas.alpha_composite(tinted(AV / "hairback_bob.png", hair_color))
     canvas.alpha_composite(base)
-    if hair:
+    if hair or kind == "top":
         canvas.alpha_composite(tinted(AV / "bottom_shorts.png", PANTS))
-    canvas.alpha_composite(tinted(AV / "top_tshirt.png", SHIRT))
+    if kind != "top":
+        canvas.alpha_composite(tinted(AV / "top_tshirt.png", SHIRT))
     head = base.copy()
     mask = np.zeros((H, W), np.uint8)
     mask[: 207 + 12] = 255  # 脖子以上
@@ -311,6 +313,16 @@ def preview(kind, ids, out_dir):
             c.alpha_composite(s)
             c.alpha_composite(tinted(out_dir / f"shoes_{sid}.png", SHOES_COLOR.get(sid, (240, 240, 240))))
             sheet.paste(c.crop(crop).resize((size, size)).convert("RGB"), (i * size, 0))
+    elif kind == "top":
+        sheet = Image.new("RGB", (size * len(ids), size))
+        s = scene("top")
+        green = np.all(np.asarray(s)[..., :3] == GREEN, -1)
+        s.putalpha(Image.fromarray(np.where(green, 0, 255).astype(np.uint8)))
+        for i, tid in enumerate(ids):
+            c = Image.new("RGBA", (W, H), (122, 156, 198, 255))
+            c.alpha_composite(s)
+            c.alpha_composite(tinted(out_dir / f"top_{tid}.png", (168, 213, 162)))
+            sheet.paste(c.crop(crop).resize((size, size)).convert("RGB"), (i * size, 0))
     else:
         # 配件：照遊戲的疊法（背包後層在最底、背帶在上衣前面、其他配件在最上面）
         sheet = Image.new("RGB", (size * len(ids), size))
@@ -349,7 +361,7 @@ def process(kind, args):
         gen = Image.open(f).convert("RGB")
         if gen.size != (SIDE, SIDE):
             gen = gen.resize((SIDE, SIDE), Image.LANCZOS)
-        s, dx, dy = register(gen, ref, brown=kind in WITH_HAIR)
+        s, dx, dy = register(gen, ref, brown=(kind in WITH_HAIR or kind == "top"))
         img = extract(warp(gen, s, dx, dy), ref, crop, fill_holes=(kind == "acc" and iid == "backpack"))
         if kind == "acc":
             save_acc(iid, img, out_dir)

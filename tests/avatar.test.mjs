@@ -90,7 +90,7 @@ for (const g of GROWTH_GRADES) {
 // 四年級時每件上衣都從同一條領口線開始，下襬蓋過褲裙腰頭（343）
 for (const t of AVATAR_PARTS.top) {
   const x = tf(`top_${t.id}`, 4);
-  const box = { tshirt: 356, hoodie: 373, shirt: 352, sailor: 342, sweater: 354, vest: 408 }[t.id];
+  const box = { tshirt: 356, hoodie: 373, shirt: 352, sailor: 342, sweater: 354, vest: 354 }[t.id];
   check(Math.abs(at(x, x.oy) - 202) < 0.01 && at(x, box) >= 356 - 0.01, `上衣「${t.name}」對齊領口線、下襬蓋過腰頭`);
 }
 const big = avatarLayers(defaultAvatar(), 9).map((l) => l.file);
