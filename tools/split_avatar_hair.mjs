@@ -23,13 +23,13 @@ const write = (f, buf) => execFileSync("convert", ["-size", `${W}x${H}`, "-depth
 
 // 後髮在頭部高度要左右填滿到哪一列（g4 座標）：馬尾、雙馬尾只填到太陽穴，辮子之間保持鏤空
 // 新髮型沒列在這裡時，填到頭髮最下緣（短髮、鮑伯頭類）
-const BACK_FILL_TO = { short: 193, bob: 217, twin: 140, pony: 140, curly: 195, bowl: 169 };
+const BACK_FILL_TO = { short: 193, bob: 217, twin: 140, pony: 140, curly: 195, straight: 240, bowl: 169 };
 const CAP_LINE = 95; // 這條線以上，頭頂沒被頭髮蓋到的地方補成頭髮
 const STRAY_FROM = 140; // 這條線以下清掉細雜線（只對 short、bowl）
 const STRAY = new Set(["short", "bowl"]);
 const OUTLINE = [92, 88, 90];
-// 垂到臉頰上的髮尾（上色後像臉上一塊污漬）：框內 y0 以下清掉，上面 fade 列漸淡成髮尖
-const TRIM = { short: { x0: 270, x1: 340, y0: 171, fade: 6 } };
+// 垂到臉頰上的髮尾：新版由 AI 生成柔順邊緣，不再做矩形硬切
+const TRIM = {};
 
 const n4 = (i) => {
   const x = i % W, y = (i / W) | 0;
@@ -109,9 +109,22 @@ for (const id of ONLY.length ? ONLY : Object.keys(BACK_FILL_TO)) {
   for (let i = 0; i < W * H; i++) sil[i] = A(i) >= 100 ? 1 : 0;
   const back = fillHoles(sil);
   const fillTo = BACK_FILL_TO[id] ?? H - 1;
+  // 計算頭部與身體在每一列的左右邊界（避免雙馬尾、馬尾在頭頂上方橫跨天空填滿）
+  const bodyL = new Int16Array(H).fill(-1);
+  const bodyR = new Int16Array(H).fill(-1);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      if (head(y * W + x)) {
+        if (bodyL[y] < 0) bodyL[y] = x;
+        bodyR[y] = x;
+      }
+    }
+  }
   for (let y = 0; y <= fillTo; y++) {
+    if (bodyL[y] < 0) continue;
+    const hl = bodyL[y], hr = bodyR[y];
     let l = -1, r = -1;
-    for (let x = 0; x < W; x++) if (back[y * W + x]) { if (l < 0) l = x; r = x; }
+    for (let x = hl; x <= hr; x++) if (back[y * W + x]) { if (l < 0) l = x; r = x; }
     if (l >= 0) for (let x = l; x <= r; x++) back[y * W + x] = 1;
   }
   // 填滿後再補一次洞（逐列填滿可能圍出新的洞），邊緣往內 1.5px 畫外框

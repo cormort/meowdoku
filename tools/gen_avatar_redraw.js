@@ -8,19 +8,37 @@
 const fs = await import("node:fs");
 // 要跑哪些類別。ego-browser 不繼承自訂環境變數，所以直接改這一行：
 // 平常全部 ["hair", "acc", "hat", "shoes"]；只重畫某一類時暫時改成例如 ["shoes"]。
-const RUN = ["hair", "acc", "hat", "shoes"];
+const RUN = ["hair"];
 const LOG = "/tmp/avatar_gen/log_redraw.txt";
 fs.mkdirSync("/tmp/avatar_gen", { recursive: true });
 const log = (m) => fs.appendFileSync(LOG, `[${new Date().toISOString().slice(11, 19)}] ${m}\n`);
 
 // 髮型：key 要跟 js/avatar.js 的 AVATAR_PARTS.hair 一致（新增髮型時兩邊都要加）
 const HAIR = [
-  { key: "short", look: "short tidy boyish hair with soft layered bangs that stop above the eyebrows; the ears stay visible" },
-  { key: "bob", look: "a chin-length bob with straight blunt bangs at eyebrow level; the sides fall straight down past the cheeks and curve inward just under the chin" },
-  { key: "twin", look: "twin tails tied high on both sides of the head with small round hair ties, light side bangs; each tail hangs down beside the head to shoulder level" },
-  { key: "pony", look: "a high ponytail tied at the back of the head with a small hair tie, side-swept bangs; the tail is clearly visible sweeping out from behind the head to one side" },
-  { key: "curly", look: "fluffy, voluminous curly hair reaching the jaw, with soft curly bangs; big round curls on both sides of the face" },
-  { key: "bowl", look: "a round mushroom bowl cut with perfectly straight bangs at eyebrow level; the round sides cover the tops of the ears" },
+  {
+    key: "bob",
+    look: "a soft, natural Japanese anime bob hairstyle (初戀短髮鮑伯頭) with gentle, light air-bangs curving softly down to eyebrow level, and smooth rounded side hair curving gently along the cheeks down to the jawline. The side locks naturally frame the cheeks with soft curved contours (no harsh boxy cuts, no flat blunt horizontal edges). Clean, adorable anime aesthetic with cute curved sideburns that softly hug the round face",
+  },
+  {
+    key: "short",
+    look: "a stylish Japanese/Korean anime boyish layered short hair (日系碎蓋層次短髮) with soft, textured feathery bangs that stop just above the eyebrows, and delicate natural sideburns gently tapering down in front of the ears. The sideburns and edges softly frame the face with natural curved hair strands (NO blunt cuts, NO boxy horizontal cuts, NO flat ruler cuts). Adorable, clean anime look with natural hair volume",
+  },
+  {
+    key: "twin",
+    look: "an adorable anime twin-tails hairstyle (萌系雙馬尾) with soft air-bangs curving down to eyebrow level, and gentle curved side strands softly framing the cheeks down to chin level. Two fluffy, voluminous pigtails are tied high on the sides of the head with small hair ties, hanging down naturally beside the head to shoulder level. The cheek-framing side locks have smooth, organic curves (NO blunt cuts, NO vertical ruler lines)",
+  },
+  {
+    key: "pony",
+    look: "a cheerful, spirited high ponytail hairstyle (活力高馬尾) with soft, light see-through bangs at eyebrow level, and cute delicate wisps of hair naturally curving along the temples and cheeks. A high, perky ponytail is tied at the upper-back of the head with a small hair tie, sweeping gracefully out to one side. The hairline and side strands flow smoothly with soft anime lineart (NO harsh straight cuts)",
+  },
+  {
+    key: "curly",
+    look: "a charming, voluminous fluffy wavy hairstyle (浪漫蓬鬆微捲髮) with soft curly bangs at eyebrow level, and lush, bouncy shoulder-length waves naturally curving along and framing both cheeks down to the collarbone. The curls have organic, rounded volume and soft wavy tips (NO flat vertical cuts, NO harsh straight edges)",
+  },
+  {
+    key: "straight",
+    look: "an elegant anime long straight hairstyle (氣質長直髮) with neat, soft air-bangs at eyebrow level, and sleek, silky side locks flowing smoothly down along both cheeks past the shoulders. The side hair naturally and softly hugs the contours of the cheeks with gentle organic lines before draping down (NO harsh blunt vertical cuts, NO blocky edges)",
+  },
 ];
 // 配件：key 要跟 AVATAR_PARTS.accessory 一致
 const ACC = [
@@ -57,6 +75,7 @@ const RULES = {
   hair:
     " Keep EVERYTHING else exactly the same as the attached image: the same face, eyes, expression, ears, neck, light-blue T-shirt, pose, size, position and framing, and the same perfectly flat pure green background. Only add the hair." +
     " The hair must fully cover the top and back of the scalp (no bald skin showing through the hair), sit naturally on this exact head, and must NOT cover the eyes; no loose strands lying across the eyes or cheeks." +
+    " Crucial: The side locks and sideburns must have smooth, natural, organic curved contours framing the cheeks — absolutely NO blunt horizontal cuts, NO boxy square edges, NO straight vertical ruler cuts along the cheeks." +
     " No hat, no hair accessories other than the hair ties mentioned." +
     STYLE,
   acc:
@@ -82,8 +101,23 @@ const ITEMS = [
 ].map((it) => ({ ...it, ref: `/tmp/avatar_ref/${it.kind}.png`, out: `/tmp/avatar_gen/${it.kind}/${it.key}.png`, prompt: it.prompt + RULES[it.kind] }));
 for (const k of RUN) fs.mkdirSync(`/tmp/avatar_gen/${k}`, { recursive: true });
 
-const task = await taskSpace("gemini redraw");
-const page = task.page("p1");
+let task;
+try {
+  task = await claimTaskSpace("gemini redraw");
+} catch {
+  task = await taskSpace("gemini redraw");
+}
+const pages = await task.pages();
+let page = pages.find((p) => p.label === "p1");
+if (!page) {
+  const tabs = await task.tabs();
+  const geminiTab = tabs.find((t) => (t.url || "").includes("gemini"));
+  if (geminiTab) {
+    page = await task.adopt(geminiTab.page, { as: "p1" });
+  } else {
+    page = await task.newPage("p1");
+  }
+}
 const wait = (ms) => page.waitForTimeout(ms);
 
 async function newChat() {
@@ -119,7 +153,13 @@ for (const it of ITEMS) {
     // 出現後直接把檔案塞進圖片 input（accept="image/*"），不必碰原生檔案選擇視窗。
     let attached = false;
     try {
-      await page.click('loc=role:button[name="上傳與工具"]', { label: "open upload menu" });
+      await page.evaluate(() => {
+        const btn = document.querySelector('button[aria-label="上傳與工具"]');
+        if (btn) {
+          btn.scrollIntoView();
+          btn.click();
+        }
+      });
       await wait(1500);
       const n = await page.evaluate(
         () => document.querySelectorAll('input[type=file][accept="image/*"]').length,
@@ -165,10 +205,9 @@ for (const it of ITEMS) {
       const imgs = await page.evaluate(
         (seen) => {
           const inReply = [...document.querySelectorAll("model-response img")];
-          const pool = inReply.length ? inReply : [...document.querySelectorAll("img")];
           return {
             reply: inReply.length,
-            imgs: pool
+            imgs: inReply
               .filter(
                 (i) =>
                   (i.src.startsWith("blob:") || i.src.startsWith("data:image")) &&
@@ -196,8 +235,7 @@ for (const it of ITEMS) {
     await wait(12000);
     const b64 = await page.evaluate(async (seen) => {
       const inReply = [...document.querySelectorAll("model-response img")];
-      const pool = inReply.length ? inReply : [...document.querySelectorAll("img")];
-      const img = pool
+      const img = inReply
         .filter(
           (i) =>
             (i.src.startsWith("blob:") || i.src.startsWith("data:image")) &&
@@ -224,3 +262,4 @@ for (const it of ITEMS) {
   }
 }
 log("全部結束");
+await task.finish({ keep: "all" });

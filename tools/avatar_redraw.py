@@ -217,7 +217,10 @@ def extract(gen, ref, crop, fill_holes=False):
     neutral = (sat < SAT_MAX) & ~green
     same = np.abs(a - rf).max(-1) < 40
     ref_neutral = (rf.max(-1) - rf.min(-1)) < SAT_MAX
-    hair = neutral & ~(same & ref_neutral)
+    # 只扣除五官特徵區（眉毛、眼睛、嘴巴）；頭部與臉頰外輪廓不應扣除，否則會在頭髮內留下頭殼虛線切痕
+    y_idx, x_idx = np.indices(neutral.shape)
+    is_face_feature = (y_idx >= 280) & (y_idx <= 520) & (x_idx >= 370) & (x_idx <= 650)
+    hair = neutral & ~(same & ref_neutral & is_face_feature)
     # 只留夠大的塊（最大塊的 2% 以上；眼睛、雜點會掉）
     from collections import deque
     lab = np.zeros(hair.shape, np.int32)

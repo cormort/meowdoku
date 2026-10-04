@@ -15,7 +15,7 @@ export const AVATAR_PARTS = {
     { id: "twin", name: "雙馬尾" },
     { id: "pony", name: "馬尾" },
     { id: "curly", name: "捲捲頭" },
-    { id: "bowl", name: "西瓜皮" },
+    { id: "straight", name: "長直髮" },
   ],
   hairColor: [
     { id: "black", name: "黑", value: "#3a2f2a" },
@@ -81,8 +81,10 @@ export function normalizeAvatar(a) {
   const base = defaultAvatar();
   const out = { ...base };
   if (a && typeof a === "object") {
+    const hair = a.hair === "bowl" ? "straight" : a.hair;
     for (const key of Object.keys(base)) {
-      if (typeof a[key] === "string" && AVATAR_PARTS[key].some((o) => o.id === a[key])) out[key] = a[key];
+      const val = key === "hair" ? hair : a[key];
+      if (typeof val === "string" && AVATAR_PARTS[key].some((o) => o.id === val)) out[key] = val;
     }
   }
   return out;
