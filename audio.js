@@ -273,9 +273,16 @@ class MeowAudioEngine {
     if (this.sfxGain && this.ctx) {
       this.sfxGain.gain.setValueAtTime(this.sfxEnabled ? 0.6 : 0.001, this.ctx.currentTime);
     }
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('meowaudiochange', { detail: { bgm: this.bgmEnabled, sfx: this.sfxEnabled, scene: this.scene } }));
-    }
+    return this.sfxEnabled;
+  }
+
+  setBgm(enabled) {
+    if (this.bgmEnabled !== !!enabled) return this.toggleBgm();
+    return this.bgmEnabled;
+  }
+
+  setSfx(enabled) {
+    if (this.sfxEnabled !== !!enabled) return this.toggleSfx();
     return this.sfxEnabled;
   }
 

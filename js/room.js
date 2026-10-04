@@ -442,14 +442,39 @@ export function captureRoomPhoto() {
     }
   }
 
-  // Cat
+  // Hero Avatar (Center-Left)
+  const heroBox = stage.querySelector("#roomHeroWrap .avatar-png");
+  if (heroBox) {
+    const avW = 340;
+    const avH = 340;
+    const avX = fx + 90;
+    const avY = fy + fh - avH - 45;
+    const layers = heroBox.querySelectorAll(".av-img");
+    ctx.save();
+    ctx.shadowColor = "rgba(45, 25, 10, 0.2)";
+    ctx.shadowBlur = 14;
+    ctx.shadowOffsetY = 8;
+    for (const img of layers) {
+      if (img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, avX, avY, avW, avH);
+      }
+    }
+    ctx.restore();
+  }
+
+  // Companion Cat (Center-Right)
   const catImg = $("roomCatImg");
   if (catImg && catImg.complete && catImg.naturalWidth > 0) {
-    const catH = 430;
+    const catH = 260;
     const catW = catImg.naturalWidth * (catH / catImg.naturalHeight);
-    const catX = fx + (fw - catW) / 2;
+    const catX = fx + fw - catW - 100;
     const catY = fy + fh - catH - 50;
+    ctx.save();
+    ctx.shadowColor = "rgba(40, 25, 10, 0.16)";
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 6;
     ctx.drawImage(catImg, catX, catY, catW, catH);
+    ctx.restore();
 
     // Costume Sprite Overlay (if equipped)
     const activeCostume = selectedCostume(activePetKey());
