@@ -9,7 +9,7 @@ import {
   aroundNeighbors,
   rowColOf,
   indexOf,
-} from "../engine.js?v=3";
+} from "../engine.js?v=4";
 import { audio } from "../audio.js";
 import { $, LS, getSkinAudioContext, hideSheet, playSkinArrivalSound, playSkinLaunchSound, playSkinTrailSound, showSheet } from "./ui.js";
 const MARK = "✕",
@@ -50,6 +50,7 @@ const state = {
   timer: null,
   done: false,
   daily: false,
+  expert: false,
   dailyKey: null,
   history: [],
   cursor: 0,
@@ -57,9 +58,9 @@ const state = {
   autoMarked: new Set(),
 };
 // 配樂：每種模式兩首，由題目本身決定播哪首（同一題重整後還是同一首）
-const MUSIC = { 5: ["puzzle", "park"], 7: ["cafe", "street"], 9: ["onsen", "cinema"], daily: ["room", "beach"] };
+const MUSIC = { 5: ["puzzle", "park"], 7: ["cafe", "street"], 9: ["onsen", "cinema"], expert: ["cinema"], daily: ["room", "beach"] };
 function sceneForBoard() {
-  const pool = state.daily ? MUSIC.daily : MUSIC[state.n] || MUSIC[5];
+  const pool = state.daily ? MUSIC.daily : MUSIC[levelKey(state.n, state.expert)] || MUSIC[5];
   return pool[state.owner.reduce((a, b) => a + b, 0) % pool.length];
 }
 function regionColor(r) {
@@ -220,12 +221,15 @@ function fmtTime(sec) {
   const s = Math.max(0, Math.floor(sec));
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
+// 專家：9×9，只收「卡住、必須做排除」至少 3 次的題目（約前 35% 難的），不給自動打叉與提示
+const EXPERT_MIN_STEPS = 3;
+const levelKey = (n, expert) => (expert ? "expert" : n);
 const chunkinessOf = (n) => (n <= 5 ? 0.75 : n <= 7 ? 0.5 : 0.35),
   randomSeed = () => (Date.now() ^ (Math.random() * 4294967295)) >>> 0;
 function makeGenerator() {
   let worker = null;
   try {
-    worker = new Worker("./gen-worker.js", { type: "module" });
+    worker = new Worker("./gen-worker.js?v=4", { type: "module" });
   } catch {
     worker = null;
   }
@@ -246,7 +250,8 @@ function makeGenerator() {
       pending.clear();
     };
   }
-  return (n, seed) => {
+  return (n, seed, expert = false) => {
+    const minSteps = expert ? EXPERT_MIN_STEPS : 0;
     const fallback = () =>
       new Promise((resolve) =>
         setTimeout(
@@ -255,7 +260,8 @@ function makeGenerator() {
               generatePuzzle(n, {
                 rng: makeRng(seed),
                 chunkiness: chunkinessOf(n),
-                maxTries: 300,
+                minSteps,
+                maxTries: minSteps ? 900 : 300,
               }),
             ),
           20,
@@ -265,26 +271,28 @@ function makeGenerator() {
     const id = ++seq;
     return new Promise((resolve) => {
       pending.set(id, { resolve });
-      worker.postMessage({ id, n, seed, chunkiness: chunkinessOf(n) });
+      worker.postMessage({ id, n, seed, chunkiness: chunkinessOf(n), minSteps });
     }).then((puzzle) => (puzzle === undefined ? fallback() : puzzle));
   };
 }
 const requestPuzzle = makeGenerator(),
   requestPrefetch = makeGenerator(),
   prefetched = new Map();
-function prefetch(n) {
-  if (!prefetched.has(n)) prefetched.set(n, requestPrefetch(n, randomSeed()));
+function prefetch(n, expert = false) {
+  const key = levelKey(n, expert);
+  if (!prefetched.has(key)) prefetched.set(key, requestPrefetch(n, randomSeed(), expert));
 }
 let gameSeq = 0;
-async function newGame({ n = state.n, daily = false, seed = null } = {}) {
-  const my = ++gameSeq;
+async function newGame({ n = state.n, daily = false, seed = null, expert = false } = {}) {
+  const my = ++gameSeq,
+    key = levelKey(n, expert);
   let job;
-  if (seed === null && prefetched.has(n)) {
-    job = prefetched.get(n);
-    prefetched.delete(n);
-  } else job = requestPuzzle(n, seed === null ? randomSeed() : seed);
+  if (seed === null && prefetched.has(key)) {
+    job = prefetched.get(key);
+    prefetched.delete(key);
+  } else job = requestPuzzle(n, seed === null ? randomSeed() : seed, expert);
   const spinner = setTimeout(
-      () => setLoading(true, daily ? "生成今日題目…" : "生成題目中…"),
+      () => setLoading(true, daily ? "生成今日題目…" : expert ? "挑選專家難題中…" : "生成題目中…"),
       120,
     ),
     puzzle = await job;
@@ -292,7 +300,9 @@ async function newGame({ n = state.n, daily = false, seed = null } = {}) {
   if (my !== gameSeq) return;
   setLoading(false);
   if (!puzzle) {
-    showSheet("生成失敗", "請再試一次。", "再試一次", () => newGame({ n, daily, seed }));
+    // 隨機題偶爾 maxTries 內挑不到（9×9 約 1/30）：直接換個種子重抽；固定種子（每日）才請玩家重試
+    if (seed === null) return newGame({ n, daily, expert });
+    showSheet("生成失敗", "請再試一次。", "再試一次", () => newGame({ n, daily, seed, expert }));
     return;
   }
   lastPlacedCatIndex = -1;
@@ -308,6 +318,7 @@ async function newGame({ n = state.n, daily = false, seed = null } = {}) {
     cursor: 0,
     hints: 0,
     daily,
+    expert,
     dailyKey: daily ? todayKey() : null,
     autoMarked: new Set(),
     genMs: puzzle.stats.ms,
@@ -317,10 +328,8 @@ async function newGame({ n = state.n, daily = false, seed = null } = {}) {
   startTimer();
   updateBestLabel();
   saveResume();
-  document
-    .querySelectorAll(".levels [data-n]")
-    .forEach((b) => b.classList.toggle("on", Number(b.dataset.n) === state.n));
-  prefetch(n);
+  syncLevelUI();
+  prefetch(n, expert);
 }
 function todayKey() {
   const d = new Date();
@@ -338,6 +347,7 @@ function saveResume() {
         lives: state.lives,
         elapsed: state.elapsed,
         daily: state.daily,
+        expert: state.expert,
         dailyKey: state.dailyKey,
         autoMarked: [...state.autoMarked],
         done: state.done,
@@ -357,6 +367,7 @@ function loadResume() {
       lives: s.lives ?? 3,
       elapsed: s.elapsed || 0,
       daily: !!s.daily,
+      expert: !!s.expert,
       dailyKey: s.dailyKey || null,
       done: !!s.done,
       history: [],
@@ -370,16 +381,24 @@ function loadResume() {
     $("timer").textContent = fmtTime(state.elapsed);
     if (!state.done) startTimer();
     updateBestLabel();
-    document
-      .querySelectorAll(".levels [data-n]")
-      .forEach((b) => b.classList.toggle("on", Number(b.dataset.n) === state.n));
+    syncLevelUI();
     return true;
   } catch {
     return false;
   }
 }
+// 等級按鈕亮哪顆、專家關掉自動打叉與提示（不改玩家自己的自動打叉設定）
+function syncLevelUI() {
+  document
+    .querySelectorAll(".levels [data-n]")
+    .forEach((b) => b.classList.toggle("on", Number(b.dataset.n) === state.n && !!b.dataset.expert === !!state.expert));
+  $("hintBtn").disabled = !!state.expert;
+  $("autoXBtn").disabled = !!state.expert;
+  $("autoXBtn").textContent = state.expert ? "自動打叉：專家關" : state.autoX ? "自動打叉" : "自動打叉：關";
+  $("autoXBtn").classList.toggle("on", state.autoX && !state.expert);
+}
 function updateBestLabel() {
-  const best = Number(localStorage.getItem(LS.best(state.n)) || 0);
+  const best = Number(localStorage.getItem(LS.best(levelKey(state.n, state.expert))) || 0);
   $("bestLabel").textContent = best ? `🏆 ${fmtTime(best)}` : "🏆 --:--";
 }
 function pushHistory() {
@@ -391,7 +410,7 @@ function pushHistory() {
   if (state.history.length > 200) state.history.shift();
 }
 function applyAutoMarks(cell) {
-  if (!state.autoX) return;
+  if (!state.autoX || state.expert) return;
   const n = state.n,
     mark = (i) => {
       if (state.cells[i] === 0) {
@@ -451,6 +470,7 @@ function tapCell(i) {
         newGame({
           n: state.n,
           daily: state.daily,
+          expert: state.expert,
           seed: state.daily ? hashSeed(state.dailyKey) : null,
         }),
       );
@@ -494,7 +514,7 @@ function checkWin() {
   state.done = true;
   clearInterval(state.timer);
   state.elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
-  const key = LS.best(state.n),
+  const key = LS.best(levelKey(state.n, state.expert)),
     prev = Number(localStorage.getItem(key) || 0),
     isBest = !prev || state.elapsed < prev;
   if (isBest) localStorage.setItem(key, String(state.elapsed));
@@ -560,7 +580,7 @@ function celebrateWin() {
   return 1100 + n * 60;
 }
 function giveHint() {
-  if (state.done) return;
+  if (state.done || state.expert) return;
   audio.playHint();
   const result = logicSolve(state.n, state.owner, { collect: true }),
     placed = new Set(catsOnBoard()),
@@ -986,8 +1006,10 @@ $("board").addEventListener(
 );
 document
   .querySelectorAll(".levels [data-n]")
-  .forEach((b) => b.addEventListener("click", () => newGame({ n: Number(b.dataset.n) })));
-$("newBtn").onclick = () => newGame({ n: state.n });
+  .forEach((b) =>
+    b.addEventListener("click", () => newGame({ n: Number(b.dataset.n), expert: !!b.dataset.expert })),
+  );
+$("newBtn").onclick = () => newGame({ n: state.n, expert: state.expert });
 $("restartBtn").onclick = () => {
   lastPlacedCatIndex = -1;
   clearAutoMarks();
@@ -1113,6 +1135,8 @@ export function setSkin(key) {
 // 進出謎題畫面：離開時暫停計時、停用鍵盤
 export function enterPuzzle() {
   puzzleActive = true;
+  // 專家題要挑 1～10 秒：一開站就在預先生成用的 worker 備好一題（跟目前這局用不同 worker），第一次按「🔥 專家」就不用等
+  prefetch(9, true);
   if (!state.cells.length) newGame({ n: 5 });
   else if (state.daily && state.dailyKey !== todayKey()) newGame({ n: 5 });
   else if (!state.done) startTimer();

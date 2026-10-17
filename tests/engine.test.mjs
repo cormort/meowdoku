@@ -2,7 +2,7 @@
 // 用法：node tests/engine.test.mjs [每種尺寸的盤數]
 import {
   makeRng, generateSolution, growRegions, regionIsConnected, buildMasks,
-  countSolutions, logicSolve, generatePuzzle, isSolved, findConflicts, orthoNeighbors,
+  countSolutions, logicSolve, generatePuzzle, eliminationSteps, isSolved, findConflicts, orthoNeighbors,
 } from '../engine.js';
 
 let failures = 0;
@@ -118,6 +118,19 @@ for (const [n, chunkiness, label] of [[5, 0.75, '5×5 簡單'], [7, 0.55, '7×7 
 
 function hashFor(n, t) { return (n * 7919 + t * 104729 + 12345) >>> 0; }
 
+{
+  // 專家：9×9 且至少 3 次排除；照樣唯一解、不用猜
+  const count = Math.max(3, Math.round(rounds / 6)), times = [];
+  let bad = 0;
+  for (let t = 0; t < count; t++) {
+    const p = generatePuzzle(9, { rng: makeRng(hashFor(99, t)), chunkiness: 0.35, minSteps: 3, maxTries: 900 });
+    if (!p) { bad++; continue; }
+    times.push(p.stats.ms);
+    if (eliminationSteps(9, p.owner) < 3 || countSolutions(9, p.owner, 2) !== 1 || !logicSolve(9, p.owner).solved) bad++;
+  }
+  console.log(`  9×9 專家: ${count - bad}/${count} 合格｜平均 ${(times.reduce((a, b) => a + b, 0) / Math.max(1, times.length)).toFixed(0)}ms，最慢 ${Math.max(...times)}ms`);
+  check(bad === 0, '9×9 專家題都至少 3 次排除、唯一解、不用猜', `不合格 ${bad}/${count}`);
+}
 // ---------- 5) 玩家盤面判定 ----------
 console.log('=== 5) 完成判定與衝突偵測 ===');
 {

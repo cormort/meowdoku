@@ -389,6 +389,54 @@ export function logicSolve(n, owner, { collect = false, basic = false } = {}) {
     techniques: collect ? techniques : undefined,
   };
 }
+// 難度分數：照人解題的順序——先把「只剩一格」用到不能再用，卡住時才用一次
+// 「色塊只落在同一列／行 → 那條線上其他格排除」。回傳卡住、必須排除的次數；解不完回傳 -1。
+export function eliminationSteps(n, owner) {
+  const mask = buildMasks(n, owner),
+    allowed = new Uint8Array(n * n).fill(1),
+    cats = new Set(),
+    map = new Map();
+  owner.forEach((r, i) => {
+    if (!map.has(r)) map.set(r, []);
+    map.get(r).push(i);
+  });
+  const regions = [...map.values()],
+    groups = [...regions];
+  for (let r = 0; r < n; r++) groups.push(Array.from({ length: n }, (_, c) => indexOf(n, r, c)));
+  for (let c = 0; c < n; c++) groups.push(Array.from({ length: n }, (_, r) => indexOf(n, r, c)));
+  let steps = 0;
+  while (cats.size < n) {
+    let placed = false;
+    for (const g of groups) {
+      const cs = g.filter((i) => allowed[i]);
+      if (cs.length === 1 && !cats.has(cs[0])) {
+        cats.add(cs[0]);
+        for (const j of mask[cs[0]]) allowed[j] = 0;
+        allowed[cs[0]] = 1;
+        placed = true;
+      }
+    }
+    if (placed) continue;
+    steps++;
+    let eliminated = false;
+    for (const cells of regions) {
+      const cs = cells.filter((i) => allowed[i]);
+      if (cs.length < 2) continue;
+      const rows = new Set(cs.map((i) => Math.floor(i / n))),
+        cols = new Set(cs.map((i) => i % n)),
+        line = [];
+      if (rows.size === 1) for (let c = 0; c < n; c++) line.push(indexOf(n, [...rows][0], c));
+      if (cols.size === 1) for (let r = 0; r < n; r++) line.push(indexOf(n, r, [...cols][0]));
+      for (const x of line)
+        if (allowed[x] && !cells.includes(x)) {
+          allowed[x] = 0;
+          eliminated = true;
+        }
+    }
+    if (!eliminated) return -1;
+  }
+  return steps;
+}
 const _placementCache = new Map();
 export function enumeratePlacements(n, limit = 200000) {
   if (limit === 200000 && _placementCache.has(n)) return _placementCache.get(n);
@@ -525,7 +573,7 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, st
 }
 export function generatePuzzle(
   n,
-  { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 300 } = {},
+  { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 300, minSteps = 0 } = {},
 ) {
   const started = Date.now();
   let tries = 0;
@@ -544,6 +592,9 @@ export function generatePuzzle(
     const lastTry = tries >= maxTries;
     if (!lastTry && [...sizes.values()].includes(1)) continue;
     if (!lastTry && logicSolve(n, owner, { basic: true }).solved) continue;
+    // 專家：至少要卡住、做排除 minSteps 次
+    const steps = eliminationSteps(n, owner);
+    if (!lastTry && steps < minSteps) continue;
     if (Math.max(...sizes.values()) > Math.ceil(n * 2.2) && tries < maxTries) continue;
     return {
       n,
@@ -554,6 +605,7 @@ export function generatePuzzle(
         tries,
         ms: Date.now() - started,
         logicRounds: logic.rounds,
+        steps,
         regionMin: Math.min(...sizes.values()),
         regionMax: Math.max(...sizes.values()),
         alternatives: othersCount(n),
