@@ -6,6 +6,6 @@ self.onmessage = (event) => {
   const rng = makeRng(seed);
   self.postMessage({
     id,
-    puzzle: generatePuzzle(n, { rng, chunkiness, maxTries: 60 }),
+    puzzle: generatePuzzle(n, { rng, chunkiness, maxTries: 300 }),
   });
 };

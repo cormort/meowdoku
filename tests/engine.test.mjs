@@ -93,7 +93,7 @@ console.log('=== 4) 題目生成品質（唯一解／不用猜／耗時） ===')
 const rounds = Number(process.argv[2] || 60);
 for (const [n, chunkiness, label] of [[5, 0.75, '5×5 簡單'], [7, 0.55, '7×7 普通'], [9, 0.35, '9×9 困難']]) {
   const times = [];
-  let ok = 0, multi = 0, guess = 0, unreachable = 0, notUniqueButLogic = 0;
+  let ok = 0, multi = 0, guess = 0, unreachable = 0, notUniqueButLogic = 0, easy = 0;
   for (let t = 0; t < rounds; t++) {
     const puzzle = generatePuzzle(n, { rng: makeRng(hashFor(n, t)), chunkiness, maxTries: 400 });
     if (!puzzle) { unreachable++; continue; }
@@ -102,13 +102,18 @@ for (const [n, chunkiness, label] of [[5, 0.75, '5×5 簡單'], [7, 0.55, '7×7 
     if (sols === 1) ok++; else if (sols > 1) multi++;
     const logic = logicSolve(n, puzzle.owner);
     if (!logic.solved) guess++;
+    // 太簡單：有 1 格色塊（白送一隻貓），或只靠「只剩一格」就解完
+    const sizes = new Map();
+    puzzle.owner.forEach((v) => sizes.set(v, (sizes.get(v) || 0) + 1));
+    if (puzzle.stats.tries < 400 && ([...sizes.values()].includes(1) || logicSolve(n, puzzle.owner, { basic: true }).solved)) easy++;
     // 生成的解本身必須是合法完整解
     check(isSolved(n, puzzle.owner, puzzle.solution.map((c, r) => r * n + c)), `n=${n} 產生的解合法`);
   }
   const avg = times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(0) : '-';
   const max = times.length ? Math.max(...times) : '-';
-  console.log(`  ${label}: 成功 ${ok}/${rounds}｜多解 ${multi}｜需猜測 ${guess}｜放棄 ${unreachable}｜平均 ${avg}ms，最慢 ${max}ms`);
+  console.log(`  ${label}: 成功 ${ok}/${rounds}｜多解 ${multi}｜需猜測 ${guess}｜太簡單 ${easy}｜放棄 ${unreachable}｜平均 ${avg}ms，最慢 ${max}ms`);
   check(multi === 0 && guess === 0, `${label} 全部唯一解且不用猜`);
+  check(easy === 0, `${label} 沒有太簡單的題目`, `太簡單 ${easy}`);
 }
 
 function hashFor(n, t) { return (n * 7919 + t * 104729 + 12345) >>> 0; }

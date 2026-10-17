@@ -294,7 +294,7 @@ export function countSolutions(n, owner, limit = 2, conflicts = null) {
   search(0);
   return solutions;
 }
-export function logicSolve(n, owner, { collect = false } = {}) {
+export function logicSolve(n, owner, { collect = false, basic = false } = {}) {
   const mask = buildMasks(n, owner),
     allowed = new Uint8Array(n * n).fill(1),
     cats = [],
@@ -354,7 +354,7 @@ export function logicSolve(n, owner, { collect = false } = {}) {
         progress = true;
       }
     }
-    if (contradiction) break;
+    if (contradiction || basic) continue; // basic：只用「只剩一格」，用來判斷題目是不是太簡單
     for (const cells of regions) {
       const cs = cells.filter((i) => allowed[i]);
       if (cs.length < 2) continue;
@@ -525,7 +525,7 @@ function buildPartitionSA(n, solution, rng, { chunkiness = 0.5, steps = 4000, st
 }
 export function generatePuzzle(
   n,
-  { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 60 } = {},
+  { rng = makeRng(Date.now() >>> 0), chunkiness = 0.5, maxTries = 300 } = {},
 ) {
   const started = Date.now();
   let tries = 0;
@@ -539,7 +539,11 @@ export function generatePuzzle(
     if (!logic.solved) continue;
     const sizes = new Map();
     owner.forEach((v) => sizes.set(v, (sizes.get(v) || 0) + 1));
-    if ([...sizes.values()].filter((v) => v === 1).length > 1 && tries < maxTries) continue;
+    // 太簡單的題目重抽（最後一次照收，保證一定有題）：
+    // 1 格色塊＝白送一隻貓、後面一路連鎖；只靠「只剩一格」就能解完也算太簡單
+    const lastTry = tries >= maxTries;
+    if (!lastTry && [...sizes.values()].includes(1)) continue;
+    if (!lastTry && logicSolve(n, owner, { basic: true }).solved) continue;
     if (Math.max(...sizes.values()) > Math.ceil(n * 2.2) && tries < maxTries) continue;
     return {
       n,

@@ -255,7 +255,7 @@ function makeGenerator() {
               generatePuzzle(n, {
                 rng: makeRng(seed),
                 chunkiness: chunkinessOf(n),
-                maxTries: 60,
+                maxTries: 300,
               }),
             ),
           20,
