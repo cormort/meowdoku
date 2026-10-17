@@ -9,7 +9,6 @@ export const LS = {
   daily: "meowdoku.daily",
   resume: "meowdoku.resume",
   skin: "meowdoku.skin",
-  pet: "meowdoku.pet",
 };
 export function localDay() {
   const d = new Date();

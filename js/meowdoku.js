@@ -1,4 +1,4 @@
-// meowdoku.js — 貓咪邏輯謎題（數獨打工）：盤面、生成、操作、換貓動畫
+// meowdoku.js — 貓咪邏輯謎題：盤面、生成、操作、換貓動畫
 import {
   makeRng,
   hashSeed,
@@ -11,7 +11,6 @@ import {
   indexOf,
 } from "../engine.js?v=3";
 import { audio } from "../audio.js";
-import { activePetKey, addCoins, addEventProgress, addPetStat, awardFood, petData, rewardHtml, setPetView } from "./pet.js";
 import { $, LS, getSkinAudioContext, hideSheet, playSkinArrivalSound, playSkinLaunchSound, playSkinTrailSound, showSheet } from "./ui.js";
 const MARK = "✕",
   CAT = "🐱";
@@ -491,25 +490,13 @@ function checkWin() {
     isBest = !prev || state.elapsed < prev;
   if (isBest) localStorage.setItem(key, String(state.elapsed));
   updateBestLabel();
-  const activeKey = activePetKey();
-  petData.affection[activeKey] = (petData.affection[activeKey] || 0) + 8;
-  const wonCoins = state.n === 5 ? 60 : state.n === 7 ? 120 : 200;
-  addCoins(wonCoins);
-  addPetStat(activeKey, "math", 4);
-  const reward = awardFood({ n: state.n, daily: state.daily });
-  addEventProgress("wins", 1);
-  if (state.n >= 7) addEventProgress("hard", 1);
   saveResume();
   showSheet(
     isBest ? "新紀錄！🏆" : "完成！🎉",
-    `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>${rewardHtml(reward)}<div class="win-coins-notice">🪙 +${wonCoins} 金幣 · 📐 算術邏輯 +4</div>`,
+    `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>`,
     "下一題",
     () => newGame({ n: state.n }),
-    "前往貓屋",
-    () => {
-      setPetView("home");
-      location.hash = "";
-    },
+    "關閉",
   );
 }
 function giveHint() {
