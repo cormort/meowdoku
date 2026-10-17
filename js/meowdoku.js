@@ -452,6 +452,7 @@ function tapCell(i) {
     }
     paintCells();
     saveResume();
+    armCatCountdown();
     return;
   }
   const trial = catsOnBoard();
@@ -463,6 +464,8 @@ function tapCell(i) {
     const el = $("board").children[i];
     el.classList.add("bad");
     setTimeout(() => el.classList.remove("bad"), 320);
+    if (state.lives > 0) armCatCountdown();
+    else setMode("mark");
     if (state.lives <= 0) {
       clearInterval(state.timer);
       audio.playMeow(0.7);
@@ -484,11 +487,33 @@ function tapCell(i) {
   audio.playCatPlace();
   state.autoMarked.delete(i);
   applyAutoMarks(i);
-  setMode("mark");
   paintCells();
   celebratePlace(i);
   saveResume();
   checkWin();
+  if (state.done) setMode("mark");
+  else armCatCountdown();
+}
+// 放貓後先留在放貓模式、倒數 5 秒；期間再點格子就重新倒數，沒點就切回「✕ 排除」
+const CAT_MODE_MS = 5000;
+let catModeTimer = 0,
+  catModeTick = 0;
+function stopCatCountdown() {
+  clearTimeout(catModeTimer);
+  clearInterval(catModeTick);
+  $("modeCatBtn").textContent = "🐱 放貓";
+  $("modeCatBtn").classList.remove("counting");
+}
+function armCatCountdown() {
+  stopCatCountdown();
+  const b = $("modeCatBtn"),
+    end = Date.now() + CAT_MODE_MS,
+    show = () => (b.textContent = `🐱 放貓 ${Math.max(1, Math.ceil((end - Date.now()) / 1000))}`);
+  show();
+  b.style.setProperty("--cat-mode-ms", `${CAT_MODE_MS}ms`);
+  restartClass(b, "counting");
+  catModeTick = setInterval(show, 250);
+  catModeTimer = setTimeout(() => setMode("mark"), CAT_MODE_MS);
 }
 function clearCell(i) {
   if (state.done) return;
@@ -503,6 +528,7 @@ function clearCell(i) {
   saveResume();
 }
 function setMode(mode) {
+  stopCatCountdown();
   state.mode = mode;
   $("modeMarkBtn").classList.toggle("on", mode === "mark");
   $("modeCatBtn").classList.toggle("on", mode === "cat");
@@ -520,9 +546,11 @@ function checkWin() {
   if (isBest) localStorage.setItem(key, String(state.elapsed));
   updateBestLabel();
   saveResume();
-  // 先讓貓咪跳一輪、撒彩紙，再跳出結算（減少動態時直接跳出）
+  // 先讓貓咪跳一輪、撒彩紙，再跳出結算（減少動態時直接跳出）；期間已開新局就不跳
+  const seq = gameSeq;
   setTimeout(
     () =>
+      seq === gameSeq &&
       showSheet(
         isBest ? "新紀錄！🏆" : "完成！🎉",
         `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>`,
@@ -1143,6 +1171,7 @@ export function enterPuzzle() {
 }
 export function leavePuzzle() {
   puzzleActive = false;
+  stopCatCountdown();
   clearInterval(state.timer);
   saveResume();
 }

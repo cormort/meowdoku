@@ -1610,3 +1610,30 @@ label {
     display: none;
   }
 }
+
+/* 放貓後的 5 秒倒數：按鈕底部一條逐漸縮短的進度條 */
+#modeCatBtn {
+  position: relative;
+  overflow: hidden;
+}
+#modeCatBtn.counting::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  animation: catModeDrain var(--cat-mode-ms, 5s) linear forwards;
+}
+@keyframes catModeDrain {
+  to {
+    transform: scaleX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #modeCatBtn.counting::after {
+    animation: none;
+  }
+}
