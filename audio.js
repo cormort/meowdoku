@@ -8,12 +8,6 @@ class MeowAudioEngine {
     this.sfxGain = null;
     this.masterGain = null;
     
-    // 呼嚕音效節點
-    this.purrOsc = null;
-    this.purrGain = null;
-    this.purrLfo = null;
-    this.isPurring = false;
-    
     // 設定
     this.bgmEnabled = localStorage.getItem('meowdoku.bgm') !== '0'; // 預設開啟（首播需使用者手勢）
     this.sfxEnabled = localStorage.getItem('meowdoku.sfx') !== '0'; // 預設開啟
@@ -23,7 +17,7 @@ class MeowAudioEngine {
     this.bgmTimer = null;
     this.bgmStep = 0;
     this.barIdx = 0;
-    this.scene = 'room';
+    this.scene = 'puzzle';
     this.ducking = false;
 
     // ===== 場景配樂：每個場景一首（和弦進行／速度／音色／節奏型都不同） =====
@@ -286,13 +280,10 @@ class MeowAudioEngine {
     return this.sfxEnabled;
   }
 
-  // 切換場景配樂（小屋／公園／咖啡廳／商店街／電影院／海邊／溫泉／數獨）
-  // 收到「同一個場景」時不重來，避免切分頁時音樂被打斷重播。
+  // 切換配樂（各難度／每日挑戰各有曲目池，見 js/meowdoku.js 的 MUSIC）
+  // 收到「同一首」時不重來，避免音樂被打斷重播。
   setScene(id, { force = false } = {}) {
-    // 活動代號 → 曲目代號（逛街 shopping 用商店街的曲、看電影 movie 用電影院的曲）
-    const alias = { shopping: 'street', movie: 'cinema', home: 'room' };
-    const want = alias[id] || id;
-    const next = this.tracks[want] ? want : 'room';
+    const next = this.tracks[id] ? id : 'puzzle';
     if (this.scene === next && !force) return next;
     this.scene = next;
     this.barIdx = 0;
@@ -561,62 +552,6 @@ class MeowAudioEngine {
     this.bgmTimer = setTimeout(() => this.scheduleNextBar(), Math.max(60, barMs - 40));
   }
 
-  // ==================== 離線匯出（試聽用） ====================
-  // 用 OfflineAudioContext 把某個場景的曲子渲染成 WAV（base64），
-  // 用來存成音檔試聽／驗收，不影響正在播放的音樂。
-  async exportTrack(id, seconds = 24, sampleRate = 44100) {
-    const track = this.tracks[id];
-    if (!track) return null;
-    const Offline = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    if (!Offline) return null;
-    const barSec = (60 / track.bpm) * 4;
-    const off = new Offline(2, Math.ceil(sampleRate * seconds), sampleRate);
-    const out = off.createGain();
-    out.gain.setValueAtTime(0.85, 0);
-    out.connect(off.destination);
-    const bars = Math.ceil(seconds / barSec);
-    for (let b = 0; b < bars; b++) this.renderBar(off, out, track, b, b * barSec);
-    const buf = await off.startRendering();
-    return { wav: this.bufferToWavBase64(buf), seconds, bpm: track.bpm, bars };
-  }
-
-  bufferToWavBase64(buffer) {
-    const numCh = buffer.numberOfChannels;
-    const len = buffer.length;
-    const bytes = 44 + len * numCh * 2;
-    const ab = new ArrayBuffer(bytes);
-    const view = new DataView(ab);
-    const wstr = (off, s) => { for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i)); };
-    wstr(0, 'RIFF');
-    view.setUint32(4, bytes - 8, true);
-    wstr(8, 'WAVE');
-    wstr(12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, numCh, true);
-    view.setUint32(24, buffer.sampleRate, true);
-    view.setUint32(28, buffer.sampleRate * numCh * 2, true);
-    view.setUint16(32, numCh * 2, true);
-    view.setUint16(34, 16, true);
-    wstr(36, 'data');
-    view.setUint32(40, len * numCh * 2, true);
-    const chans = [];
-    for (let c = 0; c < numCh; c++) chans.push(buffer.getChannelData(c));
-    let off = 44;
-    for (let i = 0; i < len; i++) {
-      for (let c = 0; c < numCh; c++) {
-        const s = Math.max(-1, Math.min(1, chans[c][i]));
-        view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-        off += 2;
-      }
-    }
-    let bin = '';
-    const u8 = new Uint8Array(ab);
-    const chunk = 0x8000;
-    for (let i = 0; i < u8.length; i += chunk) bin += String.fromCharCode.apply(null, u8.subarray(i, i + chunk));
-    return btoa(bin);
-  }
-
   // ==================== 遊戲音效 (SFX) ====================
 
   // 1. 放貓咪 (清脆可愛的貓叫聲或貓咪撲爪音)
@@ -790,65 +725,6 @@ class MeowAudioEngine {
     } catch {}
   }
 
-  // 8. 貓咪呼嚕聲 (28Hz 低頻三角波 + 2.6Hz 呼吸調幅)
-  startPurr() {
-    if (!this.sfxEnabled) return;
-    this.init();
-    if (!this.ctx || this.isPurring) return;
-    try {
-      const now = this.ctx.currentTime;
-      this.purrOsc = this.ctx.createOscillator();
-      this.purrOsc.type = 'triangle';
-      this.purrOsc.frequency.setValueAtTime(29, now);
-
-      this.purrLfo = this.ctx.createOscillator();
-      this.purrLfo.type = 'sine';
-      this.purrLfo.frequency.setValueAtTime(2.6, now);
-
-      const lfoGain = this.ctx.createGain();
-      lfoGain.gain.setValueAtTime(0.08, now);
-
-      this.purrGain = this.ctx.createGain();
-      this.purrGain.gain.setValueAtTime(0.02, now);
-      this.purrGain.gain.linearRampToValueAtTime(0.14, now + 0.3);
-
-      this.purrLfo.connect(this.purrGain.gain);
-      this.purrOsc.connect(this.purrGain);
-
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(140, now);
-
-      this.purrGain.connect(filter);
-      filter.connect(this.sfxGain);
-
-      this.purrOsc.start();
-      this.purrLfo.start();
-      this.isPurring = true;
-    } catch {}
-  }
-
-  stopPurr() {
-    if (!this.ctx || !this.isPurring) return;
-    try {
-      const now = this.ctx.currentTime;
-      if (this.purrGain) {
-        this.purrGain.gain.linearRampToValueAtTime(0.001, now + 0.25);
-      }
-      setTimeout(() => {
-        try {
-          if (this.purrOsc) { this.purrOsc.stop(); this.purrOsc.disconnect(); }
-          if (this.purrLfo) { this.purrLfo.stop(); this.purrLfo.disconnect(); }
-        } catch {}
-        this.purrOsc = null;
-        this.purrLfo = null;
-        this.isPurring = false;
-      }, 260);
-    } catch {
-      this.isPurring = false;
-    }
-  }
-
   // 9. 萌萌貓叫聲
   playMeow(pitch = 1.0) {
     if (!this.sfxEnabled) return;
@@ -908,128 +784,6 @@ class MeowAudioEngine {
     } catch {}
   }
 
-  // 11. 鏟砂沙沙聲
-  playSand() {
-    if (!this.sfxEnabled) return;
-    this.init();
-    if (!this.ctx) return;
-    try {
-      const bufferSize = this.ctx.sampleRate * 0.18;
-      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-      }
-      const noise = this.ctx.createBufferSource();
-      noise.buffer = buffer;
-
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1200, this.ctx.currentTime);
-      filter.Q.setValueAtTime(3.0, this.ctx.currentTime);
-
-      const gain = this.ctx.createGain();
-      gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.17);
-
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.sfxGain);
-
-      noise.start();
-    } catch {}
-  }
-
-  // 12. 歡呼音效
-  playCheer() {
-    this.playVictory();
-  }
-
-  // 13. 相機快門聲 (拍照留念)
-  playShutter() {
-    if (!this.sfxEnabled) return;
-    this.init();
-    if (!this.ctx) return;
-    try {
-      const now = this.ctx.currentTime;
-      // 反光鏡彈起
-      const osc = this.ctx.createOscillator();
-      const oscGain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(650, now);
-      osc.frequency.exponentialRampToValueAtTime(160, now + 0.04);
-      oscGain.gain.setValueAtTime(0.3, now);
-      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
-      osc.connect(oscGain);
-      oscGain.connect(this.sfxGain);
-      osc.start(now);
-      osc.stop(now + 0.05);
-
-      // 機械快門聲
-      const bufSize = Math.floor(this.ctx.sampleRate * 0.09);
-      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.35));
-      }
-      const noise = this.ctx.createBufferSource();
-      noise.buffer = buf;
-      const noiseGain = this.ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.25, now + 0.025);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
-      noise.connect(noiseGain);
-      noiseGain.connect(this.sfxGain);
-      noise.start(now + 0.025);
-    } catch {}
-  }
-
-  // 14. 金幣叮噹聲
-  playCoin() {
-    if (!this.sfxEnabled) return;
-    this.init();
-    if (!this.ctx) return;
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(987.77, now); // B5
-      osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-      osc.connect(gain);
-      gain.connect(this.sfxGain);
-      osc.start(now);
-      osc.stop(now + 0.36);
-    } catch {}
-  }
-
-  // 15. 測驗答對叮咚音效
-  playQuizCorrect() {
-    if (!this.sfxEnabled) return;
-    this.init();
-    if (!this.ctx) return;
-    try {
-      const now = this.ctx.currentTime;
-      [
-        { f: 523.25, t: 0 },
-        { f: 659.25, t: 0.09 },
-        { f: 783.99, t: 0.18 },
-        { f: 1046.50, t: 0.28 }
-      ].forEach(({ f, t }) => {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(f, now + t);
-        gain.gain.setValueAtTime(0.15, now + t);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.28);
-        osc.connect(gain);
-        gain.connect(this.sfxGain);
-        osc.start(now + t);
-        osc.stop(now + t + 0.3);
-      });
-    } catch {}
-  }
 }
 
 export const audio = new MeowAudioEngine();

@@ -56,6 +56,12 @@ const state = {
   hints: 0,
   autoMarked: new Set(),
 };
+// 配樂：每種模式兩首，由題目本身決定播哪首（同一題重整後還是同一首）
+const MUSIC = { 5: ["puzzle", "park"], 7: ["cafe", "street"], 9: ["onsen", "cinema"], daily: ["room", "beach"] };
+function sceneForBoard() {
+  const pool = state.daily ? MUSIC.daily : MUSIC[state.n] || MUSIC[5];
+  return pool[state.owner.reduce((a, b) => a + b, 0) % pool.length];
+}
 function regionColor(r) {
   return (
     document.documentElement.dataset.theme === "dark" ? REGION_COLORS_DARK : REGION_COLORS
@@ -148,6 +154,7 @@ export function renderBoard() {
   }
   paintCells();
   renderRegionLines();
+  audio.setScene(sceneForBoard());
 }
 function paintCells() {
   const board = $("board"),
@@ -439,6 +446,7 @@ function tapCell(i) {
     setTimeout(() => el.classList.remove("bad"), 320);
     if (state.lives <= 0) {
       clearInterval(state.timer);
+      audio.playMeow(0.7);
       showSheet("沒有小魚乾了 🐟", `這一局用了 ${fmtTime(state.elapsed)}。`, "再試一次", () =>
         newGame({
           n: state.n,
@@ -458,6 +466,7 @@ function tapCell(i) {
   applyAutoMarks(i);
   setMode("mark");
   paintCells();
+  celebratePlace(i);
   saveResume();
   checkWin();
 }
@@ -491,13 +500,64 @@ function checkWin() {
   if (isBest) localStorage.setItem(key, String(state.elapsed));
   updateBestLabel();
   saveResume();
-  showSheet(
-    isBest ? "新紀錄！🏆" : "完成！🎉",
-    `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>`,
-    "下一題",
-    () => newGame({ n: state.n }),
-    "關閉",
+  // 先讓貓咪跳一輪、撒彩紙，再跳出結算（減少動態時直接跳出）
+  setTimeout(
+    () =>
+      showSheet(
+        isBest ? "新紀錄！🏆" : "完成！🎉",
+        `${state.n}×${state.n} 用了 <b>${fmtTime(state.elapsed)}</b>`,
+        "下一題",
+        () => newGame({ n: state.n }),
+        "關閉",
+      ),
+    celebrateWin(),
   );
+}
+const reducedMotion = () => matchMedia("(prefers-reduced-motion:reduce)").matches;
+function restartClass(el, cls) {
+  el.classList.remove(cls);
+  void el.offsetWidth; // 重新觸發動畫
+  el.classList.add(cls);
+}
+// 放貓：這隻貓跳一下，牠所在的列、行、色塊從牠往外一圈圈亮起來（三條規則都被這隻貓滿足了）
+function celebratePlace(i) {
+  if (reducedMotion()) return;
+  const n = state.n,
+    cells = $("board").children,
+    [r, c] = rowColOf(n, i);
+  restartClass(cells[i], "pop");
+  for (let j = 0; j < n * n; j++) {
+    const [rj, cj] = rowColOf(n, j);
+    if (j === i || (rj !== r && cj !== c && state.owner[j] !== state.owner[i])) continue;
+    cells[j].style.setProperty("--d", `${Math.max(Math.abs(rj - r), Math.abs(cj - c)) * 45}ms`);
+    restartClass(cells[j], "lit");
+  }
+  audio.playJingle();
+}
+// 過關：貓咪由上而下輪流跳、棋盤上方撒彩紙；回傳結算面板要延後幾毫秒
+function celebrateWin() {
+  audio.playVictory();
+  setTimeout(() => audio.playMeow(1.15), 650);
+  if (reducedMotion()) return 0;
+  const n = state.n,
+    cells = $("board").children;
+  for (const i of catsOnBoard()) {
+    cells[i].style.setProperty("--d", `${rowColOf(n, i)[0] * 90}ms`);
+    restartClass(cells[i], "win-hop");
+  }
+  const box = $("board").getBoundingClientRect(),
+    bits = ["🐟", "🐾", "✨", "🐱", "⭐"],
+    count = PERF.low ? 14 : PERF.mobile ? 22 : 34;
+  for (let k = 0; k < count; k++) {
+    const e = fx("win-confetti", box.left + Math.random() * box.width, box.top + box.height * 0.35, 1600);
+    if (!e) break;
+    e.textContent = bits[k % bits.length];
+    e.style.setProperty("--dx", `${(Math.random() - 0.5) * box.width * 0.7}px`);
+    e.style.setProperty("--dy", `${-(0.35 + Math.random() * 0.45) * box.height}px`);
+    e.style.setProperty("--rot", `${(Math.random() - 0.5) * 720}deg`);
+    e.style.animationDelay = `${Math.random() * 180}ms`;
+  }
+  return 1100 + n * 60;
 }
 function giveHint() {
   if (state.done) return;
@@ -688,7 +748,7 @@ function bezier(a, c, b, t) {
     y: u * u * a.y + 2 * u * t * c.y + t * t * b.y,
   };
 }
-function fx(className, x, y) {
+function fx(className, x, y, life = 900) {
   if (PERF.hidden || PERF.activeFx >= PERF.maxFx) return null;
   const e = document.createElement("span");
   e.className = className;
@@ -701,7 +761,7 @@ function fx(className, x, y) {
     PERF.activeFx = Math.max(0, PERF.activeFx - 1);
   };
   e.addEventListener("animationend", done, { once: true });
-  setTimeout(done, 900);
+  setTimeout(done, life);
   return e;
 }
 function trail(x, y, s = 1) {

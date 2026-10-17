@@ -1495,3 +1495,118 @@ label {
 }
 /* 觸控裝置／窄螢幕：維持原本手機樣式（這裡只是確保大螢幕專用規則不會外洩） */
 
+
+/* =========================================================
+   棋盤美術與特效：格子立體感、放貓彈跳、列／行／色塊亮起、過關彩紙
+   ========================================================= */
+:root {
+  --cell-hi: rgba(255, 255, 255, 0.42);
+  --cell-lo: rgba(60, 30, 10, 0.08);
+  --lit-glow: rgba(255, 255, 255, 0.75);
+}
+:root[data-theme="dark"] {
+  --cell-hi: rgba(255, 255, 255, 0.1);
+  --cell-lo: rgba(0, 0, 0, 0.22);
+  --lit-glow: rgba(255, 236, 170, 0.45);
+}
+/* 色塊磚：上緣高光、下緣陰影，像一塊塊軟糖 */
+.cell {
+  box-shadow:
+    inset 0 2px 0 var(--cell-hi),
+    inset 0 -3px 0 var(--cell-lo);
+}
+.cell.mark i {
+  font-size: 0.72em;
+  opacity: 0.55;
+}
+.cell.autox i {
+  opacity: 0.35;
+}
+.cell.cat i {
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+}
+
+/* 放貓：貓彈一下 */
+.cell.cat.pop i {
+  animation: catPop 0.38s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes catPop {
+  0% {
+    transform: scale(0.3) rotate(-12deg);
+  }
+  60% {
+    transform: scale(1.18) rotate(4deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* 同列、同行、同色塊由近到遠亮起（--d 是距離造成的延遲） */
+.cell.lit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--lit-glow), transparent 72%);
+  opacity: 0;
+  animation: cellLit 0.5s ease-out var(--d, 0ms) both;
+}
+@keyframes cellLit {
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* 過關：貓咪由上而下輪流跳 */
+.cell.cat.win-hop i {
+  animation: catHop 0.55s ease-in-out var(--d, 0ms) 2;
+}
+@keyframes catHop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-22%) scale(1.08, 0.94);
+  }
+  60% {
+    transform: translateY(0) scale(1.1, 0.88);
+  }
+}
+.win-confetti {
+  position: absolute;
+  font-size: 22px;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  animation: confettiFly 1.4s cubic-bezier(0.2, 0.7, 0.4, 1) both;
+}
+@keyframes confettiFly {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  12% {
+    opacity: 1;
+  }
+  55% {
+    transform: translate(calc(-50% + var(--dx) * 0.8), calc(-50% + var(--dy))) rotate(calc(var(--rot) * 0.6)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) * 0.2 + 120px)) rotate(var(--rot)) scale(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cell.cat.pop i,
+  .cell.cat.win-hop i,
+  .cell.lit::after,
+  .win-confetti {
+    animation: none !important;
+  }
+  .win-confetti {
+    display: none;
+  }
+}

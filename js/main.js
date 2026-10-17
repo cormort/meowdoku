@@ -157,7 +157,6 @@ document.addEventListener(
   }
   initPuzzle(localStorage.getItem(LS.skin) || "emoji");
   enterPuzzle();
-  audio.setScene("puzzle");
   if ("serviceWorker" in navigator && location.protocol !== "file:")
     navigator.serviceWorker.register("./sw.js").catch(() => {});
 })();
